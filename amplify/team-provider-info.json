@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-latmedicreact-dev-035d6-authRole",
+      "UnauthRoleArn": "arn:aws:iam::888577064026:role/amplify-latmedicreact-dev-035d6-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::888577064026:role/amplify-latmedicreact-dev-035d6-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-latmedicreact-dev-035d6-deployment",
+      "UnauthRoleName": "amplify-latmedicreact-dev-035d6-unauthRole",
+      "StackName": "amplify-latmedicreact-dev-035d6",
+      "StackId": "arn:aws:cloudformation:us-east-1:888577064026:stack/amplify-latmedicreact-dev-035d6/021067a0-7e48-11f0-b971-0e83c6194e71",
+      "AmplifyAppId": "dehpw86z5eq5t"
+    },
+    "categories": {
+      "auth": {
+        "latmedicreact68ebd0e4": {}
+      }
+    }
+  }
+}
