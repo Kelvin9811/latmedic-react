@@ -3,12 +3,11 @@ import logo from './logo.svg';
 import './App.css';
 
 import awsconfig from './aws-exports';
-
 import { Amplify } from 'aws-amplify';
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
-
 import { I18n } from '@aws-amplify/core';
+import MainScreen from './MainScreen.js';
 
 // Configuración Amplify
 Amplify.configure(awsconfig);
@@ -41,16 +40,13 @@ function App() {
       <header className="App-header">
         <Authenticator>
           {({ signOut, user }) => (
-            <div>
-              <img src={logo} className="App-logo" alt="logo" />
-              <p>Hola <strong>{user?.username}</strong> 👋</p>
-              <button onClick={signOut}>Cerrar sesión</button>
-            </div>
+            <MainScreen user={user} signOut={signOut} />
           )}
         </Authenticator>
       </header>
     </div>
   );
 }
+
 
 export default App;
