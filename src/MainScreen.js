@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import SidebarMenu from './components/SidebarMenu';
+import CrearHistoriaClinica from './components/CrearHistoriaClinica';
 import logo from './logo.svg';
 
 const MainScreen = ({ user, signOut }) => {
@@ -8,14 +9,14 @@ const MainScreen = ({ user, signOut }) => {
   return (
     <div>
       <SidebarMenu onSelect={setSelected} signOut={signOut} />
-      <div style={{ marginLeft: '240px', padding: '40px' }}>
+      <div style={{ }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
           <span>Hola <strong>{user?.username}</strong></span>
         </div>
         {selected === 'crear' && (
           <div>
             <h2>Crear Historia Clínica</h2>
-            {/* ...formulario... */}
+            <CrearHistoriaClinica />
           </div>
         )}
         {selected === 'revisar' && (

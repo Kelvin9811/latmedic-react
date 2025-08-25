@@ -76,6 +76,7 @@ DATOS
 	Nombre cedula
 ANTECEDFENTES
 	una sola vez
+
 Revisiones
 	cuerpo completo le duele la cabeza
 		le duele el cuello

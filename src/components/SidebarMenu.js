@@ -7,9 +7,9 @@ const SidebarMenu = ({ onSelect, signOut }) => {
   return (
     <>
       <div className="hamburger" onClick={() => setOpen(!open)}>
-        <div />
-        <div />
-        <div />
+        <span className="hamburger-label">
+          {open ? 'Cerrar menú' : 'Abrir menú'}
+        </span>
       </div>
       <div className={`sidebar-menu ${open ? 'open' : ''}`}>
         <div className="sidebar-menu-content">
