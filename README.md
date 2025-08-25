@@ -68,3 +68,25 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+
+
+DATOS
+	Nombre cedula
+ANTECEDFENTES
+	una sola vez
+Revisiones
+	cuerpo completo le duele la cabeza
+		le duele el cuello
+		le duele los pies
+		selecciono y pongo que le paso en cada parte
+
+docuentos 
+	radiografia
+	rayos x
+
+Recetario
+	generar pdf para imprimir con un fondo del recetario
+
+
