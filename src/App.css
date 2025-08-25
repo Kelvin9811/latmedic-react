@@ -20,7 +20,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: clamp(12px, 2vw, 28px);
   color: #fff;
   position: relative;
   /* Fondo con imagen */
@@ -56,4 +56,14 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Ejemplo para hacer los títulos y textos principales responsivos */
+h1, h2, h3, h4, h5, h6 {
+  font-size: clamp(16px, 3vw, 32px);
+  font-weight: 600;
+}
+
+p, label, input, textarea, button, span {
+  font-size: clamp(12px, 1.5vw, 20px);
 }
