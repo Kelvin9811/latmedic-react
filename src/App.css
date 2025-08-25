@@ -14,14 +14,35 @@
 }
 
 .App-header {
-  background-color: #fff;
+  background-color: #000;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: #282c34;
+  color: #fff;
+  position: relative;
+  /* Fondo con imagen */
+  background-image: url('./images/APLI-001.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Superposición oscura para mejorar contraste */
+.App-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 0;
+}
+
+/* Asegura que el contenido esté por encima de la superposición */
+.App-header > * {
+  position: relative;
+  z-index: 1;
 }
 
 .App-link {

@@ -9,9 +9,8 @@ const MainScreen = ({ user, signOut }) => {
     <div>
       <SidebarMenu onSelect={setSelected} signOut={signOut} />
       <div style={{ marginLeft: '240px', padding: '40px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
-          <img src={logo} alt="logo" style={{ width: 60, marginRight: 16 }} />
-          <span>Hola <strong>{user?.username}</strong> 👋</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
+          <span>Hola <strong>{user?.username}</strong></span>
         </div>
         {selected === 'crear' && (
           <div>

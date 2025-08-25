@@ -35,19 +35,44 @@
 .sidebar-menu.open {
   left: 0;
 }
-.sidebar-menu ul {
+.sidebar-menu-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.sidebar-menu-list {
   list-style: none;
   padding: 0;
   margin: 0;
   width: 100%;
   text-align: center;
 }
-.sidebar-menu li {
-  padding: 20px 0;
+.sidebar-menu-list li {
+  padding: 16px 0;
   cursor: pointer;
-  font-size: 1.2em;
+  font-size: 1em;
   border-bottom: 1px solid #eee;
+  color: #000;
 }
-.sidebar-menu li:hover {
+.sidebar-menu-list li:hover {
+  background: #f0f0f0;
+}
+
+.sidebar-logout-btn {
+  width: 100%;
+  padding: 16px 0;
+  font-size: 0.95em;
+  background: none;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  border-top: 1px solid #eee;
+  margin-top: auto;
+}
+
+.sidebar-logout-btn:hover {
   background: #f0f0f0;
 }

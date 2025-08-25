@@ -12,11 +12,15 @@ const SidebarMenu = ({ onSelect, signOut }) => {
         <div />
       </div>
       <div className={`sidebar-menu ${open ? 'open' : ''}`}>
-        <ul>
-          <li onClick={() => { onSelect('crear'); setOpen(false); }}>Crear Historia Clínica</li>
-          <li onClick={() => { onSelect('revisar'); setOpen(false); }}>Revisar Historias</li>
-          <li onClick={() => { signOut(); setOpen(false); }}>Cerrar Sesión</li>
-        </ul>
+        <div className="sidebar-menu-content">
+          <ul className="sidebar-menu-list">
+            <li onClick={() => { onSelect('crear'); setOpen(false); }}>Crear Historia Clínica</li>
+            <li onClick={() => { onSelect('revisar'); setOpen(false); }}>Revisar Historias</li>
+          </ul>
+          <button className="sidebar-logout-btn" onClick={() => { signOut(); setOpen(false); }}>
+            Cerrar Sesión
+          </button>
+        </div>
       </div>
     </>
   );
