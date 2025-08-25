@@ -1,0 +1,45 @@
+.crear-historia-form {
+  width: 80vw;
+  max-width: 1200px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.crear-historia-titulo {
+  text-align: center;
+  margin-bottom: 16px;
+  color: #000;
+  
+}
+
+.crear-historia-campo {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.crear-historia-campo label {
+  margin-bottom: 4px;
+  color: #000;
+}
+
+.crear-historia-campo input,
+.crear-historia-campo textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.crear-historia-btn {
+  width: 100%;
+  padding: 10px;
+  background: #282c34;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}

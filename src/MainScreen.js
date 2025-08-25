@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import SidebarMenu from './components/SidebarMenu';
 import CrearHistoriaClinica from './components/CrearHistoriaClinica';
+import RevisionesForm from './components/RevisionesForm';
 import logo from './logo.svg';
 
 const MainScreen = ({ user, signOut }) => {
   const [selected, setSelected] = useState(null);
+  const [paciente, setPaciente] = useState(null);
 
   return (
     <div>
@@ -16,7 +18,11 @@ const MainScreen = ({ user, signOut }) => {
         {selected === 'crear' && (
           <div>
             <h2>Crear Historia Clínica</h2>
-            <CrearHistoriaClinica />
+            {!paciente ? (
+              <CrearHistoriaClinica onHistoriaCreada={({ nombre }) => setPaciente(nombre)} />
+            ) : (
+              <RevisionesForm nombrePaciente={paciente} />
+            )}
           </div>
         )}
         {selected === 'revisar' && (
