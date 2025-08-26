@@ -139,3 +139,43 @@
 .revisiones-eliminar-btn:hover {
   background: #d9363e;
 }
+
+.popup-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-content {
+  background: #fff;
+  padding: 32px 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  text-align: center;
+  min-width: 280px;
+  
+}
+
+.popup-content h4 {
+  color: #000;
+}
+
+.popup-content p {
+  color:#000
+}
+
+.popup-btn {
+  margin-top: 18px;
+  padding: 10px 32px;
+  background: #282c34;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  cursor: pointer;
+}
+

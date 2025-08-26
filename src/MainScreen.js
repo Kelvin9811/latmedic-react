@@ -8,6 +8,11 @@ const MainScreen = ({ user, signOut }) => {
   const [selected, setSelected] = useState(null);
   const [cliente, setCliente] = useState(null);
 
+  const handleGuardado = () => {
+    setCliente(null);
+    setSelected(null);
+  };
+
   return (
     <div>
       <SidebarMenu onSelect={setSelected} signOut={signOut} />
@@ -24,6 +29,7 @@ const MainScreen = ({ user, signOut }) => {
               <RevisionesForm
                 cliente={cliente}
                 usuario={user?.username}
+                onGuardado={handleGuardado}
               />
             )}
           </div>
