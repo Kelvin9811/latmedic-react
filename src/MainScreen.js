@@ -6,7 +6,7 @@ import logo from './logo.svg';
 
 const MainScreen = ({ user, signOut }) => {
   const [selected, setSelected] = useState(null);
-  const [paciente, setPaciente] = useState(null);
+  const [cliente, setCliente] = useState(null);
 
   return (
     <div>
@@ -18,10 +18,13 @@ const MainScreen = ({ user, signOut }) => {
         {selected === 'crear' && (
           <div>
             <h2>Crear Historia Clínica</h2>
-            {!paciente ? (
-              <CrearHistoriaClinica onHistoriaCreada={({ nombre }) => setPaciente(nombre)} />
+            {!cliente ? (
+              <CrearHistoriaClinica onHistoriaCreada={data => setCliente(data)} />
             ) : (
-              <RevisionesForm nombrePaciente={paciente} />
+              <RevisionesForm
+                cliente={cliente}
+                usuario={user?.username}
+              />
             )}
           </div>
         )}

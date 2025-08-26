@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import './RevisionesForm.css';
 
-const RevisionesForm = ({ nombrePaciente }) => {
+const RevisionesForm = ({ cliente, usuario }) => {
     const [revisiones, setRevisiones] = useState([{ parte: '', descripcion: '' }]);
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (idx, field, value) => {
         const nuevas = revisiones.map((rev, i) =>
@@ -19,14 +20,38 @@ const RevisionesForm = ({ nombrePaciente }) => {
         setRevisiones(revisiones.filter((_, i) => i !== idx));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
+        
         e.preventDefault();
-        alert('Revisiones guardadas');
+        setLoading(true);
+        try {
+            const body = JSON.stringify({
+                usuario,
+                cliente,
+                revisiones
+            });
+            console.log("Cuerpo de la solicitud:", body);
+            const response = await fetch('http://creacion-api/v1/api-creacion-historia-clinica', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body
+            });
+            if (response.ok) {
+                alert('Revisiones guardadas');
+            } else {
+                alert('Error al guardar revisiones');
+            }
+        } catch (err) {
+            alert('Error de conexión');
+        }
+        setLoading(false);
     };
 
     return (
         <form className="revisiones-form" onSubmit={handleSubmit}>
-            <h3 className="revisiones-titulo">Revisiones para {nombrePaciente}</h3>
+            <h3 className="revisiones-titulo">Revisiones para {cliente?.nombre}</h3>
             {revisiones.map((rev, idx) => (
                 <div key={idx} className="revisiones-row">
                     <div className="revisiones-seccion-x">
@@ -67,14 +92,16 @@ const RevisionesForm = ({ nombrePaciente }) => {
                 type="button"
                 className="revisiones-agregar-btn"
                 onClick={agregarRevision}
+                disabled={loading}
             >
                 Agregar revisión
             </button>
             <button
                 type="submit"
                 className="revisiones-guardar-btn"
+                disabled={loading}
             >
-                Guardar revisiones
+                {loading ? 'Guardando...' : 'Guardar revisiones'}
             </button>
         </form>
     );
