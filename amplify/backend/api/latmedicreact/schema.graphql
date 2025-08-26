@@ -1,0 +1,41 @@
+type Cliente
+  @model
+  @auth(rules: [
+    { allow: owner, operations: [create, read, update, delete] },
+    # Opcional: habilita roles por grupo en Cognito
+    { allow: groups, groups: ["medicos"], operations: [create, read, update] },
+    { allow: groups, groups: ["asistentes"], operations: [read, create, update] }
+  ]) {
+  id: ID!                    # puedes usar la cédula como id si lo prefieres
+  cedula: String! @index(name: "byCedula", queryField: "clienteByCedula")
+  nombre: String!
+  antecedentes: String
+  revisiones: [Revision] @hasMany(indexName: "byCliente", fields: ["id"])
+  recetas: [Receta] @hasMany(indexName: "byCliente", fields: ["id"])
+}
+
+type Revision
+  @model
+  @auth(rules: [
+    { allow: owner, operations: [create, read, update, delete] },
+    { allow: groups, groups: ["medicos", "asistentes"], operations: [create, read, update] }
+  ]) {
+  id: ID!
+  clienteID: ID! @index(name: "byCliente", sortKeyFields: ["createdAt"])
+  parte: String!
+  descripcion: String
+  createdAt: AWSDateTime
+}
+
+type Receta
+  @model
+  @auth(rules: [
+    { allow: owner, operations: [create, read, update, delete] },
+    { allow: groups, groups: ["medicos", "asistentes"], operations: [create, read, update] }
+  ]) {
+  id: ID!
+  clienteID: ID! @index(name: "byCliente", sortKeyFields: ["createdAt"])
+  indicaciones: String
+  s3key: String              # clave del archivo en S3
+  createdAt: AWSDateTime
+}
