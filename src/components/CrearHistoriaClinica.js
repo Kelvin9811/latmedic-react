@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import './CrearHistoriaClinica.css';
+import { upsertClienteByCedula } from '../apiCrud';
 
 const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
   const [nombre, setNombre] = useState('');
   const [cedula, setCedula] = useState('');
   const [antecedentes, setAntecedentes] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    await upsertClienteByCedula({
+      cedula,
+      nombre,
+      antecedentes
+    });
     if (onHistoriaCreada) {
       onHistoriaCreada({ nombre, cedula, antecedentes });
     }

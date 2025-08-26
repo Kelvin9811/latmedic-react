@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './RevisionesForm.css';
+import { upsertClienteByCedula, createRevision, getClienteFullByCedula } from '../apiCrud';
 
 const RevisionesForm = ({ cliente, usuario, onGuardado }) => {
     const [revisiones, setRevisiones] = useState([{ parte: '', descripcion: '' }]);
@@ -25,24 +26,16 @@ const RevisionesForm = ({ cliente, usuario, onGuardado }) => {
         e.preventDefault();
         setLoading(true);
         try {
-            const body = JSON.stringify({
-                usuario,
-                cliente,
-                revisiones
-            });
-            const response = await fetch('http://creacion-api/v1/api-creacion-historia-clinica', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body
-            });
-            if (response.ok) {
-                setRevisiones([{ parte: '', descripcion: '' }]);
-                setShowPopup(true);
-            } else {
-                setShowPopup(true); // También muestra el popup en error, puedes personalizar el mensaje si quieres
+
+            // Llama a createRevision para cada revisión
+            for (const rev of revisiones) {
+                await createRevision({
+                    clienteID: cliente.cedula,
+                    parte: rev.parte,
+                    descripcion: rev.descripcion
+                });
             }
+
         } catch (err) {
             setShowPopup(true);
         }

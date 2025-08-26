@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SidebarMenu from './components/SidebarMenu';
 import CrearHistoriaClinica from './components/CrearHistoriaClinica';
 import RevisionesForm from './components/RevisionesForm';
+import RevisarHistoriasClinicas from './components/RevisarHistoriasClinicas';
 import logo from './logo.svg';
 
 const MainScreen = ({ user, signOut }) => {
@@ -36,8 +37,7 @@ const MainScreen = ({ user, signOut }) => {
         )}
         {selected === 'revisar' && (
           <div>
-            <h2>Revisar Historias Clínicas</h2>
-            {/* ...tabla/lista... */}
+            <RevisarHistoriasClinicas />
           </div>
         )}
         {!selected && (
