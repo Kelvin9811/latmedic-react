@@ -240,3 +240,127 @@ export async function deleteHistoriaClinicaByCedula(cedula, { cascade = true } =
 
   return { ok: true, deleted: del.data.deleteCliente };
 }
+
+/* -------------------- CONSULTAS -------------------- */
+
+// Crear una consulta para un paciente (por cédula)
+export async function createConsultaForCedula(cedula, { motivo, diagnostico } = {}) {
+  // busca el cliente
+  const { data } = await client.graphql({
+    query: queries.clienteByCedula,
+    variables: { cedula, limit: 1 },
+    authMode: 'userPool',
+  });
+  const cli = data?.clienteByCedula?.items?.[0];
+  if (!cli) throw new Error('CLIENTE_NOT_FOUND');
+
+  const res = await client.graphql({
+    query: mutations.createConsulta,
+    variables: { input: {
+      clienteID: cli.id,
+      motivo: motivo ?? null,
+      diagnostico: diagnostico ?? null,
+      createdAt: new Date().toISOString(),
+    }},
+    authMode: 'userPool',
+  });
+  return res.data.createConsulta;
+}
+
+// Listar consultas por cédula (ordenadas por fecha)
+export async function listConsultasByCedula(cedula, { limit = 20, nextToken, sortDirection = 'DESC' } = {}) {
+  const { data } = await client.graphql({
+    query: queries.clienteByCedula,
+    variables: { cedula, limit: 1 },
+    authMode: 'userPool',
+  });
+  const cli = data?.clienteByCedula?.items?.[0];
+  if (!cli) return { items: [], nextToken: null };
+
+  const resp = await client.graphql({
+    query: queries.consultasByCliente,
+    variables: { clienteID: cli.id, sortDirection, limit, nextToken },
+    authMode: 'userPool',
+  });
+  const conn = resp?.data?.consultasByCliente ?? {};
+  return { items: conn.items ?? [], nextToken: conn.nextToken ?? null };
+}
+
+/* --------- Revisiones/Recetas/Documentos por CONSULTA --------- */
+
+// Revisión
+export async function addRevisionToConsulta(consultaID, { parte, descripcion }) {
+  const res = await client.graphql({
+    query: mutations.createRevision,
+    variables: { input: {
+      consultaID,
+      parte,
+      descripcion,
+      createdAt: new Date().toISOString(),
+    }},
+    authMode: 'userPool',
+  });
+  return res.data.createRevision;
+}
+
+export async function listRevisionesByConsulta(consultaID, { limit = 50, nextToken, sortDirection = 'DESC' } = {}) {
+  const { data } = await client.graphql({
+    query: queries.revisionesByConsulta,
+    variables: { consultaID, sortDirection, limit, nextToken },
+    authMode: 'userPool',
+  });
+  const conn = data?.revisionesByConsulta ?? {};
+  return { items: (conn.items ?? []).filter(Boolean), nextToken: conn.nextToken ?? null };
+}
+
+// Receta (metadatos; S3 lo vemos luego)
+export async function addRecetaToConsulta(consultaID, { indicaciones, s3key }) {
+  const res = await client.graphql({
+    query: mutations.createReceta,
+    variables: { input: {
+      consultaID,
+      indicaciones: indicaciones ?? null,
+      s3key: s3key ?? null,
+      createdAt: new Date().toISOString(),
+    }},
+    authMode: 'userPool',
+  });
+  return res.data.createReceta;
+}
+
+export async function listRecetasByConsulta(consultaID, { limit = 50, nextToken, sortDirection = 'DESC' } = {}) {
+  const { data } = await client.graphql({
+    query: queries.recetasByConsulta,
+    variables: { consultaID, sortDirection, limit, nextToken },
+    authMode: 'userPool',
+  });
+  const conn = data?.recetasByConsulta ?? {};
+  return { items: (conn.items ?? []).filter(Boolean), nextToken: conn.nextToken ?? null };
+}
+
+// Documento (metadatos; luego subimos a S3)
+export async function addDocumentoToConsulta(consultaID, { tipo, titulo, s3key, notas }) {
+  const res = await client.graphql({
+    query: mutations.createDocumento,
+    variables: { input: {
+      consultaID,
+      tipo: tipo ?? 'OTRO',
+      titulo: titulo ?? null,
+      s3key: s3key ?? null,
+      notas: notas ?? null,
+      createdAt: new Date().toISOString(),
+    }},
+    authMode: 'userPool',
+  });
+  return res.data.createDocumento;
+}
+
+export async function listDocumentosByConsulta(consultaID, { limit = 50, nextToken, sortDirection = 'DESC' } = {}) {
+  const { data } = await client.graphql({
+    query: queries.documentosByConsulta,
+    variables: { consultaID, sortDirection, limit, nextToken },
+    authMode: 'userPool',
+  });
+  const conn = data?.documentosByConsulta ?? {};
+  return { items: (conn.items ?? []).filter(Boolean), nextToken: conn.nextToken ?? null };
+}

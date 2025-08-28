@@ -91,3 +91,17 @@ Recetario
 	generar pdf para imprimir con un fondo del recetario
 
 
+
+
+
+agregar busqueda por nombre con un like
+
+agregar un objeto de consulta el cual va a tener atadas las revisiones, examenes y recetas
+
+
+richaralonso
+xi/M94BRn3]x
+
+alexis9811
+
+

@@ -11,26 +11,12 @@ export const createCliente = /* GraphQL */ `
       cedula
       nombre
       antecedentes
-      revisiones {
+      consultas {
         items {
           id
           clienteID
-          parte
-          descripcion
-          createdAt
-          updatedAt
-          owner
-          __typename
-        }
-        nextToken
-        __typename
-      }
-      recetas {
-        items {
-          id
-          clienteID
-          indicaciones
-          s3key
+          motivo
+          diagnostico
           createdAt
           updatedAt
           owner
@@ -56,26 +42,12 @@ export const updateCliente = /* GraphQL */ `
       cedula
       nombre
       antecedentes
-      revisiones {
+      consultas {
         items {
           id
           clienteID
-          parte
-          descripcion
-          createdAt
-          updatedAt
-          owner
-          __typename
-        }
-        nextToken
-        __typename
-      }
-      recetas {
-        items {
-          id
-          clienteID
-          indicaciones
-          s3key
+          motivo
+          diagnostico
           createdAt
           updatedAt
           owner
@@ -101,26 +73,12 @@ export const deleteCliente = /* GraphQL */ `
       cedula
       nombre
       antecedentes
-      revisiones {
+      consultas {
         items {
           id
           clienteID
-          parte
-          descripcion
-          createdAt
-          updatedAt
-          owner
-          __typename
-        }
-        nextToken
-        __typename
-      }
-      recetas {
-        items {
-          id
-          clienteID
-          indicaciones
-          s3key
+          motivo
+          diagnostico
           createdAt
           updatedAt
           owner
@@ -136,6 +94,195 @@ export const deleteCliente = /* GraphQL */ `
     }
   }
 `;
+export const createConsulta = /* GraphQL */ `
+  mutation CreateConsulta(
+    $input: CreateConsultaInput!
+    $condition: ModelConsultaConditionInput
+  ) {
+    createConsulta(input: $input, condition: $condition) {
+      id
+      clienteID
+      motivo
+      diagnostico
+      createdAt
+      revisiones {
+        items {
+          id
+          clienteID
+          consultaID
+          parte
+          descripcion
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      recetas {
+        items {
+          id
+          clienteID
+          consultaID
+          indicaciones
+          s3key
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      documentos {
+        items {
+          id
+          consultaID
+          tipo
+          titulo
+          s3key
+          notas
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const updateConsulta = /* GraphQL */ `
+  mutation UpdateConsulta(
+    $input: UpdateConsultaInput!
+    $condition: ModelConsultaConditionInput
+  ) {
+    updateConsulta(input: $input, condition: $condition) {
+      id
+      clienteID
+      motivo
+      diagnostico
+      createdAt
+      revisiones {
+        items {
+          id
+          clienteID
+          consultaID
+          parte
+          descripcion
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      recetas {
+        items {
+          id
+          clienteID
+          consultaID
+          indicaciones
+          s3key
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      documentos {
+        items {
+          id
+          consultaID
+          tipo
+          titulo
+          s3key
+          notas
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const deleteConsulta = /* GraphQL */ `
+  mutation DeleteConsulta(
+    $input: DeleteConsultaInput!
+    $condition: ModelConsultaConditionInput
+  ) {
+    deleteConsulta(input: $input, condition: $condition) {
+      id
+      clienteID
+      motivo
+      diagnostico
+      createdAt
+      revisiones {
+        items {
+          id
+          clienteID
+          consultaID
+          parte
+          descripcion
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      recetas {
+        items {
+          id
+          clienteID
+          consultaID
+          indicaciones
+          s3key
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      documentos {
+        items {
+          id
+          consultaID
+          tipo
+          titulo
+          s3key
+          notas
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
 export const createRevision = /* GraphQL */ `
   mutation CreateRevision(
     $input: CreateRevisionInput!
@@ -144,6 +291,7 @@ export const createRevision = /* GraphQL */ `
     createRevision(input: $input, condition: $condition) {
       id
       clienteID
+      consultaID
       parte
       descripcion
       createdAt
@@ -161,6 +309,7 @@ export const updateRevision = /* GraphQL */ `
     updateRevision(input: $input, condition: $condition) {
       id
       clienteID
+      consultaID
       parte
       descripcion
       createdAt
@@ -178,6 +327,7 @@ export const deleteRevision = /* GraphQL */ `
     deleteRevision(input: $input, condition: $condition) {
       id
       clienteID
+      consultaID
       parte
       descripcion
       createdAt
@@ -195,6 +345,7 @@ export const createReceta = /* GraphQL */ `
     createReceta(input: $input, condition: $condition) {
       id
       clienteID
+      consultaID
       indicaciones
       s3key
       createdAt
@@ -212,6 +363,7 @@ export const updateReceta = /* GraphQL */ `
     updateReceta(input: $input, condition: $condition) {
       id
       clienteID
+      consultaID
       indicaciones
       s3key
       createdAt
@@ -229,8 +381,66 @@ export const deleteReceta = /* GraphQL */ `
     deleteReceta(input: $input, condition: $condition) {
       id
       clienteID
+      consultaID
       indicaciones
       s3key
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const createDocumento = /* GraphQL */ `
+  mutation CreateDocumento(
+    $input: CreateDocumentoInput!
+    $condition: ModelDocumentoConditionInput
+  ) {
+    createDocumento(input: $input, condition: $condition) {
+      id
+      consultaID
+      tipo
+      titulo
+      s3key
+      notas
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const updateDocumento = /* GraphQL */ `
+  mutation UpdateDocumento(
+    $input: UpdateDocumentoInput!
+    $condition: ModelDocumentoConditionInput
+  ) {
+    updateDocumento(input: $input, condition: $condition) {
+      id
+      consultaID
+      tipo
+      titulo
+      s3key
+      notas
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const deleteDocumento = /* GraphQL */ `
+  mutation DeleteDocumento(
+    $input: DeleteDocumentoInput!
+    $condition: ModelDocumentoConditionInput
+  ) {
+    deleteDocumento(input: $input, condition: $condition) {
+      id
+      consultaID
+      tipo
+      titulo
+      s3key
+      notas
       createdAt
       updatedAt
       owner

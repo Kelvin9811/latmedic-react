@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import SidebarMenu from './components/SidebarMenu';
 import CrearHistoriaClinica from './components/CrearHistoriaClinica';
-import RevisionesForm from './components/RevisionesForm';
+import CrearConsulta from './components/CrearConsulta';
+import ManejoConsulta from './components/ManejoConsulta';
 import RevisarHistoriasClinicas from './components/RevisarHistoriasClinicas';
+import RevisarRecetas from './components/RevisarRecetas';
 import logo from './logo.svg';
 
 const MainScreen = ({ user, signOut }) => {
   const [selected, setSelected] = useState(null);
   const [cliente, setCliente] = useState(null);
+  const [consulta, setConsulta] = useState(null);
 
   const handleGuardado = () => {
     setCliente(null);
+    setConsulta(null);
     setSelected(null);
   };
 
@@ -26,11 +30,14 @@ const MainScreen = ({ user, signOut }) => {
             <h2>Crear Historia Clínica</h2>
             {!cliente ? (
               <CrearHistoriaClinica onHistoriaCreada={data => setCliente(data)} />
+            ) : !consulta ? (
+              <CrearConsulta
+                cedula={cliente.cedula}
+                onConsultaCreada={data => setConsulta(data)}
+              />
             ) : (
-              <RevisionesForm
-                cliente={cliente}
-                usuario={user?.username}
-                onGuardado={handleGuardado}
+              <ManejoConsulta
+                consultaID={consulta.id}
               />
             )}
           </div>
@@ -38,6 +45,11 @@ const MainScreen = ({ user, signOut }) => {
         {selected === 'revisar' && (
           <div>
             <RevisarHistoriasClinicas />
+          </div>
+        )}
+        {selected === 'recetas' && (
+          <div>
+            <RevisarRecetas />
           </div>
         )}
         {!selected && (

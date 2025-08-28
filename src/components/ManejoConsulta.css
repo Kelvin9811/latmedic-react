@@ -1,0 +1,74 @@
+.manejo-consulta-container {
+  width: 80vw;
+  max-width: 1200px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.manejo-consulta-titulo {
+  margin-bottom: 16px;
+  color: #222;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.manejo-consulta-section {
+  margin-bottom: 32px;
+}
+
+.manejo-consulta-subtitulo {
+  margin-bottom: 12px;
+  color: #1976d2;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.manejo-consulta-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.manejo-consulta-input,
+.manejo-consulta-textarea {
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 1rem;
+  color: #222;
+  background: #fafafa;
+}
+
+.manejo-consulta-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.manejo-consulta-btn:disabled {
+  background: #bdbdbd;
+  cursor: not-allowed;
+}
+
+.manejo-consulta-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.manejo-consulta-listitem {
+  background: #f5f5f5;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  padding: 8px;
+  color: #222;
+}

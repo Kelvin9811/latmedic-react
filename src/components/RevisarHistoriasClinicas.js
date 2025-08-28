@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getClienteFullByCedula, upsertClienteByCedula, createRevision, listRevisiones, deleteHistoriaClinicaByCedula, updateRevision, deleteRevision } from '../apiCrud';
+import { getClienteFullByCedula, upsertClienteByCedula, createConsultaForCedula, listConsultasByCedula, deleteHistoriaClinicaByCedula } from '../apiCrud';
 import './RevisarHistoriasClinicas.css';
 
 const RevisarHistoriasClinicas = () => {
@@ -8,54 +8,50 @@ const RevisarHistoriasClinicas = () => {
   const [loading, setLoading] = useState(false);
   const [editIdx, setEditIdx] = useState(null);
   const [editData, setEditData] = useState({ nombre: '', cedula: '', antecedentes: '' });
-  const [showRevisiones, setShowRevisiones] = useState(false);
-  const [revisiones, setRevisiones] = useState([]);
-  const [revisionesCedula, setRevisionesCedula] = useState('');
+  const [showConsultas, setShowConsultas] = useState(false);
+  const [consultas, setConsultas] = useState([]);
+  const [consultasCedula, setConsultasCedula] = useState('');
   const [showEliminar, setShowEliminar] = useState(false);
   const [eliminarIdx, setEliminarIdx] = useState(null);
   const [eliminarTimer, setEliminarTimer] = useState(10);
   const [eliminarHabilitado, setEliminarHabilitado] = useState(false);
-  const [editRevIdx, setEditRevIdx] = useState(null);
-  const [editRevData, setEditRevData] = useState({ parte: '', descripcion: '' });
-  const [loadingRev, setLoadingRev] = useState(false);
-  const [showEliminarRevision, setShowEliminarRevision] = useState(false);
-  const [eliminarRevisionIdx, setEliminarRevisionIdx] = useState(null);
-  const [showAgregarRevision, setShowAgregarRevision] = useState(false);
-  const [nuevaRevision, setNuevaRevision] = useState({ parte: '', descripcion: '' });
-  // Función para mostrar el formulario de agregar revisión
-  const handleAgregarRevisionClick = () => {
-    setShowAgregarRevision(true);
-    setNuevaRevision({ parte: '', descripcion: '' });
+  const [nuevaConsulta, setNuevaConsulta] = useState({ motivo: '', diagnostico: '' });
+  const [loadingConsulta, setLoadingConsulta] = useState(false);
+  // Función para mostrar el formulario de agregar consulta
+  const handleAgregarConsultaClick = () => {
+    setShowConsultas(true);
+    setNuevaConsulta({ motivo: '', diagnostico: '' });
   };
 
-  // Función para cancelar agregar revisión
-  const handleAgregarRevisionCancel = () => {
-    setShowAgregarRevision(false);
-    setNuevaRevision({ parte: '', descripcion: '' });
+  // Función para cancelar agregar consulta
+  const handleAgregarConsultaCancel = () => {
+    setShowConsultas(false);
+    setNuevaConsulta({ motivo: '', diagnostico: '' });
   };
 
-  // Función para cambiar los campos del formulario de nueva revisión
-  const handleNuevaRevisionChange = (field, value) => {
-    setNuevaRevision(prev => ({ ...prev, [field]: value }));
+  // Función para cambiar los campos del formulario de nueva consulta
+  const handleNuevaConsultaChange = (field, value) => {
+    setNuevaConsulta(prev => ({ ...prev, [field]: value }));
   };
 
-  // Función para guardar la nueva revisión
-  const handleAgregarRevisionSave = async () => {
-    setLoadingRev(true);
+  // Función para guardar la nueva consulta
+  const handleAgregarConsultaSave = async () => {
+    setLoadingConsulta(true);
     try {
-      // Usar el método importado de apiCrud.js
-      const nueva = await createRevision({
-        clienteID: revisionesCedula,
-        parte: nuevaRevision.parte,
-        descripcion: nuevaRevision.descripcion
-      });
-      setRevisiones(revs => [{ ...nueva }, ...revs]);
-      setShowAgregarRevision(false);
-      setNuevaRevision({ parte: '', descripcion: '' });
+      const nueva = await createConsultaForCedula(
+        consultasCedula,
+        {
+          motivo: nuevaConsulta.motivo,
+          diagnostico: nuevaConsulta.diagnostico
+        }
+      );
+      setConsultas(con => [{ ...nueva }, ...con]);
+      setShowConsultas(false);
+      setNuevaConsulta({ motivo: '', diagnostico: '' });
     } catch {
       // Puedes mostrar un mensaje de error si lo deseas
     }
-    setLoadingRev(false);
+    setLoadingConsulta(false);
   };
 
   const handleBuscar = async (e) => {
@@ -64,9 +60,12 @@ const RevisarHistoriasClinicas = () => {
     try {
       const resultado = await getClienteFullByCedula(cedulaBusqueda);
       if (resultado) {
-        // Cargar revisiones para la historia encontrada
-        const revisionesData = await listRevisiones(resultado.cedula, { limit: 20, sortDirection: 'DESC' });
-        setHistorias([{ ...resultado, revisiones: Array.isArray(revisionesData.items) ? revisionesData.items : [] }]);
+        // Cargar consultas para la historia encontrada
+        const consultasData = await listConsultasByCedula(
+          resultado.cedula,
+          { limit: 20, sortDirection: 'DESC' }
+        );
+        setHistorias([{ ...resultado, consultas: Array.isArray(consultasData.items) ? consultasData.items : [] }]);
       } else {
         setHistorias([]);
       }
@@ -91,31 +90,10 @@ const RevisarHistoriasClinicas = () => {
     setHistorias(hist => hist.map((h, idx) => idx === editIdx ? editData : h));
     setEditIdx(null);
     setLoading(false);
-  };
-
-  const handleEditCancel = () => {
-    setEditIdx(null);
-  };
-
-  const handleVerRevisiones = async (cedula) => {
-    setLoading(true);
-    setRevisionesCedula(cedula);
-    try {
-      const revisionesData = await listRevisiones(cedula, { limit: 20, sortDirection: 'DESC' });
-      console.log('Revisiones obtenidas:', revisionesData.items);
-      console.log('Tipo de revisionesData:', typeof revisionesData.items);
-      setRevisiones(Array.isArray(revisionesData.items) ? revisionesData.items : []);
-    } catch {
-      setRevisiones([]);
-    }
-    setShowRevisiones(true);
-    setLoading(false);
-  };
-
-  const handleCerrarRevisiones = () => {
-    setShowRevisiones(false);
-    setRevisiones([]);
-    setRevisionesCedula('');
+    // Mostrar pantalla de agregar consulta
+    setConsultasCedula(editData.cedula);
+    setShowConsultas(true);
+    setShowConsultas(true);
   };
 
   const handleEliminarClick = (idx) => {
@@ -158,62 +136,26 @@ const RevisarHistoriasClinicas = () => {
     setEliminarHabilitado(false);
   };
 
-  const handleEditRevision = (idx) => {
-    setEditRevIdx(idx);
-    setEditRevData({ parte: revisiones[idx].parte, descripcion: revisiones[idx].descripcion });
-  };
-
-  const handleEditRevChange = (field, value) => {
-    setEditRevData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleEditRevSave = async () => {
-    setLoadingRev(true);
+  const handleVerConsultas = async (cedula) => {
+    setLoading(true);
+    setConsultasCedula(cedula);
     try {
-      const revision = revisiones[editRevIdx];
-      await updateRevision({
-        ...revision,
-        parte: editRevData.parte,
-        descripcion: editRevData.descripcion
-      });
-      setRevisiones(revs =>
-        revs.map((r, idx) =>
-          idx === editRevIdx ? { ...r, parte: editRevData.parte, descripcion: editRevData.descripcion } : r
-        )
+      const consultasData = await listConsultasByCedula(
+        cedula,
+        { limit: 20, sortDirection: 'DESC' }
       );
-      setEditRevIdx(null);
+      setConsultas(Array.isArray(consultasData.items) ? consultasData.items : []);
     } catch {
-      // Puedes mostrar un mensaje de error si lo deseas
+      setConsultas([]);
     }
-    setLoadingRev(false);
+    setShowConsultas(true);
+    setLoading(false);
   };
 
-  const handleEliminarRevision = (idx) => {
-    setEliminarRevisionIdx(idx);
-    setShowEliminarRevision(true);
-  };
-
-  const handleEliminarRevisionConfirm = async () => {
-    setLoadingRev(true);
-    try {
-      const revision = revisiones[eliminarRevisionIdx];
-      await deleteRevision({ id: revision.id, _version: revision._version });
-      setRevisiones(revs => revs.filter((_, i) => i !== eliminarRevisionIdx));
-    } catch {
-      // Puedes mostrar un mensaje de error si lo deseas
-    }
-    setLoadingRev(false);
-    setShowEliminarRevision(false);
-    setEliminarRevisionIdx(null);
-  };
-
-  const handleEliminarRevisionCancel = () => {
-    setShowEliminarRevision(false);
-    setEliminarRevisionIdx(null);
-  };
-
-  const handleEditRevCancel = () => {
-    setEditRevIdx(null);
+  const handleCerrarConsultas = () => {
+    setShowConsultas(false);
+    setConsultas([]);
+    setConsultasCedula('');
   };
 
   return (
@@ -253,7 +195,7 @@ const RevisarHistoriasClinicas = () => {
                 {editIdx === idx ? (
                   <>
                     <button onClick={handleEditSave} className="revisar-historias-btn">Guardar</button>
-                    <button onClick={handleEditCancel} className="revisar-historias-btn revisar-historias-btn-cancel">Cancelar</button>
+                    <button onClick={() => setEditIdx(null)} className="revisar-historias-btn revisar-historias-btn-cancel">Cancelar</button>
                   </>
                 ) : (
                   <>
@@ -262,10 +204,10 @@ const RevisarHistoriasClinicas = () => {
                   </>
                 )}
               </div>
-              <div className="revisar-historias-revisiones" style={{ marginTop: 16 }}>
-                <h4 style={{ marginBottom: 8 , color: '#000' }}>Revisiones</h4>
-                {Array.isArray(h.revisiones) && h.revisiones.length === 0 ? (
-                  <p>No hay revisiones para este paciente.</p>
+              <div className="revisar-historias-consultas" style={{ marginTop: 16 }}>
+                <h4 style={{ marginBottom: 8 , color: '#000' }}>Consultas</h4>
+                {Array.isArray(h.consultas) && h.consultas.length === 0 ? (
+                  <p>No hay consultas para este paciente.</p>
                 ) : (
                   <ul style={{
                     marginBottom: 12,
@@ -277,67 +219,28 @@ const RevisarHistoriasClinicas = () => {
                     flexDirection: 'column',
                     background: '#fafafa',
                   }}>
-                    {h.revisiones.map((rev, i) => (
+                    {h.consultas.map((con, i) => (
                       <li key={i} style={{ marginBottom: 12, color: '#000', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column' }}>
                         <div>
-                          <strong>Área:</strong> {rev.parte}
+                          <strong>Motivo:</strong> {con.motivo}
                         </div>
                         <div>
-                          <strong>Descripción:</strong> <span style={{ whiteSpace: 'pre-line', color: '#000' }}>{rev.descripcion}</span>
+                          <strong>Diagnóstico:</strong> <span style={{ whiteSpace: 'pre-line', color: '#000' }}>{con.diagnostico}</span>
                         </div>
                         <div>
-                          <strong>Fecha de revisión:</strong> {rev.fechaRegistro ? new Date(rev.fechaRegistro).toLocaleString() : rev.createdAt ? new Date(rev.createdAt).toLocaleString() : 'Sin fecha'}
+                          <strong>Fecha de consulta:</strong> {con.createdAt ? new Date(con.createdAt).toLocaleString() : 'Sin fecha'}
                         </div>
-                        <div style={{ marginTop: 8, display: 'flex', gap: 8, justifyContent: 'center' }}>
-                          <button className="revisar-historias-btn revisar-historias-btn-editar" onClick={() => { setEditRevIdx(i); setEditRevData({ parte: rev.parte, descripcion: rev.descripcion }); }}>Editar</button>
-                          <button className="revisar-historias-btn revisar-historias-btn-eliminar" onClick={() => { setEliminarRevisionIdx(i); setShowEliminarRevision(true); }} disabled={loadingRev}>Eliminar</button>
-                        </div>
-                        {editRevIdx === i && (
-                          <div style={{ marginTop: 8 }}>
-                            <div>
-                              <strong>Área:</strong>
-                              <input value={editRevData.parte} onChange={e => handleEditRevChange('parte', e.target.value)} style={{ marginLeft: 8 }} />
-                            </div>
-                            <div>
-                              <strong>Descripción:</strong>
-                              <textarea value={editRevData.descripcion} onChange={e => handleEditRevChange('descripcion', e.target.value)} rows={2} style={{ marginLeft: 8, width: '100%' }} />
-                            </div>
-                            <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-                              <button className="revisar-historias-btn revisar-historias-btn-editar" onClick={handleEditRevSave} disabled={loadingRev}>Guardar</button>
-                              <button className="revisar-historias-btn revisar-historias-btn-cancel" onClick={handleEditRevCancel} disabled={loadingRev}>Cancelar</button>
-                            </div>
-                          </div>
-                        )}
                       </li>
                     ))}
                   </ul>
                 )}
-                <button className="revisar-historias-btn revisar-historias-btn-agregar" onClick={() => { setShowAgregarRevision(true); setNuevaRevision({ parte: '', descripcion: '' }); }}>Agregar revisión</button>
-                {showAgregarRevision && (
-                  <div className="revisar-historias-popup-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1000, background: 'rgba(0,0,0,0.3)' }}>
-                    <div className="revisar-historias-popup-content" style={{ maxHeight: '90vh', overflowY: 'auto', width: '90vw', maxWidth: 600, margin: '5vh auto', background: '#fff', borderRadius: 12, boxShadow: '0 2px 16px rgba(0,0,0,0.15)', padding: 24, position: 'relative' }}>
-                      <h4>Agregar nueva revisión</h4>
-                      <div>
-                        <strong>Área:</strong>
-                        <input value={nuevaRevision.parte} onChange={e => handleNuevaRevisionChange('parte', e.target.value)} style={{ marginLeft: 8 }} />
-                      </div>
-                      <div>
-                        <strong>Descripción:</strong>
-                        <textarea value={nuevaRevision.descripcion} onChange={e => handleNuevaRevisionChange('descripcion', e.target.value)} rows={2} style={{ marginLeft: 8, width: '100%' }} />
-                      </div>
-                      <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-                        <button className="revisar-historias-btn revisar-historias-btn-agregar" onClick={handleAgregarRevisionSave} disabled={loadingRev}>Guardar</button>
-                        <button className="revisar-historias-btn revisar-historias-btn-cancel" onClick={handleAgregarRevisionCancel} disabled={loadingRev}>Cancelar</button>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                <button className="revisar-historias-btn revisar-historias-btn-agregar" onClick={() => { setShowConsultas(true); setConsultasCedula(h.cedula); }}>Agregar consulta</button>
               </div>
             </div>
           ))}
         </div>
       )}
-      {showRevisiones && (
+      {showConsultas && (
         <div className="revisar-historias-popup-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1000, background: 'rgba(0,0,0,0.3)' }}>
           <div
             className="revisar-historias-popup-content"
@@ -354,20 +257,20 @@ const RevisarHistoriasClinicas = () => {
               position: 'relative',
             }}
           >
-            <h4>Revisiones de la cédula {revisionesCedula}</h4>
-            {Array.isArray(revisiones) && revisiones.length === 0 ? (
-              <p>No hay revisiones para este paciente.</p>
+            <h4>Consultas de la cédula {consultasCedula}</h4>
+            {Array.isArray(consultas) && consultas.length === 0 ? (
+              <p>No hay consultas para este paciente.</p>
             ) : (
               <ul style={{
-                      marginBottom: 12,
-                      color: '#000',
-                      border: '1px solid #e0e0e0',
-                      borderRadius: '8px',
-                      padding: '12px',
-                      display: 'flex',
-                      flexDirection: 'column'
-                    }}>
-                {Array.isArray(revisiones) && revisiones.map((rev, i) => (
+                marginBottom: 12,
+                color: '#000',
+                border: '1px solid #e0e0e0',
+                borderRadius: '8px',
+                padding: '12px',
+                display: 'flex',
+                flexDirection: 'column'
+              }}>
+                {consultas.map((con, i) => (
                   <li
                     key={i}
                     style={{
@@ -380,121 +283,54 @@ const RevisarHistoriasClinicas = () => {
                       flexDirection: 'column'
                     }}
                   >
-                    {editRevIdx === i ? (
-                      <>
-                        <div>
-                          <strong style={{ color: '#000' }}>Área:</strong>
-                          <input
-                            value={editRevData.parte}
-                            onChange={e => handleEditRevChange('parte', e.target.value)}
-                            style={{ marginLeft: 8 }}
-                          />
-                        </div>
-                        <div>
-                          <strong style={{ color: '#000' }}>Descripción:</strong>
-                          <textarea
-                            value={editRevData.descripcion}
-                            onChange={e => handleEditRevChange('descripcion', e.target.value)}
-                            rows={2}
-                            style={{ marginLeft: 8, width: '100%' }}
-                          />
-                        </div>
-                        <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-                          <button className="revisar-historias-btn revisar-historias-btn-editar" onClick={handleEditRevSave} disabled={loadingRev}>Guardar</button>
-                          <button className="revisar-historias-btn revisar-historias-btn-cancel" onClick={handleEditRevCancel} disabled={loadingRev}>Cancelar</button>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div>
-                          <strong style={{ color: '#000' }}>Área:</strong> {rev.parte}
-                        </div>
-                        <div>
-                          <strong style={{ color: '#000' }}>Descripción:</strong> <span style={{ whiteSpace: 'pre-line', color: '#000' }}>{rev.descripcion}</span>
-                        </div>
-                        <div>
-                          <strong style={{ color: '#000' }}>Fecha de revisión:</strong> {rev.fechaRegistro
-                            ? new Date(rev.fechaRegistro).toLocaleString()
-                            : rev.createdAt
-                              ? new Date(rev.createdAt).toLocaleString()
-                              : 'Sin fecha'}
-                        </div>
-                        <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-                          <button className="revisar-historias-btn revisar-historias-btn-editar" onClick={() => handleEditRevision(i)}>Editar</button>
-                          <button
-                            className="revisar-historias-btn revisar-historias-btn-eliminar"
-                            style={{}}
-                            onClick={() => handleEliminarRevision(i)}
-                            disabled={loadingRev}
-                            title="Eliminar revisión"
-                          >
-                            Eliminar
-                          </button>
-                        </div>
-                      </>
-                    )}
+                    <div>
+                      <strong style={{ color: '#000' }}>Motivo:</strong> {con.motivo}
+                    </div>
+                    <div>
+                      <strong style={{ color: '#000' }}>Diagnóstico:</strong> <span style={{ whiteSpace: 'pre-line', color: '#000' }}>{con.diagnostico}</span>
+                    </div>
+                    <div>
+                      <strong style={{ color: '#000' }}>Fecha de consulta:</strong> {con.createdAt
+                        ? new Date(con.createdAt).toLocaleString()
+                        : 'Sin fecha'}
+                    </div>
                   </li>
                 ))}
               </ul>
             )}
             <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-              <button className="revisar-historias-btn" onClick={handleCerrarRevisiones}>Cerrar</button>
-              <button className="revisar-historias-btn revisar-historias-btn-agregar" onClick={handleAgregarRevisionClick}>Agregar revisión</button>
+              <button className="revisar-historias-btn" onClick={handleCerrarConsultas}>Cerrar</button>
+              <button className="revisar-historias-btn revisar-historias-btn-agregar" onClick={handleAgregarConsultaClick}>Agregar consulta</button>
             </div>
-            {showAgregarRevision && (
+            {showConsultas && (
               <div className="revisar-historias-popup-overlay">
                 <div className="revisar-historias-popup-content">
-                  <h4>Agregar nueva revisión</h4>
+                  <h4>Agregar nueva consulta</h4>
                   <div>
-                    <strong>Área:</strong>
+                    <strong>Motivo:</strong>
                     <input
-                      value={nuevaRevision.parte}
-                      onChange={e => handleNuevaRevisionChange('parte', e.target.value)}
+                      value={nuevaConsulta.motivo}
+                      onChange={e => handleNuevaConsultaChange('motivo', e.target.value)}
                       style={{ marginLeft: 8 }}
                     />
                   </div>
                   <div>
-                    <strong>Descripción:</strong>
+                    <strong>Diagnóstico:</strong>
                     <textarea
-                      value={nuevaRevision.descripcion}
-                      onChange={e => handleNuevaRevisionChange('descripcion', e.target.value)}
+                      value={nuevaConsulta.diagnostico}
+                      onChange={e => handleNuevaConsultaChange('diagnostico', e.target.value)}
                       rows={2}
                       style={{ marginLeft: 8, width: '100%' }}
                     />
                   </div>
                   <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-                    <button className="revisar-historias-btn revisar-historias-btn-agregar" onClick={handleAgregarRevisionSave} disabled={loadingRev}>Guardar</button>
-                    <button className="revisar-historias-btn revisar-historias-btn-cancel" onClick={handleAgregarRevisionCancel} disabled={loadingRev}>Cancelar</button>
+                    <button className="revisar-historias-btn revisar-historias-btn-agregar" onClick={handleAgregarConsultaSave} disabled={loadingConsulta}>Guardar</button>
+                    <button className="revisar-historias-btn revisar-historias-btn-cancel" onClick={handleAgregarConsultaCancel} disabled={loadingConsulta}>Cancelar</button>
                   </div>
                 </div>
               </div>
             )}
           </div>
-          {showEliminarRevision && (
-            <div className="revisar-historias-popup-overlay">
-              <div className="revisar-historias-popup-content">
-                <h4>Confirmar eliminación</h4>
-                <p>
-                  ¿Está seguro que desea eliminar esta revisión?<br />
-                  Esta acción no se puede deshacer.
-                </p>
-                <button
-                  className="revisar-historias-btn revisar-historias-btn-eliminar"
-                  onClick={handleEliminarRevisionConfirm}
-                  disabled={loadingRev}
-                >
-                  Eliminar revisión
-                </button>
-                <button
-                  className="revisar-historias-btn revisar-historias-btn-cancel"
-                  onClick={handleEliminarRevisionCancel}
-                  disabled={loadingRev}
-                >
-                  Cancelar
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       )}
       {showEliminar && (

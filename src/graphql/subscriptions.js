@@ -11,26 +11,12 @@ export const onCreateCliente = /* GraphQL */ `
       cedula
       nombre
       antecedentes
-      revisiones {
+      consultas {
         items {
           id
           clienteID
-          parte
-          descripcion
-          createdAt
-          updatedAt
-          owner
-          __typename
-        }
-        nextToken
-        __typename
-      }
-      recetas {
-        items {
-          id
-          clienteID
-          indicaciones
-          s3key
+          motivo
+          diagnostico
           createdAt
           updatedAt
           owner
@@ -56,26 +42,12 @@ export const onUpdateCliente = /* GraphQL */ `
       cedula
       nombre
       antecedentes
-      revisiones {
+      consultas {
         items {
           id
           clienteID
-          parte
-          descripcion
-          createdAt
-          updatedAt
-          owner
-          __typename
-        }
-        nextToken
-        __typename
-      }
-      recetas {
-        items {
-          id
-          clienteID
-          indicaciones
-          s3key
+          motivo
+          diagnostico
           createdAt
           updatedAt
           owner
@@ -101,26 +73,12 @@ export const onDeleteCliente = /* GraphQL */ `
       cedula
       nombre
       antecedentes
-      revisiones {
+      consultas {
         items {
           id
           clienteID
-          parte
-          descripcion
-          createdAt
-          updatedAt
-          owner
-          __typename
-        }
-        nextToken
-        __typename
-      }
-      recetas {
-        items {
-          id
-          clienteID
-          indicaciones
-          s3key
+          motivo
+          diagnostico
           createdAt
           updatedAt
           owner
@@ -136,6 +94,195 @@ export const onDeleteCliente = /* GraphQL */ `
     }
   }
 `;
+export const onCreateConsulta = /* GraphQL */ `
+  subscription OnCreateConsulta(
+    $filter: ModelSubscriptionConsultaFilterInput
+    $owner: String
+  ) {
+    onCreateConsulta(filter: $filter, owner: $owner) {
+      id
+      clienteID
+      motivo
+      diagnostico
+      createdAt
+      revisiones {
+        items {
+          id
+          clienteID
+          consultaID
+          parte
+          descripcion
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      recetas {
+        items {
+          id
+          clienteID
+          consultaID
+          indicaciones
+          s3key
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      documentos {
+        items {
+          id
+          consultaID
+          tipo
+          titulo
+          s3key
+          notas
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onUpdateConsulta = /* GraphQL */ `
+  subscription OnUpdateConsulta(
+    $filter: ModelSubscriptionConsultaFilterInput
+    $owner: String
+  ) {
+    onUpdateConsulta(filter: $filter, owner: $owner) {
+      id
+      clienteID
+      motivo
+      diagnostico
+      createdAt
+      revisiones {
+        items {
+          id
+          clienteID
+          consultaID
+          parte
+          descripcion
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      recetas {
+        items {
+          id
+          clienteID
+          consultaID
+          indicaciones
+          s3key
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      documentos {
+        items {
+          id
+          consultaID
+          tipo
+          titulo
+          s3key
+          notas
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onDeleteConsulta = /* GraphQL */ `
+  subscription OnDeleteConsulta(
+    $filter: ModelSubscriptionConsultaFilterInput
+    $owner: String
+  ) {
+    onDeleteConsulta(filter: $filter, owner: $owner) {
+      id
+      clienteID
+      motivo
+      diagnostico
+      createdAt
+      revisiones {
+        items {
+          id
+          clienteID
+          consultaID
+          parte
+          descripcion
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      recetas {
+        items {
+          id
+          clienteID
+          consultaID
+          indicaciones
+          s3key
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      documentos {
+        items {
+          id
+          consultaID
+          tipo
+          titulo
+          s3key
+          notas
+          createdAt
+          updatedAt
+          owner
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
 export const onCreateRevision = /* GraphQL */ `
   subscription OnCreateRevision(
     $filter: ModelSubscriptionRevisionFilterInput
@@ -144,6 +291,7 @@ export const onCreateRevision = /* GraphQL */ `
     onCreateRevision(filter: $filter, owner: $owner) {
       id
       clienteID
+      consultaID
       parte
       descripcion
       createdAt
@@ -161,6 +309,7 @@ export const onUpdateRevision = /* GraphQL */ `
     onUpdateRevision(filter: $filter, owner: $owner) {
       id
       clienteID
+      consultaID
       parte
       descripcion
       createdAt
@@ -178,6 +327,7 @@ export const onDeleteRevision = /* GraphQL */ `
     onDeleteRevision(filter: $filter, owner: $owner) {
       id
       clienteID
+      consultaID
       parte
       descripcion
       createdAt
@@ -195,6 +345,7 @@ export const onCreateReceta = /* GraphQL */ `
     onCreateReceta(filter: $filter, owner: $owner) {
       id
       clienteID
+      consultaID
       indicaciones
       s3key
       createdAt
@@ -212,6 +363,7 @@ export const onUpdateReceta = /* GraphQL */ `
     onUpdateReceta(filter: $filter, owner: $owner) {
       id
       clienteID
+      consultaID
       indicaciones
       s3key
       createdAt
@@ -229,8 +381,66 @@ export const onDeleteReceta = /* GraphQL */ `
     onDeleteReceta(filter: $filter, owner: $owner) {
       id
       clienteID
+      consultaID
       indicaciones
       s3key
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onCreateDocumento = /* GraphQL */ `
+  subscription OnCreateDocumento(
+    $filter: ModelSubscriptionDocumentoFilterInput
+    $owner: String
+  ) {
+    onCreateDocumento(filter: $filter, owner: $owner) {
+      id
+      consultaID
+      tipo
+      titulo
+      s3key
+      notas
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onUpdateDocumento = /* GraphQL */ `
+  subscription OnUpdateDocumento(
+    $filter: ModelSubscriptionDocumentoFilterInput
+    $owner: String
+  ) {
+    onUpdateDocumento(filter: $filter, owner: $owner) {
+      id
+      consultaID
+      tipo
+      titulo
+      s3key
+      notas
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onDeleteDocumento = /* GraphQL */ `
+  subscription OnDeleteDocumento(
+    $filter: ModelSubscriptionDocumentoFilterInput
+    $owner: String
+  ) {
+    onDeleteDocumento(filter: $filter, owner: $owner) {
+      id
+      consultaID
+      tipo
+      titulo
+      s3key
+      notas
       createdAt
       updatedAt
       owner

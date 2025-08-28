@@ -2,18 +2,34 @@ type Cliente
   @model
   @auth(rules: [
     { allow: owner, operations: [create, read, update, delete] },
-    # Opcional: habilita roles por grupo en Cognito
     { allow: groups, groups: ["medicos"], operations: [create, read, update] },
     { allow: groups, groups: ["asistentes"], operations: [read, create, update] }
   ]) {
-  id: ID!                    # puedes usar la cédula como id si lo prefieres
+  id: ID!
   cedula: String! @index(name: "byCedula", queryField: "clienteByCedula")
   nombre: String!
   antecedentes: String
-  revisiones: [Revision] @hasMany(indexName: "byCliente", fields: ["id"])
-  recetas: [Receta] @hasMany(indexName: "byCliente", fields: ["id"])
+  consultas: [Consulta] @hasMany(indexName: "byCliente", fields: ["id"])
 }
 
+type Consulta
+  @model
+  @auth(rules: [
+    { allow: owner, operations: [create, read, update, delete] },
+    { allow: groups, groups: ["medicos", "asistentes"], operations: [create, read, update] }
+  ]) {
+  id: ID!
+  clienteID: ID! @index(name: "byCliente", queryField: "consultasByCliente", sortKeyFields: ["createdAt"])
+  motivo: String
+  diagnostico: String
+  createdAt: AWSDateTime
+  revisiones: [Revision] @hasMany(indexName: "byConsulta", fields: ["id"])
+  recetas: [Receta] @hasMany(indexName: "byConsulta", fields: ["id"])
+  documentos: [Documento] @hasMany(indexName: "byConsulta", fields: ["id"])
+}
+
+# Mantén compatibilidad: clienteID sigue existiendo (legacy),
+# y añadimos consultaID para la estructura nueva.
 type Revision
   @model
   @auth(rules: [
@@ -21,7 +37,10 @@ type Revision
     { allow: groups, groups: ["medicos", "asistentes"], operations: [create, read, update] }
   ]) {
   id: ID!
-  clienteID: ID! @index(name: "byCliente", sortKeyFields: ["createdAt"])
+  # Legacy (para que lo existente siga funcionando):
+  clienteID: ID @index(name: "byCliente", queryField: "revisionsByClienteIDAndCreatedAt", sortKeyFields: ["createdAt"])
+  # Nuevo:
+  consultaID: ID @index(name: "byConsulta", queryField: "revisionesByConsulta", sortKeyFields: ["createdAt"])
   parte: String!
   descripcion: String
   createdAt: AWSDateTime
@@ -34,8 +53,28 @@ type Receta
     { allow: groups, groups: ["medicos", "asistentes"], operations: [create, read, update] }
   ]) {
   id: ID!
-  clienteID: ID! @index(name: "byCliente", sortKeyFields: ["createdAt"])
+  # Legacy:
+  clienteID: ID @index(name: "byCliente", queryField: "recetasByClienteIDAndCreatedAt", sortKeyFields: ["createdAt"])
+  # Nuevo:
+  consultaID: ID @index(name: "byConsulta", queryField: "recetasByConsulta", sortKeyFields: ["createdAt"])
   indicaciones: String
-  s3key: String              # clave del archivo en S3
+  s3key: String
+  createdAt: AWSDateTime
+}
+
+enum DocumentoTipo { RX ECO LAB PDF IMG OTRO }
+
+type Documento
+  @model
+  @auth(rules: [
+    { allow: owner, operations: [create, read, update, delete] },
+    { allow: groups, groups: ["medicos", "asistentes"], operations: [create, read, update] }
+  ]) {
+  id: ID!
+  consultaID: ID! @index(name: "byConsulta", queryField: "documentosByConsulta", sortKeyFields: ["createdAt"])
+  tipo: DocumentoTipo
+  titulo: String
+  s3key: String     # archivo en S3 (lo integramos luego)
+  notas: String
   createdAt: AWSDateTime
 }

@@ -8,6 +8,12 @@
   box-sizing: border-box;
 }
 
+.crear-consulta-campo label{
+  text-align: center;
+  margin-bottom: 16px;
+  color: #000;
+  
+}
 .crear-historia-titulo {
   text-align: center;
   margin-bottom: 16px;
