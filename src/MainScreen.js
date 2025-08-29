@@ -4,7 +4,7 @@ import CrearHistoriaClinica from './components/CrearHistoriaClinica';
 import CrearConsulta from './components/CrearConsulta';
 import ManejoConsulta from './components/ManejoConsulta';
 import RevisarHistoriasClinicas from './components/RevisarHistoriasClinicas';
-import RevisarRecetas from './components/RevisarRecetas';
+import RevisarTodasLasHistorias from './components/RevisarTodasLasHistorias';
 import logo from './logo.svg';
 
 const MainScreen = ({ user, signOut }) => {
@@ -49,7 +49,7 @@ const MainScreen = ({ user, signOut }) => {
         )}
         {selected === 'recetas' && (
           <div>
-            <RevisarRecetas />
+            <RevisarTodasLasHistorias />
           </div>
         )}
         {!selected && (

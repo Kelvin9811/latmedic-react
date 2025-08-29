@@ -15,8 +15,8 @@ const SidebarMenu = ({ onSelect, signOut }) => {
         <div className="sidebar-menu-content">
           <ul className="sidebar-menu-list">
             <li onClick={() => { onSelect('crear'); setOpen(false); }}>Crear Historia Clínica</li>
-            <li onClick={() => { onSelect('revisar'); setOpen(false); }}>Revisar Historias</li>
-            <li onClick={() => { onSelect('recetas'); setOpen(false); }}>Revisar Recetas</li>
+            <li onClick={() => { onSelect('revisar'); setOpen(false); }}>Revisar Historia por cédula</li>
+            <li onClick={() => { onSelect('recetas'); setOpen(false); }}>Revisar Historias</li>
           </ul>
           <button className="sidebar-logout-btn" onClick={() => { signOut(); setOpen(false); }}>
             Cerrar Sesión

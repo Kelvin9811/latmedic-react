@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getClienteFullByCedula, upsertClienteByCedula, createConsultaForCedula, listConsultasByCedula, deleteHistoriaClinicaByCedula } from '../apiCrud';
+import ManejoConsulta from './ManejoConsulta';
 import './RevisarHistoriasClinicas.css';
 
 const RevisarHistoriasClinicas = () => {
@@ -17,6 +18,7 @@ const RevisarHistoriasClinicas = () => {
   const [eliminarHabilitado, setEliminarHabilitado] = useState(false);
   const [nuevaConsulta, setNuevaConsulta] = useState({ motivo: '', diagnostico: '' });
   const [loadingConsulta, setLoadingConsulta] = useState(false);
+  const [consultaSeleccionada, setConsultaSeleccionada] = useState(null);
   // Función para mostrar el formulario de agregar consulta
   const handleAgregarConsultaClick = () => {
     setShowConsultas(true);
@@ -174,7 +176,7 @@ const RevisarHistoriasClinicas = () => {
       </form>
       {loading && <p className="revisar-historias-loading">Cargando...</p>}
       {historias.length === 0 && !loading && <p className="revisar-historias-vacio">No se encontraron historias clínicas.</p>}
-      {historias.length > 0 && (
+      {historias.length > 0 && !consultaSeleccionada && (
         <div className="revisar-historias-lista">
           {historias.map((h, idx) => (
             <div key={idx} className="revisar-historias-item" style={{ marginBottom: 32, border: '1px solid #e0e0e0', borderRadius: 8, padding: 16, background: '#fff' }}>
@@ -220,7 +222,21 @@ const RevisarHistoriasClinicas = () => {
                     background: '#fafafa',
                   }}>
                     {h.consultas.map((con, i) => (
-                      <li key={i} style={{ marginBottom: 12, color: '#000', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column' }}>
+                      <li
+                        key={i}
+                        style={{
+                          marginBottom: 12,
+                          color: '#000',
+                          border: '1px solid #e0e0e0',
+                          borderRadius: '8px',
+                          padding: '12px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          cursor: 'pointer'
+                        }}
+                        onClick={() => setConsultaSeleccionada(con)}
+                        title="Ver manejo de consulta"
+                      >
                         <div>
                           <strong>Motivo:</strong> {con.motivo}
                         </div>
@@ -330,6 +346,29 @@ const RevisarHistoriasClinicas = () => {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+      {consultaSeleccionada && (
+        <div className="revisar-historias-popup-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1000, background: 'rgba(0,0,0,0.3)' }}>
+          <div
+            className="revisar-historias-popup-content"
+            style={{
+              height: '90vh',
+              width: '90vw',
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              margin: '5vh auto',
+              background: '#fff',
+              borderRadius: 12,
+              boxShadow: '0 2px 16px rgba(0,0,0,0.15)',
+              padding: 24,
+              position: 'relative',
+              overflowY: 'auto'
+            }}
+          >
+            <button className="revisar-historias-btn revisar-historias-btn-cancel" style={{ position: 'absolute', top: 12, right: 12 }} onClick={() => setConsultaSeleccionada(null)}>Cerrar</button>
+            <ManejoConsulta consultaID={consultaSeleccionada.id} />
           </div>
         </div>
       )}

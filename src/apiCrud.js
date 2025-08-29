@@ -364,3 +364,54 @@ export async function listDocumentosByConsulta(consultaID, { limit = 50, nextTok
   const conn = data?.documentosByConsulta ?? {};
   return { items: (conn.items ?? []).filter(Boolean), nextToken: conn.nextToken ?? null };
 }
+
+export async function updateDocumento({
+  id,
+  titulo,
+  tipo,        // 'RX' | 'ECO' | 'LAB' | 'PDF' | 'IMG' | 'OTRO'
+  notas,
+  s3key,       // si reemplazas el archivo en S3
+  consultaID,  // opcional: re-asignar a otra consulta
+  _version
+}) {
+  const input = { id };
+  if (titulo !== undefined) input.titulo = titulo;
+  if (tipo !== undefined) input.tipo = tipo;
+  if (notas !== undefined) input.notas = notas;
+  if (s3key !== undefined) input.s3key = s3key;
+  if (consultaID !== undefined) input.consultaID = consultaID;
+  if (_version !== undefined) input._version = _version;
+
+  const { data } = await client.graphql({
+    query: mutations.updateDocumento,
+    variables: { input },
+    authMode: 'userPool',
+  });
+  return data.updateDocumento;
+}
+
+/**
+ * Elimina un Documento por id.
+ * Con Conflict Detection, envía también _version.
+ */
+export async function deleteDocumento({ id, _version }) {
+  const { data } = await client.graphql({
+    query: mutations.deleteDocumento,
+    variables: { input: _version ? { id, _version } : { id } },
+    authMode: 'userPool',
+  });
+  return data.deleteDocumento;
+}
+
+/**
+ * Listar clientes (historias clínicas) con paginado.
+ */
+export async function listClientes({ limit = 10, nextToken } = {}) {
+  const { data } = await client.graphql({
+    query: queries.listClientes,
+    variables: { limit, nextToken },
+    authMode: 'userPool',
+  });
+  const conn = data?.listClientes ?? {};
+  return { items: conn.items ?? [], nextToken: conn.nextToken ?? null };
+}
