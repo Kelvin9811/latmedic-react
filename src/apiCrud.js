@@ -209,8 +209,47 @@ async function deleteAllRecetasByCedula(cedula) {
 }
 
 /**
+ * Elimina TODAS las consultas del cliente (paginado).
+ */
+async function deleteAllConsultasByCedula(cedula, cascade) {
+  // Buscar el cliente por cédula
+  const { data } = await client.graphql({
+    query: queries.clienteByCedula,
+    variables: { cedula, limit: 1 },
+    authMode: 'userPool',
+  });
+  const cliente = data?.clienteByCedula?.items?.[0];
+  if (!cliente) return;
+
+
+  let nextToken = null;
+  do {
+    const resp = await client.graphql({
+      query: queries.consultasByCliente,
+      variables: { clienteID: cliente.id, limit: 50, nextToken, sortDirection: 'DESC' },
+      authMode: 'userPool',
+    });
+    const page = resp?.data?.consultasByCliente;
+    const items = page?.items ?? [];
+    for (const consulta of items) {
+      if (cascade) {
+        await deleteAllRevisionesByConsulta(consulta.id);
+        await deleteAllRecetasByConsulta(consulta.id);
+        await deleteAllDocumentosByConsulta(consulta.id);
+      }
+      await client.graphql({
+        query: mutations.deleteConsulta,
+        variables: { input: { id: consulta.id, ...(consulta._version !== undefined ? { _version: consulta._version } : {}) } },
+        authMode: 'userPool',
+      });
+    }
+    nextToken = page?.nextToken ?? null;
+  } while (nextToken);
+}
+
+/**
  * Elimina la historia clínica (cliente) por cédula.
- * Por defecto hace borrado en cascada de Revisiones y Recetas.
+ * Por defecto hace borrado en cascada de Revisiones, Recetas y Consultas.
  */
 export async function deleteHistoriaClinicaByCedula(cedula, { cascade = true } = {}) {
   console.log(`Eliminando historia clínica para cédula: ${cedula}`);
@@ -226,8 +265,7 @@ export async function deleteHistoriaClinicaByCedula(cedula, { cascade = true } =
 
   // 2) Borrado en cascada (primero hijos)
   if (cascade) {
-    await deleteAllRevisionesByCedula(cedula);
-    await deleteAllRecetasByCedula(cedula);
+    await deleteAllConsultasByCedula(cedula,true);
     // (Cuando integremos S3: aquí también borraremos los archivos si los tuviera)
   }
 
@@ -401,6 +439,78 @@ export async function deleteDocumento({ id, _version }) {
     authMode: 'userPool',
   });
   return data.deleteDocumento;
+}
+
+/**
+ * Elimina TODAS las revisiones de una consulta (paginado).
+ */
+export async function deleteAllRevisionesByConsulta(consultaID) {
+  let nextToken = null;
+  do {
+    const { data } = await client.graphql({
+      query: queries.revisionesByConsulta,
+      variables: { consultaID, limit: 50, nextToken, sortDirection: 'DESC' },
+      authMode: 'userPool',
+    });
+    const page = data?.revisionesByConsulta;
+    const items = page?.items ?? [];
+    for (const it of items) {
+      await client.graphql({
+        query: mutations.deleteRevision,
+        variables: { input: { id: it.id, ...(it._version !== undefined ? { _version: it._version } : {}) } },
+        authMode: 'userPool',
+      });
+    }
+    nextToken = page?.nextToken ?? null;
+  } while (nextToken);
+}
+
+/**
+ * Elimina TODAS las recetas de una consulta (paginado).
+ */
+export async function deleteAllRecetasByConsulta(consultaID) {
+  let nextToken = null;
+  do {
+    const { data } = await client.graphql({
+      query: queries.recetasByConsulta,
+      variables: { consultaID, limit: 50, nextToken, sortDirection: 'DESC' },
+      authMode: 'userPool',
+    });
+    const page = data?.recetasByConsulta;
+    const items = page?.items ?? [];
+    for (const it of items) {
+      await client.graphql({
+        query: mutations.deleteReceta,
+        variables: { input: { id: it.id, ...(it._version !== undefined ? { _version: it._version } : {}) } },
+        authMode: 'userPool',
+      });
+    }
+    nextToken = page?.nextToken ?? null;
+  } while (nextToken);
+}
+
+/**
+ * Elimina TODOS los documentos de una consulta (paginado).
+ */
+export async function deleteAllDocumentosByConsulta(consultaID) {
+  let nextToken = null;
+  do {
+    const { data } = await client.graphql({
+      query: queries.documentosByConsulta,
+      variables: { consultaID, limit: 50, nextToken, sortDirection: 'DESC' },
+      authMode: 'userPool',
+    });
+    const page = data?.documentosByConsulta;
+    const items = page?.items ?? [];
+    for (const it of items) {
+      await client.graphql({
+        query: mutations.deleteDocumento,
+        variables: { input: { id: it.id, ...(it._version !== undefined ? { _version: it._version } : {}) } },
+        authMode: 'userPool',
+      });
+    }
+    nextToken = page?.nextToken ?? null;
+  } while (nextToken);
 }
 
 /**

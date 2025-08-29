@@ -30,8 +30,12 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
         <input
           type="text"
           value={nombre}
-          onChange={e => setNombre(e.target.value)}
+          onChange={e => {
+            const val = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '');
+            setNombre(val);
+          }}
           required
+          maxLength={60}
         />
       </div>
       <div className="crear-historia-campo">
@@ -39,8 +43,14 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
         <input
           type="text"
           value={cedula}
-          onChange={e => setCedula(e.target.value)}
+          onChange={e => {
+            const val = e.target.value.replace(/\D/g, '');
+            setCedula(val);
+          }}
           required
+          maxLength={10}
+          pattern="[0-9]*"
+          inputMode="numeric"
         />
       </div>
       <div className="crear-historia-campo">
