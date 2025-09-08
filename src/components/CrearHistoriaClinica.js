@@ -5,21 +5,21 @@ import { upsertClienteByCedula } from '../apiCrud';
 const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
   const [nombre, setNombre] = useState('');
   const [cedula, setCedula] = useState('');
-  const [antecedentes, setAntecedentes] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     await upsertClienteByCedula({
       cedula,
-      nombre,
-      antecedentes
+      nombre
     });
     if (onHistoriaCreada) {
-      onHistoriaCreada({ nombre, cedula, antecedentes });
+      onHistoriaCreada({ nombre, cedula });
     }
     setNombre('');
     setCedula('');
-    setAntecedentes('');
+    setLoading(false);
   };
 
   return (
@@ -37,8 +37,6 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
           required
           maxLength={60}
         />
-      </div>
-      <div className="crear-historia-campo">
         <label>Cédula:</label>
         <input
           type="text"
@@ -53,16 +51,9 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
           inputMode="numeric"
         />
       </div>
-      <div className="crear-historia-campo">
-        <label>Antecedentes:</label>
-        <textarea
-          value={antecedentes}
-          onChange={e => setAntecedentes(e.target.value)}
-          rows={3}
-        />
-      </div>
-      <button className="crear-historia-btn" type="submit">
-        Guardar
+      
+      <button className="crear-historia-btn" type="submit" disabled={loading}>
+        {loading ? 'Guardando...' : 'Guardar'}
       </button>
     </form>
   );
