@@ -8,7 +8,31 @@ type Cliente
   id: ID!
   cedula: String! @index(name: "byCedula", queryField: "clienteByCedula")
   nombre: String!
-  antecedentes: String
+  direccionResidenciaHabitual: String
+  calleYNumero: String
+  barrio: String
+  parroquia: String
+  canton: String
+  provincia: String
+  zona: String
+  telefono: String
+  fechaNacimiento: AWSDateTime
+  lugarNacimiento: String
+  nacionalidad: String
+  grupoCultural: String
+  edadEnAnosCumplidos: Int
+  sexo: String
+  estadoCivil: String
+  nivelEducativo: String
+  fechaAdmision: AWSDateTime
+  ocupacion: String
+  empresaDondeTrabaja: String
+  tipoSeguroSalud: String
+  referidoDe: String
+  enCasoDeAvisarA: String
+  parentescoAfinidad: String
+  direccion: String
+  telefono: String
   consultas: [Consulta] @hasMany(indexName: "byCliente", fields: ["id"])
 }
 
@@ -20,31 +44,83 @@ type Consulta
   ]) {
   id: ID!
   clienteID: ID! @index(name: "byCliente", queryField: "consultasByCliente", sortKeyFields: ["createdAt"])
-  motivo: String
-  diagnostico: String
   createdAt: AWSDateTime
-  revisiones: [Revision] @hasMany(indexName: "byConsulta", fields: ["id"])
+  hora: String
+  grupoSanguineoYFactorRh: String
+  motivoDeConsulta: String
+  alientoEtílico: String
+  valorAlcoCheck: String
+  antecedenteAlergico: String
+  antecedenteClinico: String
+  antecedenteGinecologico: String
+  antecedenteTraumatologico: String
+  antecedenteQuirurgico: String
+  antecedenteFarmacoLogico: String
+  antecedentePsiquiatrico: String
+  antecedenteOtro: String
+  enfermedadActual: String
+  presionArterial: String
+  frecuenciaCardiaca: String
+  frecuenciaRespiratoria: String
+  temperaturaBucal: String
+  temperaturaAxilar: String
+  peso: String
+  talla: String
+  gaslowOcular: String
+  gaslowVerbal: String
+  gaslowMotora: String
+  gaslowTotal: String
+  reaccionPupilaIzq: String
+  reaccionPupilaDer: String
+  tiempoLlenadoCapilar: String
+  saturacionOxigeno: String
+  viaAereaObstruida: String
+  cabeza: String
+  cuello: String
+  torax: String
+  abdomen: String
+  columna: String
+  pelvis: String
+  extremidades: String
+  heridaPenetrante: String
+  heridaCortante: String
+  fracturaExpuesta: String
+  fracturaCerrada: String
+  cuerpoExtrano: String
+  hemorragia: String
+  mordedura: String
+  picadura: String
+  excoriacion: String
+  deformidadOMasa: String
+  hematoma: String
+  eritemaInflamacion: String
+  luxacionEsguince: String
+  quemadura: String
+  solicitudExamenBiometria: Boolean
+  solicitudExamenUroanalisis: Boolean
+  solicitudExamenQuimicaSanguinea: Boolean
+  solicitudExamenElectrolitos: Boolean
+  solicitudExamenGasometria: Boolean
+  solicitudExamenElectrocardiograma: Boolean
+  solicitudExamenEndoscopia: Boolean
+  solicitudExamenRxTorax: Boolean
+  solicitudExamenRxAbdomen: Boolean
+  solicitudExamenRxOsea: Boolean
+  solicitudExamenTomografia: Boolean
+  solicitudExamenResonancia: Boolean
+  solicitudExamenEcografiaPelvica: Boolean
+  solicitudExamenEcografiaAbdomen: Boolean
+  solicitudExamenInterconsulta: Boolean
+  solicitudExamenOtros: Boolean
+  diagnosticodeIngreso: String
+  diagnosticodeAltade: String
+  planDeTratamientoIndicaciones: String
+  planDeTratamientoMedicamentos: String
+
   recetas: [Receta] @hasMany(indexName: "byConsulta", fields: ["id"])
   documentos: [Documento] @hasMany(indexName: "byConsulta", fields: ["id"])
 }
 
-# Mantén compatibilidad: clienteID sigue existiendo (legacy),
-# y añadimos consultaID para la estructura nueva.
-type Revision
-  @model
-  @auth(rules: [
-    { allow: owner, operations: [create, read, update, delete] },
-    { allow: groups, groups: ["medicos", "asistentes"], operations: [create, read, update] }
-  ]) {
-  id: ID!
-  # Legacy (para que lo existente siga funcionando):
-  clienteID: ID @index(name: "byCliente", queryField: "revisionsByClienteIDAndCreatedAt", sortKeyFields: ["createdAt"])
-  # Nuevo:
-  consultaID: ID @index(name: "byConsulta", queryField: "revisionesByConsulta", sortKeyFields: ["createdAt"])
-  parte: String!
-  descripcion: String
-  createdAt: AWSDateTime
-}
 
 type Receta
   @model
