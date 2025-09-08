@@ -32,7 +32,6 @@ type Cliente
   enCasoDeAvisarA: String
   parentescoAfinidad: String
   direccion: String
-  telefono: String
   consultas: [Consulta] @hasMany(indexName: "byCliente", fields: ["id"])
 }
 
@@ -48,7 +47,7 @@ type Consulta
   hora: String
   grupoSanguineoYFactorRh: String
   motivoDeConsulta: String
-  alientoEtílico: String
+  alientoEtilico: String
   valorAlcoCheck: String
   antecedenteAlergico: String
   antecedenteClinico: String
@@ -120,7 +119,6 @@ type Consulta
   recetas: [Receta] @hasMany(indexName: "byConsulta", fields: ["id"])
   documentos: [Documento] @hasMany(indexName: "byConsulta", fields: ["id"])
 }
-
 
 type Receta
   @model

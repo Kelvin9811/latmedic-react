@@ -7,14 +7,106 @@ export const getCliente = /* GraphQL */ `
       id
       cedula
       nombre
-      antecedentes
+      direccionResidenciaHabitual
+      calleYNumero
+      barrio
+      parroquia
+      canton
+      provincia
+      zona
+      telefono
+      fechaNacimiento
+      lugarNacimiento
+      nacionalidad
+      grupoCultural
+      edadEnAnosCumplidos
+      sexo
+      estadoCivil
+      nivelEducativo
+      fechaAdmision
+      ocupacion
+      empresaDondeTrabaja
+      tipoSeguroSalud
+      referidoDe
+      enCasoDeAvisarA
+      parentescoAfinidad
+      direccion
       consultas {
         items {
           id
           clienteID
-          motivo
-          diagnostico
           createdAt
+          hora
+          grupoSanguineoYFactorRh
+          motivoDeConsulta
+          alientoEtilico
+          valorAlcoCheck
+          antecedenteAlergico
+          antecedenteClinico
+          antecedenteGinecologico
+          antecedenteTraumatologico
+          antecedenteQuirurgico
+          antecedenteFarmacoLogico
+          antecedentePsiquiatrico
+          antecedenteOtro
+          enfermedadActual
+          presionArterial
+          frecuenciaCardiaca
+          frecuenciaRespiratoria
+          temperaturaBucal
+          temperaturaAxilar
+          peso
+          talla
+          gaslowOcular
+          gaslowVerbal
+          gaslowMotora
+          gaslowTotal
+          reaccionPupilaIzq
+          reaccionPupilaDer
+          tiempoLlenadoCapilar
+          saturacionOxigeno
+          viaAereaObstruida
+          cabeza
+          cuello
+          torax
+          abdomen
+          columna
+          pelvis
+          extremidades
+          heridaPenetrante
+          heridaCortante
+          fracturaExpuesta
+          fracturaCerrada
+          cuerpoExtrano
+          hemorragia
+          mordedura
+          picadura
+          excoriacion
+          deformidadOMasa
+          hematoma
+          eritemaInflamacion
+          luxacionEsguince
+          quemadura
+          solicitudExamenBiometria
+          solicitudExamenUroanalisis
+          solicitudExamenQuimicaSanguinea
+          solicitudExamenElectrolitos
+          solicitudExamenGasometria
+          solicitudExamenElectrocardiograma
+          solicitudExamenEndoscopia
+          solicitudExamenRxTorax
+          solicitudExamenRxAbdomen
+          solicitudExamenRxOsea
+          solicitudExamenTomografia
+          solicitudExamenResonancia
+          solicitudExamenEcografiaPelvica
+          solicitudExamenEcografiaAbdomen
+          solicitudExamenInterconsulta
+          solicitudExamenOtros
+          diagnosticodeIngreso
+          diagnosticodeAltade
+          planDeTratamientoIndicaciones
+          planDeTratamientoMedicamentos
           updatedAt
           owner
           __typename
@@ -40,7 +132,30 @@ export const listClientes = /* GraphQL */ `
         id
         cedula
         nombre
-        antecedentes
+        direccionResidenciaHabitual
+        calleYNumero
+        barrio
+        parroquia
+        canton
+        provincia
+        zona
+        telefono
+        fechaNacimiento
+        lugarNacimiento
+        nacionalidad
+        grupoCultural
+        edadEnAnosCumplidos
+        sexo
+        estadoCivil
+        nivelEducativo
+        fechaAdmision
+        ocupacion
+        empresaDondeTrabaja
+        tipoSeguroSalud
+        referidoDe
+        enCasoDeAvisarA
+        parentescoAfinidad
+        direccion
         consultas {
           nextToken
           __typename
@@ -60,24 +175,78 @@ export const getConsulta = /* GraphQL */ `
     getConsulta(id: $id) {
       id
       clienteID
-      motivo
-      diagnostico
       createdAt
-      revisiones {
-        items {
-          id
-          clienteID
-          consultaID
-          parte
-          descripcion
-          createdAt
-          updatedAt
-          owner
-          __typename
-        }
-        nextToken
-        __typename
-      }
+      hora
+      grupoSanguineoYFactorRh
+      motivoDeConsulta
+      alientoEtilico
+      valorAlcoCheck
+      antecedenteAlergico
+      antecedenteClinico
+      antecedenteGinecologico
+      antecedenteTraumatologico
+      antecedenteQuirurgico
+      antecedenteFarmacoLogico
+      antecedentePsiquiatrico
+      antecedenteOtro
+      enfermedadActual
+      presionArterial
+      frecuenciaCardiaca
+      frecuenciaRespiratoria
+      temperaturaBucal
+      temperaturaAxilar
+      peso
+      talla
+      gaslowOcular
+      gaslowVerbal
+      gaslowMotora
+      gaslowTotal
+      reaccionPupilaIzq
+      reaccionPupilaDer
+      tiempoLlenadoCapilar
+      saturacionOxigeno
+      viaAereaObstruida
+      cabeza
+      cuello
+      torax
+      abdomen
+      columna
+      pelvis
+      extremidades
+      heridaPenetrante
+      heridaCortante
+      fracturaExpuesta
+      fracturaCerrada
+      cuerpoExtrano
+      hemorragia
+      mordedura
+      picadura
+      excoriacion
+      deformidadOMasa
+      hematoma
+      eritemaInflamacion
+      luxacionEsguince
+      quemadura
+      solicitudExamenBiometria
+      solicitudExamenUroanalisis
+      solicitudExamenQuimicaSanguinea
+      solicitudExamenElectrolitos
+      solicitudExamenGasometria
+      solicitudExamenElectrocardiograma
+      solicitudExamenEndoscopia
+      solicitudExamenRxTorax
+      solicitudExamenRxAbdomen
+      solicitudExamenRxOsea
+      solicitudExamenTomografia
+      solicitudExamenResonancia
+      solicitudExamenEcografiaPelvica
+      solicitudExamenEcografiaAbdomen
+      solicitudExamenInterconsulta
+      solicitudExamenOtros
+      diagnosticodeIngreso
+      diagnosticodeAltade
+      planDeTratamientoIndicaciones
+      planDeTratamientoMedicamentos
       recetas {
         items {
           id
@@ -125,13 +294,78 @@ export const listConsultas = /* GraphQL */ `
       items {
         id
         clienteID
-        motivo
-        diagnostico
         createdAt
-        revisiones {
-          nextToken
-          __typename
-        }
+        hora
+        grupoSanguineoYFactorRh
+        motivoDeConsulta
+        alientoEtilico
+        valorAlcoCheck
+        antecedenteAlergico
+        antecedenteClinico
+        antecedenteGinecologico
+        antecedenteTraumatologico
+        antecedenteQuirurgico
+        antecedenteFarmacoLogico
+        antecedentePsiquiatrico
+        antecedenteOtro
+        enfermedadActual
+        presionArterial
+        frecuenciaCardiaca
+        frecuenciaRespiratoria
+        temperaturaBucal
+        temperaturaAxilar
+        peso
+        talla
+        gaslowOcular
+        gaslowVerbal
+        gaslowMotora
+        gaslowTotal
+        reaccionPupilaIzq
+        reaccionPupilaDer
+        tiempoLlenadoCapilar
+        saturacionOxigeno
+        viaAereaObstruida
+        cabeza
+        cuello
+        torax
+        abdomen
+        columna
+        pelvis
+        extremidades
+        heridaPenetrante
+        heridaCortante
+        fracturaExpuesta
+        fracturaCerrada
+        cuerpoExtrano
+        hemorragia
+        mordedura
+        picadura
+        excoriacion
+        deformidadOMasa
+        hematoma
+        eritemaInflamacion
+        luxacionEsguince
+        quemadura
+        solicitudExamenBiometria
+        solicitudExamenUroanalisis
+        solicitudExamenQuimicaSanguinea
+        solicitudExamenElectrolitos
+        solicitudExamenGasometria
+        solicitudExamenElectrocardiograma
+        solicitudExamenEndoscopia
+        solicitudExamenRxTorax
+        solicitudExamenRxAbdomen
+        solicitudExamenRxOsea
+        solicitudExamenTomografia
+        solicitudExamenResonancia
+        solicitudExamenEcografiaPelvica
+        solicitudExamenEcografiaAbdomen
+        solicitudExamenInterconsulta
+        solicitudExamenOtros
+        diagnosticodeIngreso
+        diagnosticodeAltade
+        planDeTratamientoIndicaciones
+        planDeTratamientoMedicamentos
         recetas {
           nextToken
           __typename
@@ -140,44 +374,6 @@ export const listConsultas = /* GraphQL */ `
           nextToken
           __typename
         }
-        updatedAt
-        owner
-        __typename
-      }
-      nextToken
-      __typename
-    }
-  }
-`;
-export const getRevision = /* GraphQL */ `
-  query GetRevision($id: ID!) {
-    getRevision(id: $id) {
-      id
-      clienteID
-      consultaID
-      parte
-      descripcion
-      createdAt
-      updatedAt
-      owner
-      __typename
-    }
-  }
-`;
-export const listRevisions = /* GraphQL */ `
-  query ListRevisions(
-    $filter: ModelRevisionFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listRevisions(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        clienteID
-        consultaID
-        parte
-        descripcion
-        createdAt
         updatedAt
         owner
         __typename
@@ -284,7 +480,30 @@ export const clienteByCedula = /* GraphQL */ `
         id
         cedula
         nombre
-        antecedentes
+        direccionResidenciaHabitual
+        calleYNumero
+        barrio
+        parroquia
+        canton
+        provincia
+        zona
+        telefono
+        fechaNacimiento
+        lugarNacimiento
+        nacionalidad
+        grupoCultural
+        edadEnAnosCumplidos
+        sexo
+        estadoCivil
+        nivelEducativo
+        fechaAdmision
+        ocupacion
+        empresaDondeTrabaja
+        tipoSeguroSalud
+        referidoDe
+        enCasoDeAvisarA
+        parentescoAfinidad
+        direccion
         consultas {
           nextToken
           __typename
@@ -319,13 +538,78 @@ export const consultasByCliente = /* GraphQL */ `
       items {
         id
         clienteID
-        motivo
-        diagnostico
         createdAt
-        revisiones {
-          nextToken
-          __typename
-        }
+        hora
+        grupoSanguineoYFactorRh
+        motivoDeConsulta
+        alientoEtilico
+        valorAlcoCheck
+        antecedenteAlergico
+        antecedenteClinico
+        antecedenteGinecologico
+        antecedenteTraumatologico
+        antecedenteQuirurgico
+        antecedenteFarmacoLogico
+        antecedentePsiquiatrico
+        antecedenteOtro
+        enfermedadActual
+        presionArterial
+        frecuenciaCardiaca
+        frecuenciaRespiratoria
+        temperaturaBucal
+        temperaturaAxilar
+        peso
+        talla
+        gaslowOcular
+        gaslowVerbal
+        gaslowMotora
+        gaslowTotal
+        reaccionPupilaIzq
+        reaccionPupilaDer
+        tiempoLlenadoCapilar
+        saturacionOxigeno
+        viaAereaObstruida
+        cabeza
+        cuello
+        torax
+        abdomen
+        columna
+        pelvis
+        extremidades
+        heridaPenetrante
+        heridaCortante
+        fracturaExpuesta
+        fracturaCerrada
+        cuerpoExtrano
+        hemorragia
+        mordedura
+        picadura
+        excoriacion
+        deformidadOMasa
+        hematoma
+        eritemaInflamacion
+        luxacionEsguince
+        quemadura
+        solicitudExamenBiometria
+        solicitudExamenUroanalisis
+        solicitudExamenQuimicaSanguinea
+        solicitudExamenElectrolitos
+        solicitudExamenGasometria
+        solicitudExamenElectrocardiograma
+        solicitudExamenEndoscopia
+        solicitudExamenRxTorax
+        solicitudExamenRxAbdomen
+        solicitudExamenRxOsea
+        solicitudExamenTomografia
+        solicitudExamenResonancia
+        solicitudExamenEcografiaPelvica
+        solicitudExamenEcografiaAbdomen
+        solicitudExamenInterconsulta
+        solicitudExamenOtros
+        diagnosticodeIngreso
+        diagnosticodeAltade
+        planDeTratamientoIndicaciones
+        planDeTratamientoMedicamentos
         recetas {
           nextToken
           __typename
@@ -334,72 +618,6 @@ export const consultasByCliente = /* GraphQL */ `
           nextToken
           __typename
         }
-        updatedAt
-        owner
-        __typename
-      }
-      nextToken
-      __typename
-    }
-  }
-`;
-export const revisionsByClienteIDAndCreatedAt = /* GraphQL */ `
-  query RevisionsByClienteIDAndCreatedAt(
-    $clienteID: ID!
-    $createdAt: ModelStringKeyConditionInput
-    $sortDirection: ModelSortDirection
-    $filter: ModelRevisionFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    revisionsByClienteIDAndCreatedAt(
-      clienteID: $clienteID
-      createdAt: $createdAt
-      sortDirection: $sortDirection
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        clienteID
-        consultaID
-        parte
-        descripcion
-        createdAt
-        updatedAt
-        owner
-        __typename
-      }
-      nextToken
-      __typename
-    }
-  }
-`;
-export const revisionesByConsulta = /* GraphQL */ `
-  query RevisionesByConsulta(
-    $consultaID: ID!
-    $createdAt: ModelStringKeyConditionInput
-    $sortDirection: ModelSortDirection
-    $filter: ModelRevisionFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    revisionesByConsulta(
-      consultaID: $consultaID
-      createdAt: $createdAt
-      sortDirection: $sortDirection
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        clienteID
-        consultaID
-        parte
-        descripcion
-        createdAt
         updatedAt
         owner
         __typename
