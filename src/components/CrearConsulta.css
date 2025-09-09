@@ -9,12 +9,17 @@
 }
 
 .crear-consulta-titulo {
+  text-align: center;
   margin-bottom: 16px;
+  margin-top: 0px;
   color: #222;
-  font-size: 1.2rem;
-  font-weight: 600;
 }
 
+.crear-consulta-campo label {
+  text-align: center;
+  margin-bottom: 16px;
+  color: #222;
+}
 .crear-consulta-campo {
   margin-bottom: 16px;
   display: flex;
@@ -26,22 +31,19 @@
   padding: 8px;
   border: 1px solid #e0e0e0;
   border-radius: 4px;
-  font-size: 1rem;
   margin-top: 4px;
   color: #222;
   background: #fafafa;
 }
 
 .crear-consulta-btn {
-  background: #1976d2;
+  width: 100%;
+  padding: 10px;
+  background: #282c34;
   color: #fff;
   border: none;
-  border-radius: 4px;
-  padding: 10px 18px;
-  font-size: 1rem;
+  border-radius: 6px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background 0.2s;
 }
 
 .crear-consulta-btn:disabled {

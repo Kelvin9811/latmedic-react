@@ -11,7 +11,7 @@
 .revisiones-titulo {
   text-align: center;
   margin-bottom: 16px;
-  color: #000;
+  color: #222;
 }
 
 .revisiones-row {
@@ -87,7 +87,7 @@
 }
 
 .revisiones-campo label {
-  color: #000;
+  color: #222;
   margin-bottom: 4px;
 }
 
@@ -105,7 +105,7 @@
   border-radius: 6px;
   border: none;
   background: #61dafb;
-  color: #000;
+  color: #222;
   font-weight: bold;
   cursor: pointer;
 }
@@ -161,11 +161,11 @@
 }
 
 .popup-content h4 {
-  color: #000;
+  color: #222;
 }
 
 .popup-content p {
-  color:#000
+  color:#222
 }
 
 .popup-btn {

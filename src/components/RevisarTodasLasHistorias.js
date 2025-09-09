@@ -54,7 +54,7 @@ const RevisarTodasLasHistorias = () => {
         <ul style={{ marginTop: 24, padding: 0 }}>
           {historias.map((h, idx) => (
             <li key={h.id || idx} style={{ marginBottom: 16, border: '1px solid #e0e0e0', borderRadius: 8, padding: 16, background: '#fff', listStyle: 'none' }}>
-              <div style={{ color: '#000' }}>
+              <div style={{ color: '#222' }}>
                 <strong>Cédula:</strong> <span>{h.cedula}</span><br />
                 <strong>Nombre:</strong> <span>{h.nombre}</span><br />
                 <strong>Antecedentes:</strong> <span>{h.antecedentes || 'Sin antecedentes'}</span><br />

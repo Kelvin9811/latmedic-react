@@ -4,54 +4,72 @@ import * as mutations from './graphql/mutations';
 
 const client = generateClient();
 
+// ---------- helpers ----------
+const pickConn = (resp, key) => resp?.data?.[key] ?? {};
+const pickItems = (conn) => (conn?.items ?? []).filter(Boolean);
+
+// Paginador generico: llama fn({ nextToken }) hasta agotar
+async function collectAll(fn, limit = 100) {
+  let nextToken = null;
+  const all = [];
+  do {
+    const { dataKey, resp } = await fn({ nextToken, limit });
+    const conn = pickConn(resp, dataKey);
+    all.push(...pickItems(conn));
+    nextToken = conn.nextToken ?? null;
+  } while (nextToken);
+  return all;
+}
+
+// =====================================================
+//                      CLIENTE
+// =====================================================
+
 /**
- * Crea o actualiza Cliente usando la cédula como id
+ * Crea/Actualiza un Cliente (usa la cédula como id estable).
+ * Solo actualiza los campos provistos.
  */
-export async function upsertClienteByCedula({ cedula, nombre, antecedentes }) {
-  // 1) Buscar si existe por cédula
-  const { data } = await client.graphql({
+export async function upsertClienteByCedula(input) {
+  const { cedula, ...rest } = input;
+  if (!cedula) throw new Error('Falta cedula');
+
+  // Buscar si ya existe por cédula
+  const found = await client.graphql({
     query: queries.clienteByCedula,
     variables: { cedula, limit: 1 },
     authMode: 'userPool',
   });
-
-  const existing = data?.clienteByCedula?.items?.[0];
+  const existing = found?.data?.clienteByCedula?.items?.[0];
 
   if (existing) {
-    const input = {
-      id: existing.id,
-      nombre,
-      antecedentes,
-      // incluye _version si activaste conflict detection
-      ...(existing._version !== undefined ? { _version: existing._version } : {}),
-    };
+    const updateInput = { id: existing.id, ...rest };
+    if (existing._version !== undefined) updateInput._version = existing._version; // si activaste conflictos
     const res = await client.graphql({
       query: mutations.updateCliente,
-      variables: { input },
+      variables: { input: updateInput },
       authMode: 'userPool',
     });
     return res.data.updateCliente;
   } else {
+    const createInput = { id: cedula, cedula, ...rest };
     const res = await client.graphql({
       query: mutations.createCliente,
-      variables: { input: { id: cedula, cedula, nombre, antecedentes } },
+      variables: { input: createInput },
       authMode: 'userPool',
     });
     return res.data.createCliente;
   }
 }
 
-/**
- * Devuelve la ficha del cliente (incluye relaciones paginadas)
- */
-export async function getClienteFullByCedula(cedula) {
-  const { data } = await client.graphql({
+/** Obtiene el Cliente por cédula (y opcionalmente hace un get por id). */
+export async function getClienteByCedula(cedula, withGet = false) {
+  const found = await client.graphql({
     query: queries.clienteByCedula,
     variables: { cedula, limit: 1 },
     authMode: 'userPool',
   });
-  const cli = data?.clienteByCedula?.items?.[0];
-  if (!cli) return null;
+  const cli = found?.data?.clienteByCedula?.items?.[0] ?? null;
+  if (!withGet || !cli) return cli;
 
   const res = await client.graphql({
     query: queries.getCliente,
@@ -61,258 +79,69 @@ export async function getClienteFullByCedula(cedula) {
   return res.data.getCliente;
 }
 
-/**
- * Crear revisión
- */
-export async function createRevision({ clienteID, parte, descripcion }) {
-  const res = await client.graphql({
-    query: mutations.createRevision,
-    variables: {
-      input: {
-        clienteID,
-        parte,
-        descripcion,
-        createdAt: new Date().toISOString(),
-      },
-    },
-    authMode: 'userPool',
-  });
-  return res.data.createRevision;
-}
-
-/**
- * Listar revisiones (usa el índice generado: revisionsByClienteIDAndCreatedAt)
- */
-export async function listRevisiones(clienteID, { limit = 20, nextToken, sortDirection = 'DESC' } = {}) {
-  const { data } = await client.graphql({
-    query: queries.revisionsByClienteIDAndCreatedAt,
-    variables: { clienteID, sortDirection, limit, nextToken },
-    authMode: 'userPool',
-  });
-  return data.revisionsByClienteIDAndCreatedAt; // { items, nextToken }
-}
-
-/**
- * Actualizar / Eliminar revisión (si activaste conflictos, incluye _version)
- */
-export async function updateRevision({ id, parte, descripcion, _version }) {
-  const res = await client.graphql({
-    query: mutations.updateRevision,
-    variables: { input: { id, parte, descripcion, _version } },
-    authMode: 'userPool',
-  });
-  return res.data.updateRevision;
-}
-export async function deleteRevision({ id, _version }) {
-  console.log('deleteRevision input:', { id, _version });
-  const res = await client.graphql({
-    query: mutations.deleteRevision,
-    variables: { input: { id, _version } },
-    authMode: 'userPool',
-  });
-  console.log('deleteRevision response:', res);
-  return res.data.deleteRevision;
-}
-
-/**
- * (Metadatos) Crear/listar/actualizar/eliminar recetas
- * Nota: S3 lo añadimos después; por ahora s3key puede quedar vacío o con un texto.
- */
-export async function createRecetaMeta({ clienteID, indicaciones, s3key }) {
-  const res = await client.graphql({
-    query: mutations.createReceta,
-    variables: {
-      input: {
-        clienteID,
-        indicaciones,
-        s3key,
-        createdAt: new Date().toISOString(),
-      },
-    },
-    authMode: 'userPool',
-  });
-  return res.data.createReceta;
-}
-export async function listRecetas(clienteID, { limit = 20, nextToken, sortDirection = 'DESC' } = {}) {
-  const { data } = await client.graphql({
-    query: queries.recetasByClienteIDAndCreatedAt,
-    variables: { clienteID, sortDirection, limit, nextToken },
-    authMode: 'userPool',
-  });
-  return data.recetasByClienteIDAndCreatedAt; // { items, nextToken }
-}
-export async function updateReceta({ id, indicaciones, s3key, _version }) {
-  const res = await client.graphql({
-    query: mutations.updateReceta,
-    variables: { input: { id, indicaciones, s3key, _version } },
-    authMode: 'userPool',
-  });
-  return res.data.updateReceta;
-}
-export async function deleteReceta({ id, _version }) {
-  const res = await client.graphql({
-    query: mutations.deleteReceta,
-    variables: { input: { id, _version } },
-    authMode: 'userPool',
-  });
-  return res.data.deleteReceta;
-}
-
-// --- ELIMINAR EN CASCADA POR CÉDULA -----------------------------------------
-
-/**
- * Elimina TODAS las revisiones del cliente (paginado).
- */
-async function deleteAllRevisionesByCedula(cedula) {
-  let nextToken = null;
-  do {
-    const { data } = await client.graphql({
-      query: queries.revisionsByClienteIDAndCreatedAt,
-      variables: { clienteID: cedula, limit: 50, nextToken, sortDirection: 'DESC' },
-      authMode: 'userPool',
-    });
-    const page = data?.revisionsByClienteIDAndCreatedAt;
-    const items = page?.items ?? [];
-    for (const it of items) {
-      await client.graphql({
-        query: mutations.deleteRevision,
-        variables: { input: { id: it.id, ...(it._version !== undefined ? { _version: it._version } : {}) } },
-        authMode: 'userPool',
-      });
-    }
-    nextToken = page?.nextToken ?? null;
-  } while (nextToken);
-}
-
-/**
- * Elimina TODAS las recetas del cliente (paginado).
- */
-async function deleteAllRecetasByCedula(cedula) {
-  let nextToken = null;
-  do {
-    const { data } = await client.graphql({
-      query: queries.recetasByClienteIDAndCreatedAt,
-      variables: { clienteID: cedula, limit: 50, nextToken, sortDirection: 'DESC' },
-      authMode: 'userPool',
-    });
-    const page = data?.recetasByClienteIDAndCreatedAt;
-    const items = page?.items ?? [];
-    for (const it of items) {
-      await client.graphql({
-        query: mutations.deleteReceta,
-        variables: { input: { id: it.id, ...(it._version !== undefined ? { _version: it._version } : {}) } },
-        authMode: 'userPool',
-      });
-    }
-    nextToken = page?.nextToken ?? null;
-  } while (nextToken);
-}
-
-/**
- * Elimina TODAS las consultas del cliente (paginado).
- */
-async function deleteAllConsultasByCedula(cedula, cascade) {
-  // Buscar el cliente por cédula
-  const { data } = await client.graphql({
-    query: queries.clienteByCedula,
-    variables: { cedula, limit: 1 },
-    authMode: 'userPool',
-  });
-  const cliente = data?.clienteByCedula?.items?.[0];
-  if (!cliente) return;
-
-
-  let nextToken = null;
-  do {
-    const resp = await client.graphql({
-      query: queries.consultasByCliente,
-      variables: { clienteID: cliente.id, limit: 50, nextToken, sortDirection: 'DESC' },
-      authMode: 'userPool',
-    });
-    const page = resp?.data?.consultasByCliente;
-    const items = page?.items ?? [];
-    for (const consulta of items) {
-      if (cascade) {
-        await deleteAllRevisionesByConsulta(consulta.id);
-        await deleteAllRecetasByConsulta(consulta.id);
-        await deleteAllDocumentosByConsulta(consulta.id);
-      }
-      await client.graphql({
-        query: mutations.deleteConsulta,
-        variables: { input: { id: consulta.id, ...(consulta._version !== undefined ? { _version: consulta._version } : {}) } },
-        authMode: 'userPool',
-      });
-    }
-    nextToken = page?.nextToken ?? null;
-  } while (nextToken);
-}
-
-/**
- * Elimina la historia clínica (cliente) por cédula.
- * Por defecto hace borrado en cascada de Revisiones, Recetas y Consultas.
- */
+/** Elimina historia clínica por cédula. Hace borrado en cascada de Consultas, Recetas y Documentos. */
 export async function deleteHistoriaClinicaByCedula(cedula, { cascade = true } = {}) {
-  console.log(`Eliminando historia clínica para cédula: ${cedula}`);
-  // 1) Buscar el cliente por cédula para obtener su ID (y _version si aplica)
-  const { data } = await client.graphql({
+  const found = await client.graphql({
     query: queries.clienteByCedula,
     variables: { cedula, limit: 1 },
     authMode: 'userPool',
   });
-
-  const cliente = data?.clienteByCedula?.items?.[0];
+  const cliente = found?.data?.clienteByCedula?.items?.[0];
   if (!cliente) return { ok: false, error: 'NOT_FOUND' };
 
-  // 2) Borrado en cascada (primero hijos)
   if (cascade) {
-    await deleteAllConsultasByCedula(cedula,true);
-    // (Cuando integremos S3: aquí también borraremos los archivos si los tuviera)
+    // borrar todas las consultas del cliente (y sus hijos)
+    const consultas = await listConsultasByCedula(cedula).then(r => r.items);
+    for (const c of consultas) {
+      await deleteConsultaById(c.id, { cascade: true });
+    }
   }
 
-  // 3) Borrar el cliente
   const del = await client.graphql({
     query: mutations.deleteCliente,
-    variables: { input: { id: cliente.id, ...(cliente._version !== undefined ? { _version: cliente._version } : {}) } },
+    variables: { input: (cliente._version !== undefined) ? { id: cliente.id, _version: cliente._version } : { id: cliente.id } },
     authMode: 'userPool',
   });
-
   return { ok: true, deleted: del.data.deleteCliente };
 }
 
-/* -------------------- CONSULTAS -------------------- */
+// =====================================================
+//                      CONSULTA
+// =====================================================
 
-// Crear una consulta para un paciente (por cédula)
-export async function createConsultaForCedula(cedula, { motivo, diagnostico } = {}) {
-  // busca el cliente
-  const { data } = await client.graphql({
+/** Crea una Consulta para la cédula dada. */
+export async function createConsultaForCedula(cedula, fields = {}) {
+  const found = await client.graphql({
     query: queries.clienteByCedula,
     variables: { cedula, limit: 1 },
     authMode: 'userPool',
   });
-  const cli = data?.clienteByCedula?.items?.[0];
+  const cli = found?.data?.clienteByCedula?.items?.[0];
   if (!cli) throw new Error('CLIENTE_NOT_FOUND');
 
   const res = await client.graphql({
     query: mutations.createConsulta,
-    variables: { input: {
-      clienteID: cli.id,
-      motivo: motivo ?? null,
-      diagnostico: diagnostico ?? null,
-      createdAt: new Date().toISOString(),
-    }},
+    variables: {
+      input: {
+        clienteID: cli.id,
+        createdAt: new Date().toISOString(),
+        ...fields,
+      },
+    },
     authMode: 'userPool',
   });
-  return res.data.createConsulta;
+  return res.data.createConsulta; // { id, ... }
 }
 
-// Listar consultas por cédula (ordenadas por fecha)
+/** Lista consultas por cédula. Devuelve { items, nextToken }. */
 export async function listConsultasByCedula(cedula, { limit = 20, nextToken, sortDirection = 'DESC' } = {}) {
-  const { data } = await client.graphql({
+  // obtener id de cliente
+  const found = await client.graphql({
     query: queries.clienteByCedula,
     variables: { cedula, limit: 1 },
     authMode: 'userPool',
   });
-  const cli = data?.clienteByCedula?.items?.[0];
+  const cli = found?.data?.clienteByCedula?.items?.[0];
   if (!cli) return { items: [], nextToken: null };
 
   const resp = await client.graphql({
@@ -320,208 +149,206 @@ export async function listConsultasByCedula(cedula, { limit = 20, nextToken, sor
     variables: { clienteID: cli.id, sortDirection, limit, nextToken },
     authMode: 'userPool',
   });
-  const conn = resp?.data?.consultasByCliente ?? {};
-  return { items: conn.items ?? [], nextToken: conn.nextToken ?? null };
+  const conn = pickConn(resp, 'consultasByCliente');
+  return { items: pickItems(conn), nextToken: conn.nextToken ?? null };
 }
 
-/* --------- Revisiones/Recetas/Documentos por CONSULTA --------- */
-
-// Revisión
-export async function addRevisionToConsulta(consultaID, { parte, descripcion }) {
+/** Obtiene una consulta por id. */
+export async function getConsultaById(id) {
   const res = await client.graphql({
-    query: mutations.createRevision,
-    variables: { input: {
-      consultaID,
-      parte,
-      descripcion,
-      createdAt: new Date().toISOString(),
-    }},
+    query: queries.getConsulta,
+    variables: { id },
     authMode: 'userPool',
   });
-  return res.data.createRevision;
+  return res.data.getConsulta;
 }
 
-export async function listRevisionesByConsulta(consultaID, { limit = 50, nextToken, sortDirection = 'DESC' } = {}) {
-  const { data } = await client.graphql({
-    query: queries.revisionesByConsulta,
-    variables: { consultaID, sortDirection, limit, nextToken },
+/** Actualiza una consulta (envía solo campos que cambian). */
+export async function updateConsulta(input) {
+  if (!input?.id) throw new Error('Falta id');
+  const res = await client.graphql({
+    query: mutations.updateConsulta,
+    variables: { input },
     authMode: 'userPool',
   });
-  const conn = data?.revisionesByConsulta ?? {};
-  return { items: (conn.items ?? []).filter(Boolean), nextToken: conn.nextToken ?? null };
+  return res.data.updateConsulta;
 }
 
-// Receta (metadatos; S3 lo vemos luego)
-export async function addRecetaToConsulta(consultaID, { indicaciones, s3key }) {
+/** Elimina una consulta por id. Si cascade=true, borra sus Recetas y Documentos. */
+export async function deleteConsultaById(id, { cascade = true } = {}) {
+  if (cascade) {
+    // borrar todos los hijos primero
+    const recetas = await collectAll(async ({ nextToken, limit }) => ({
+      dataKey: 'recetasByConsulta',
+      resp: await client.graphql({
+        query: queries.recetasByConsulta,
+        variables: { consultaID: id, limit, nextToken, sortDirection: 'DESC' },
+        authMode: 'userPool',
+      }),
+    }));
+
+    for (const r of recetas) {
+      await deleteReceta({ id: r.id, _version: r._version });
+    }
+
+    const docs = await collectAll(async ({ nextToken, limit }) => ({
+      dataKey: 'documentosByConsulta',
+      resp: await client.graphql({
+        query: queries.documentosByConsulta,
+        variables: { consultaID: id, limit, nextToken, sortDirection: 'DESC' },
+        authMode: 'userPool',
+      }),
+    }));
+
+    for (const d of docs) {
+      await deleteDocumento({ id: d.id, _version: d._version });
+    }
+  }
+
+  // Necesitamos la _version si hay conflictos activados. Si no la tienes, intenta delete con solo id.
+  try {
+    // Intento con version (si la tienes)
+    const current = await getConsultaById(id);
+    const res = await client.graphql({
+      query: mutations.deleteConsulta,
+      variables: { input: current?._version !== undefined ? { id, _version: current._version } : { id } },
+      authMode: 'userPool',
+    });
+    return res.data.deleteConsulta;
+  } catch (e) {
+    // Fallback sin version
+    const res = await client.graphql({
+      query: mutations.deleteConsulta,
+      variables: { input: { id } },
+      authMode: 'userPool',
+    });
+    return res.data.deleteConsulta;
+  }
+}
+
+// =====================================================
+//                      RECETA
+// =====================================================
+
+/** Crea una receta bajo una consulta. (El archivo S3 es aparte; aquí guardas el s3key) */
+export async function addRecetaToConsulta(consultaID, { indicaciones, s3key } = {}) {
   const res = await client.graphql({
     query: mutations.createReceta,
-    variables: { input: {
-      consultaID,
-      indicaciones: indicaciones ?? null,
-      s3key: s3key ?? null,
-      createdAt: new Date().toISOString(),
-    }},
+    variables: {
+      input: {
+        consultaID,
+        indicaciones: indicaciones ?? null,
+        s3key: s3key ?? null,
+        createdAt: new Date().toISOString(),
+      },
+    },
     authMode: 'userPool',
   });
   return res.data.createReceta;
 }
 
+/** Lista recetas por consulta. */
 export async function listRecetasByConsulta(consultaID, { limit = 50, nextToken, sortDirection = 'DESC' } = {}) {
-  const { data } = await client.graphql({
+  const resp = await client.graphql({
     query: queries.recetasByConsulta,
-    variables: { consultaID, sortDirection, limit, nextToken },
+    variables: { consultaID, limit, nextToken, sortDirection },
     authMode: 'userPool',
   });
-  const conn = data?.recetasByConsulta ?? {};
-  return { items: (conn.items ?? []).filter(Boolean), nextToken: conn.nextToken ?? null };
+  const conn = pickConn(resp, 'recetasByConsulta');
+  return { items: pickItems(conn), nextToken: conn.nextToken ?? null };
 }
 
-// Documento (metadatos; luego subimos a S3)
-export async function addDocumentoToConsulta(consultaID, { tipo, titulo, s3key, notas }) {
+/** (Legacy) Lista recetas por cédula del cliente. */
+export async function listRecetasByCedula(cedula, { limit = 50, nextToken, sortDirection = 'DESC' } = {}) {
+  // este query existe por el índice legacy del schema
+  const resp = await client.graphql({
+    query: queries.recetasByClienteIDAndCreatedAt,
+    variables: { clienteID: cedula, limit, nextToken, sortDirection },
+    authMode: 'userPool',
+  });
+  const conn = pickConn(resp, 'recetasByClienteIDAndCreatedAt');
+  return { items: pickItems(conn), nextToken: conn.nextToken ?? null };
+}
+
+export async function updateReceta(input) {
+  if (!input?.id) throw new Error('Falta id');
+  const res = await client.graphql({
+    query: mutations.updateReceta,
+    variables: { input },
+    authMode: 'userPool',
+  });
+  return res.data.updateReceta;
+}
+
+export async function deleteReceta({ id, _version }) {
+  const res = await client.graphql({
+    query: mutations.deleteReceta,
+    variables: { input: _version !== undefined ? { id, _version } : { id } },
+    authMode: 'userPool',
+  });
+  return res.data.deleteReceta;
+}
+
+// =====================================================
+//                      DOCUMENTO
+// =====================================================
+
+/** Crea un documento (metadatos). El archivo real lo subes a S3 aparte y guardas su s3key aquí. */
+export async function addDocumentoToConsulta(consultaID, { tipo, titulo, s3key, notas } = {}) {
   const res = await client.graphql({
     query: mutations.createDocumento,
-    variables: { input: {
-      consultaID,
-      tipo: tipo ?? 'OTRO',
-      titulo: titulo ?? null,
-      s3key: s3key ?? null,
-      notas: notas ?? null,
-      createdAt: new Date().toISOString(),
-    }},
+    variables: {
+      input: {
+        consultaID,
+        tipo: tipo ?? 'OTRO',
+        titulo: titulo ?? null,
+        s3key: s3key ?? null,
+        notas: notas ?? null,
+        createdAt: new Date().toISOString(),
+      },
+    },
     authMode: 'userPool',
   });
   return res.data.createDocumento;
 }
 
+/** Lista documentos por consulta. */
 export async function listDocumentosByConsulta(consultaID, { limit = 50, nextToken, sortDirection = 'DESC' } = {}) {
-  const { data } = await client.graphql({
+  const resp = await client.graphql({
     query: queries.documentosByConsulta,
-    variables: { consultaID, sortDirection, limit, nextToken },
+    variables: { consultaID, limit, nextToken, sortDirection },
     authMode: 'userPool',
   });
-  const conn = data?.documentosByConsulta ?? {};
-  return { items: (conn.items ?? []).filter(Boolean), nextToken: conn.nextToken ?? null };
+  const conn = pickConn(resp, 'documentosByConsulta');
+  return { items: pickItems(conn), nextToken: conn.nextToken ?? null };
 }
 
-export async function updateDocumento({
-  id,
-  titulo,
-  tipo,        // 'RX' | 'ECO' | 'LAB' | 'PDF' | 'IMG' | 'OTRO'
-  notas,
-  s3key,       // si reemplazas el archivo en S3
-  consultaID,  // opcional: re-asignar a otra consulta
-  _version
-}) {
-  const input = { id };
-  if (titulo !== undefined) input.titulo = titulo;
-  if (tipo !== undefined) input.tipo = tipo;
-  if (notas !== undefined) input.notas = notas;
-  if (s3key !== undefined) input.s3key = s3key;
-  if (consultaID !== undefined) input.consultaID = consultaID;
-  if (_version !== undefined) input._version = _version;
-
-  const { data } = await client.graphql({
+export async function updateDocumento(input) {
+  if (!input?.id) throw new Error('Falta id');
+  const res = await client.graphql({
     query: mutations.updateDocumento,
     variables: { input },
     authMode: 'userPool',
   });
-  return data.updateDocumento;
+  return res.data.updateDocumento;
 }
 
-/**
- * Elimina un Documento por id.
- * Con Conflict Detection, envía también _version.
- */
 export async function deleteDocumento({ id, _version }) {
-  const { data } = await client.graphql({
+  const res = await client.graphql({
     query: mutations.deleteDocumento,
-    variables: { input: _version ? { id, _version } : { id } },
+    variables: { input: _version !== undefined ? { id, _version } : { id } },
     authMode: 'userPool',
   });
-  return data.deleteDocumento;
+  return res.data.deleteDocumento;
 }
 
-/**
- * Elimina TODAS las revisiones de una consulta (paginado).
- */
-export async function deleteAllRevisionesByConsulta(consultaID) {
-  let nextToken = null;
-  do {
-    const { data } = await client.graphql({
-      query: queries.revisionesByConsulta,
-      variables: { consultaID, limit: 50, nextToken, sortDirection: 'DESC' },
-      authMode: 'userPool',
-    });
-    const page = data?.revisionesByConsulta;
-    const items = page?.items ?? [];
-    for (const it of items) {
-      await client.graphql({
-        query: mutations.deleteRevision,
-        variables: { input: { id: it.id, ...(it._version !== undefined ? { _version: it._version } : {}) } },
-        authMode: 'userPool',
-      });
-    }
-    nextToken = page?.nextToken ?? null;
-  } while (nextToken);
-}
-
-/**
- * Elimina TODAS las recetas de una consulta (paginado).
- */
-export async function deleteAllRecetasByConsulta(consultaID) {
-  let nextToken = null;
-  do {
-    const { data } = await client.graphql({
-      query: queries.recetasByConsulta,
-      variables: { consultaID, limit: 50, nextToken, sortDirection: 'DESC' },
-      authMode: 'userPool',
-    });
-    const page = data?.recetasByConsulta;
-    const items = page?.items ?? [];
-    for (const it of items) {
-      await client.graphql({
-        query: mutations.deleteReceta,
-        variables: { input: { id: it.id, ...(it._version !== undefined ? { _version: it._version } : {}) } },
-        authMode: 'userPool',
-      });
-    }
-    nextToken = page?.nextToken ?? null;
-  } while (nextToken);
-}
-
-/**
- * Elimina TODOS los documentos de una consulta (paginado).
- */
-export async function deleteAllDocumentosByConsulta(consultaID) {
-  let nextToken = null;
-  do {
-    const { data } = await client.graphql({
-      query: queries.documentosByConsulta,
-      variables: { consultaID, limit: 50, nextToken, sortDirection: 'DESC' },
-      authMode: 'userPool',
-    });
-    const page = data?.documentosByConsulta;
-    const items = page?.items ?? [];
-    for (const it of items) {
-      await client.graphql({
-        query: mutations.deleteDocumento,
-        variables: { input: { id: it.id, ...(it._version !== undefined ? { _version: it._version } : {}) } },
-        authMode: 'userPool',
-      });
-    }
-    nextToken = page?.nextToken ?? null;
-  } while (nextToken);
-}
-
-/**
- * Listar clientes (historias clínicas) con paginado.
- */
+/** Lista clientes con paginación. Devuelve { items, nextToken }. */
 export async function listClientes({ limit = 10, nextToken } = {}) {
-  const { data } = await client.graphql({
+  const resp = await client.graphql({
     query: queries.listClientes,
     variables: { limit, nextToken },
     authMode: 'userPool',
   });
-  const conn = data?.listClientes ?? {};
-  return { items: conn.items ?? [], nextToken: conn.nextToken ?? null };
+  const conn = pickConn(resp, 'listClientes');
+  return { items: pickItems(conn), nextToken: conn.nextToken ?? null };
 }

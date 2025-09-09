@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { createConsultaForCedula } from '../apiCrud';
 import './CrearConsulta.css';
 
-const CrearConsulta = ({ cedula, onConsultaCreada }) => {
+const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
   const [motivo, setMotivo] = useState('');
   const [diagnostico, setDiagnostico] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,7 +23,9 @@ const CrearConsulta = ({ cedula, onConsultaCreada }) => {
 
   return (
     <form className="crear-consulta-form" onSubmit={handleSubmit}>
-      <h3 className="crear-consulta-titulo">Nueva Consulta</h3>
+      <h3 className="crear-consulta-titulo">
+        Nueva Consulta{nombreCliente ? ` para ${nombreCliente}` : ''}
+      </h3>
       <div className="crear-consulta-campo">
         <label>Motivo:</label>
         <input
@@ -35,7 +37,7 @@ const CrearConsulta = ({ cedula, onConsultaCreada }) => {
         />
       </div>
       <div className="crear-consulta-campo">
-        <label>Diagnóstico:</label>
+        <label>Enfermedad actual:</label>
         <textarea
           value={diagnostico}
           onChange={e => setDiagnostico(e.target.value)}

@@ -22,18 +22,18 @@ const MainScreen = ({ user, signOut }) => {
     <div>
       <SidebarMenu onSelect={setSelected} signOut={signOut} />
       <div style={{ }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 24 }}>
           <span>Hola <strong>{user?.username}</strong></span>
         </div>
         {selected === 'crear' && (
           <div>
-            <h2>Crear Historia Clínica</h2>
             {!cliente ? (
               <CrearHistoriaClinica onHistoriaCreada={data => setCliente(data)} />
             ) : !consulta ? (
               <CrearConsulta
                 cedula={cliente.cedula}
                 onConsultaCreada={data => setConsulta(data)}
+                nombreCliente={cliente.nombre}
               />
             ) : (
               <ManejoConsulta

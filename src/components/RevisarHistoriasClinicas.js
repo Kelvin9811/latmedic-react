@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getClienteFullByCedula, upsertClienteByCedula, createConsultaForCedula, listConsultasByCedula, deleteHistoriaClinicaByCedula } from '../apiCrud';
+import { getClienteByCedula, upsertClienteByCedula, createConsultaForCedula, listConsultasByCedula, deleteHistoriaClinicaByCedula } from '../apiCrud';
 import ManejoConsulta from './ManejoConsulta';
 import './RevisarHistoriasClinicas.css';
 
@@ -60,7 +60,7 @@ const RevisarHistoriasClinicas = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const resultado = await getClienteFullByCedula(cedulaBusqueda);
+      const resultado = await getClienteByCedula(cedulaBusqueda);
       if (resultado) {
         // Cargar consultas para la historia encontrada
         const consultasData = await listConsultasByCedula(
@@ -181,17 +181,17 @@ const RevisarHistoriasClinicas = () => {
           {historias.map((h, idx) => (
             <div key={idx} className="revisar-historias-item" style={{ marginBottom: 32, border: '1px solid #e0e0e0', borderRadius: 8, padding: 16, background: '#fff' }}>
               <div style={{ marginBottom: 12 }}>
-                <strong style={{ color: '#000' }}>Cédula:</strong> <span style={{ color: '#000' }}>{editIdx === idx ? (
-                  <input value={editData.cedula} onChange={e => handleEditChange('cedula', e.target.value)} disabled style={{ color: '#000' }} />
+                <strong style={{ color: '#222' }}>Cédula:</strong> <span style={{ color: '#222' }}>{editIdx === idx ? (
+                  <input value={editData.cedula} onChange={e => handleEditChange('cedula', e.target.value)} disabled style={{ color: '#222' }} />
                 ) : h.cedula}</span>
                 <br />
-                <strong style={{ color: '#000' }}>Nombre:</strong> <span style={{ color: '#000' }}>{editIdx === idx ? (
-                  <input value={editData.nombre} onChange={e => handleEditChange('nombre', e.target.value)} style={{ color: '#000' }} />
+                <strong style={{ color: '#222' }}>Nombre:</strong> <span style={{ color: '#222' }}>{editIdx === idx ? (
+                  <input value={editData.nombre} onChange={e => handleEditChange('nombre', e.target.value)} style={{ color: '#222' }} />
                 ) : h.nombre}</span>
                 <br />
-                <strong style={{ color: '#000' }}>Antecedentes:</strong> <span style={{ color: '#000' }}>{editIdx === idx ? (
-                  <textarea value={editData.antecedentes} onChange={e => handleEditChange('antecedentes', e.target.value)} rows={2} style={{ color: '#000' }} />
-                ) : <span style={{ whiteSpace: 'pre-line', color: '#000' }}>{h.antecedentes}</span>}</span>
+                <strong style={{ color: '#222' }}>Antecedentes:</strong> <span style={{ color: '#222' }}>{editIdx === idx ? (
+                  <textarea value={editData.antecedentes} onChange={e => handleEditChange('antecedentes', e.target.value)} rows={2} style={{ color: '#222' }} />
+                ) : <span style={{ whiteSpace: 'pre-line', color: '#222' }}>{h.antecedentes}</span>}</span>
               </div>
               <div style={{ marginBottom: 12 }}>
                 {editIdx === idx ? (
@@ -207,13 +207,13 @@ const RevisarHistoriasClinicas = () => {
                 )}
               </div>
               <div className="revisar-historias-consultas" style={{ marginTop: 16 }}>
-                <h4 style={{ marginBottom: 8 , color: '#000' }}>Consultas</h4>
+                <h4 style={{ marginBottom: 8 , color: '#222' }}>Consultas</h4>
                 {Array.isArray(h.consultas) && h.consultas.length === 0 ? (
                   <p>No hay consultas para este paciente.</p>
                 ) : (
                   <ul style={{
                     marginBottom: 12,
-                    color: '#000',
+                    color: '#222',
                     border: '1px solid #e0e0e0',
                     borderRadius: '8px',
                     padding: '12px',
@@ -226,7 +226,7 @@ const RevisarHistoriasClinicas = () => {
                         key={i}
                         style={{
                           marginBottom: 12,
-                          color: '#000',
+                          color: '#222',
                           border: '1px solid #e0e0e0',
                           borderRadius: '8px',
                           padding: '12px',
@@ -241,7 +241,7 @@ const RevisarHistoriasClinicas = () => {
                           <strong>Motivo:</strong> {con.motivo}
                         </div>
                         <div>
-                          <strong>Diagnóstico:</strong> <span style={{ whiteSpace: 'pre-line', color: '#000' }}>{con.diagnostico}</span>
+                          <strong>Diagnóstico:</strong> <span style={{ whiteSpace: 'pre-line', color: '#222' }}>{con.diagnostico}</span>
                         </div>
                         <div>
                           <strong>Fecha de consulta:</strong> {con.createdAt ? new Date(con.createdAt).toLocaleString() : 'Sin fecha'}
@@ -279,7 +279,7 @@ const RevisarHistoriasClinicas = () => {
             ) : (
               <ul style={{
                 marginBottom: 12,
-                color: '#000',
+                color: '#222',
                 border: '1px solid #e0e0e0',
                 borderRadius: '8px',
                 padding: '12px',
@@ -291,7 +291,7 @@ const RevisarHistoriasClinicas = () => {
                     key={i}
                     style={{
                       marginBottom: 12,
-                      color: '#000',
+                      color: '#222',
                       border: '1px solid #e0e0e0',
                       borderRadius: '8px',
                       padding: '12px',
@@ -300,13 +300,13 @@ const RevisarHistoriasClinicas = () => {
                     }}
                   >
                     <div>
-                      <strong style={{ color: '#000' }}>Motivo:</strong> {con.motivo}
+                      <strong style={{ color: '#222' }}>Motivo:</strong> {con.motivo}
                     </div>
                     <div>
-                      <strong style={{ color: '#000' }}>Diagnóstico:</strong> <span style={{ whiteSpace: 'pre-line', color: '#000' }}>{con.diagnostico}</span>
+                      <strong style={{ color: '#222' }}>Diagnóstico:</strong> <span style={{ whiteSpace: 'pre-line', color: '#222' }}>{con.diagnostico}</span>
                     </div>
                     <div>
-                      <strong style={{ color: '#000' }}>Fecha de consulta:</strong> {con.createdAt
+                      <strong style={{ color: '#222' }}>Fecha de consulta:</strong> {con.createdAt
                         ? new Date(con.createdAt).toLocaleString()
                         : 'Sin fecha'}
                     </div>

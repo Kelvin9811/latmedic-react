@@ -37,11 +37,11 @@ const RevisarRecetas = () => {
         <ul style={{ marginTop: 24, padding: 0 }}>
           {recetas.map((rec, idx) => (
             <li key={idx} style={{ marginBottom: 16, border: '1px solid #e0e0e0', borderRadius: 8, padding: 16, background: '#fff', listStyle: 'none' }}>
-              <div style={{ color: '#000' }}>
-                <strong>ID:</strong> <span style={{ color: '#000' }}>{rec.id}</span><br />
-                <strong>Indicaciones:</strong> <span style={{ color: '#000' }}>{rec.indicaciones}</span><br />
-                <strong>Fecha:</strong> <span style={{ color: '#000' }}>{rec.createdAt ? new Date(rec.createdAt).toLocaleString() : 'Sin fecha'}</span><br />
-                <strong>S3 Key:</strong> <span style={{ color: '#000' }}>{rec.s3key || 'Sin archivo'}</span>
+              <div style={{ color: '#222' }}>
+                <strong>ID:</strong> <span style={{ color: '#222' }}>{rec.id}</span><br />
+                <strong>Indicaciones:</strong> <span style={{ color: '#222' }}>{rec.indicaciones}</span><br />
+                <strong>Fecha:</strong> <span style={{ color: '#222' }}>{rec.createdAt ? new Date(rec.createdAt).toLocaleString() : 'Sin fecha'}</span><br />
+                <strong>S3 Key:</strong> <span style={{ color: '#222' }}>{rec.s3key || 'Sin archivo'}</span>
               </div>
             </li>
           ))}

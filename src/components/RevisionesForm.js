@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './RevisionesForm.css';
-import { upsertClienteByCedula, createRevision, getClienteFullByCedula } from '../apiCrud';
+import { upsertClienteByCedula, createRevision, getClienteByCedula } from '../apiCrud';
 
 const RevisionesForm = ({ cliente, usuario, onGuardado }) => {
     const [revisiones, setRevisiones] = useState([{ parte: '', descripcion: '' }]);
@@ -27,14 +27,14 @@ const RevisionesForm = ({ cliente, usuario, onGuardado }) => {
         setLoading(true);
         try {
 
-            // Llama a createRevision para cada revisión
-            for (const rev of revisiones) {
-                await createRevision({
-                    clienteID: cliente.cedula,
-                    parte: rev.parte,
-                    descripcion: rev.descripcion
-                });
-            }
+            // // Llama a createRevision para cada revisión
+            // for (const rev of revisiones) {
+            //     await createRevision({
+            //         clienteID: cliente.cedula,
+            //         parte: rev.parte,
+            //         descripcion: rev.descripcion
+            //     });
+            // }
 
         } catch (err) {
             setShowPopup(true);
