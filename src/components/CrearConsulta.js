@@ -76,6 +76,14 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
   const [planDeTratamientoMedicamentos, setPlanDeTratamientoMedicamentos] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Calcula Gaslow Total automáticamente
+  React.useEffect(() => {
+    const ocular = parseInt(gaslowOcular) || 0;
+    const verbal = parseInt(gaslowVerbal) || 0;
+    const motora = parseInt(gaslowMotora) || 0;
+    setGaslowTotal(ocular + verbal + motora);
+  }, [gaslowOcular, gaslowVerbal, gaslowMotora]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -237,6 +245,8 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
       <h3 className="crear-consulta-titulo">
         Nueva Consulta{nombreCliente ? ` para ${nombreCliente}` : ''}
       </h3>
+      <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
+      <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Inicio de Atención y Motivo</h4>
       <div className="crear-consulta-campo">
         <label>Hora:</label>
         <input
@@ -283,6 +293,8 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           className="crear-consulta-input"
         />
       </div>
+      <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
+      <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Antecedentes personales y familiares</h4>
       <div className="crear-consulta-campo">
         <label>Antecedente Alérgico:</label>
         <input
@@ -318,8 +330,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setAntecedenteTraumatologico(e.target.value)}
           className="crear-consulta-input"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Antecedente Quirúrgico:</label>
         <input
           type="text"
@@ -355,6 +365,8 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           className="crear-consulta-input"
         />
       </div>
+      <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
+      <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Enfermedad Actual y Revisión de Sistemas</h4>
       <div className="crear-consulta-campo">
         <label>Enfermedad Actual:</label>
         <textarea
@@ -365,6 +377,8 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           className="crear-consulta-textarea"
         />
       </div>
+      <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
+      <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Signos Vitales, Mediciones y Valores</h4>
       <div className="crear-consulta-campo">
         <label>Presión Arterial:</label>
         <input
@@ -382,8 +396,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setFrecuenciaCardiaca(e.target.value)}
           className="crear-consulta-input"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Frecuencia Respiratoria:</label>
         <input
           type="text"
@@ -400,8 +412,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setTemperaturaBucal(e.target.value)}
           className="crear-consulta-input"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Temperatura Axilar:</label>
         <input
           type="text"
@@ -418,8 +428,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setPeso(e.target.value)}
           className="crear-consulta-input"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Talla:</label>
         <input
           type="text"
@@ -431,36 +439,30 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
       <div className="crear-consulta-campo">
         <label>Gaslow Ocular:</label>
         <input
-          type="text"
+          type="number"
           value={gaslowOcular}
           onChange={e => setGaslowOcular(e.target.value)}
           className="crear-consulta-input"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Gaslow Verbal:</label>
         <input
-          type="text"
+          type="number"
           value={gaslowVerbal}
           onChange={e => setGaslowVerbal(e.target.value)}
           className="crear-consulta-input"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Gaslow Motora:</label>
         <input
-          type="text"
+          type="number"
           value={gaslowMotora}
           onChange={e => setGaslowMotora(e.target.value)}
           className="crear-consulta-input"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Gaslow Total:</label>
         <input
-          type="text"
+          type="number"
           value={gaslowTotal}
-          onChange={e => setGaslowTotal(e.target.value)}
+          readOnly
           className="crear-consulta-input"
         />
       </div>
@@ -500,6 +502,8 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           className="crear-consulta-input"
         />
       </div>
+      <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
+      <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Examen Físico y Diagnóstico</h4>
       <div className="crear-consulta-campo">
         <label>Vía Aérea Obstruida:</label>
         <input
@@ -508,7 +512,64 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setViaAereaObstruida(e.target.value)}
           className="crear-consulta-input"
         />
+        <label>Cabeza:</label>
+        <input
+          type="text"
+          value={cabeza}
+          onChange={e => setCabeza(e.target.value)}
+          className="crear-consulta-input"
+        />
       </div>
+      <div className="crear-consulta-campo">        
+        <label>Cuello:</label>
+        <input
+          type="text"
+          value={cuello}
+          onChange={e => setCuello(e.target.value)}
+          className="crear-consulta-input"
+        />
+        <label>Tórax:</label>
+        <input
+          type="text"
+          value={torax}
+          onChange={e => setTorax(e.target.value)}
+          className="crear-consulta-input"
+        />
+      </div>
+      <div className="crear-consulta-campo">        
+        <label>Abdomen:</label>
+        <input
+          type="text"
+          value={abdomen}
+          onChange={e => setAbdomen(e.target.value)}
+          className="crear-consulta-input"
+        />
+        <label>Columna:</label>
+        <input
+          type="text"
+          value={columna}
+          onChange={e => setColumna(e.target.value)}
+          className="crear-consulta-input"
+        />
+      </div>
+      <div className="crear-consulta-campo">        
+        <label>Pelvis:</label>
+        <input
+          type="text"
+          value={pelvis}
+          onChange={e => setPelvis(e.target.value)}
+          className="crear-consulta-input"
+        />
+        <label>Extremidades:</label>
+        <input
+          type="text"
+          value={extremidades}
+          onChange={e => setExtremidades(e.target.value)}
+          className="crear-consulta-input"
+        />
+      </div>
+      <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
+      <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Exámenes solicitados</h4>
       <div className="crear-consulta-campo">
         <label>Examen Biometría:</label>
         <input
@@ -517,8 +578,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setSolicitudExamenBiometria(e.target.checked)}
           className="crear-consulta-checkbox"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Examen Uroanálisis:</label>
         <input
           type="checkbox"
@@ -526,8 +585,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setSolicitudExamenUroanalisis(e.target.checked)}
           className="crear-consulta-checkbox"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Examen Química Sanguínea:</label>
         <input
           type="checkbox"
@@ -544,8 +601,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setSolicitudExamenElectrolitos(e.target.checked)}
           className="crear-consulta-checkbox"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Examen Gasometría:</label>
         <input
           type="checkbox"
@@ -553,8 +608,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setSolicitudExamenGasometria(e.target.checked)}
           className="crear-consulta-checkbox"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Examen Electrocardiograma:</label>
         <input
           type="checkbox"
@@ -571,8 +624,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setSolicitudExamenEndoscopia(e.target.checked)}
           className="crear-consulta-checkbox"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Examen Rx Tórax:</label>
         <input
           type="checkbox"
@@ -580,8 +631,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setSolicitudExamenRxTorax(e.target.checked)}
           className="crear-consulta-checkbox"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Examen Rx Abdomen:</label>
         <input
           type="checkbox"
@@ -598,8 +647,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setSolicitudExamenRxOsea(e.target.checked)}
           className="crear-consulta-checkbox"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Examen Tomografía:</label>
         <input
           type="checkbox"
@@ -607,8 +654,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setSolicitudExamenTomografia(e.target.checked)}
           className="crear-consulta-checkbox"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Examen Resonancia:</label>
         <input
           type="checkbox"
@@ -625,8 +670,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setSolicitudExamenEcografiaPelvica(e.target.checked)}
           className="crear-consulta-checkbox"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Examen Ecografía Abdomen:</label>
         <input
           type="checkbox"
@@ -634,8 +677,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setSolicitudExamenEcografiaAbdomen(e.target.checked)}
           className="crear-consulta-checkbox"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Interconsulta:</label>
         <input
           type="checkbox"
@@ -643,8 +684,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           onChange={e => setSolicitudExamenInterconsulta(e.target.checked)}
           className="crear-consulta-checkbox"
         />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Otros Exámenes:</label>
         <input
           type="checkbox"
@@ -653,6 +692,8 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           className="crear-consulta-checkbox"
         />
       </div>
+      <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
+      <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Diagnosticos</h4>
       <div className="crear-consulta-campo">
         <label>Diagnóstico de Ingreso:</label>
         <input

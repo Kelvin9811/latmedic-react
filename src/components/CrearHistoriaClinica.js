@@ -129,6 +129,23 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
     setShowConfirm(false);
   };
 
+  const handleFechaNacimientoChange = (e) => {
+    const fecha = e.target.value;
+    setFechaNacimiento(fecha);
+    if (fecha) {
+      const hoy = new Date();
+      const nacimiento = new Date(fecha);
+      let edad = hoy.getFullYear() - nacimiento.getFullYear();
+      const m = hoy.getMonth() - nacimiento.getMonth();
+      if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
+        edad--;
+      }
+      setEdadEnAnosCumplidos(edad >= 0 ? edad : '');
+    } else {
+      setEdadEnAnosCumplidos('');
+    }
+  };
+
   return (
     <>
       <form className="crear-historia-form" onSubmit={handleSubmit}>
@@ -233,7 +250,15 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
           <input
             type="date"
             value={fechaNacimiento}
-            onChange={e => setFechaNacimiento(e.target.value)}
+            onChange={handleFechaNacimientoChange}
+          />          
+          <label>Edad:</label>
+          <input
+            type="number"
+            value={edadEnAnosCumplidos}
+            readOnly
+            min={0}
+            max={120}
           />
         </div>
         <div className="crear-historia-campo">
@@ -261,30 +286,22 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
           />
         </div>
         <div className="crear-historia-campo">
-          <label>Edad en años cumplidos:</label>
-          <input
-            type="number"
-            value={edadEnAnosCumplidos}
-            onChange={e => setEdadEnAnosCumplidos(e.target.value)}
-            min={0}
-            max={120}
-          />
-        </div>
-        <div className="crear-historia-campo">
           <label>Sexo:</label>
-          <input
-            type="text"
-            value={sexo}
-            onChange={e => setSexo(e.target.value)}
-          />
-        </div>
-        <div className="crear-historia-campo">
+          <select value={sexo} onChange={e => setSexo(e.target.value)}>
+            <option value="">Seleccione...</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
           <label>Estado civil:</label>
-          <input
-            type="text"
-            value={estadoCivil}
-            onChange={e => setEstadoCivil(e.target.value)}
-          />
+          <select value={estadoCivil} onChange={e => setEstadoCivil(e.target.value)}>
+            <option value="">Seleccione...</option>
+            <option value="Casado">Casado</option>
+            <option value="Soltero">Soltero</option>
+            <option value="Viudo">Viudo</option>
+            <option value="Divorciado">Divorciado</option>
+            <option value="Union libre">Unión libre</option>
+          </select>
         </div>
         <div className="crear-historia-campo">
           <label>Nivel educativo:</label>
@@ -363,11 +380,11 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
         </button>
       </form>
       {showConfirm && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-            <p>¿Está seguro que desea crear la historia clínica?</p>
-            <button onClick={handleConfirm} className="crear-historia-btn">Confirmar</button>
-            <button onClick={() => setShowConfirm(false)} className="crear-historia-btn crear-historia-btn-cancel">Cancelar</button>
+        <div className="crear-historia-modal" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1000, background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 16px rgba(0,0,0,0.15)', padding: 32, minWidth: 320, maxWidth: 400, textAlign: 'center' }}>
+            <p style={{ fontWeight: 'bold', color: '#222', marginBottom: 24 }}>¿Está seguro que desea crear la historia clínica?</p>
+            <button onClick={handleConfirm} className="crear-historia-btn" >Confirmar</button>
+            <button onClick={() => setShowConfirm(false)} style={{background: '#ff4d4f'}} className="crear-historia-btn crear-historia-btn-cancel">Cancelar</button>
           </div>
         </div>
       )}

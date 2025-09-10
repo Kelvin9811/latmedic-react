@@ -64,6 +64,38 @@
   cursor: not-allowed;
 }
 
+.crear-historia-form label {
+  font-weight: bold;
+  color: #222;
+}
+
+.crear-historia-form select,
+.crear-historia-form option {
+  font-weight: bold;
+  color: #222;
+  font-size: 16px;
+}
+
+.crear-historia-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.crear-historia-modal button{
+  margin: 10px;
+}
+
+.crear-historia-btn crear-historia-btn-cancel {
+  color: #ff4d4f;
+}
+
 @media (max-width: 700px) {
   .crear-historia-campo {
     display: grid;
