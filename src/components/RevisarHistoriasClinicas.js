@@ -46,6 +46,81 @@ const RevisarHistoriasClinicas = () => {
   const [nuevaConsulta, setNuevaConsulta] = useState({ motivo: '', diagnostico: '' });
   const [loadingConsulta, setLoadingConsulta] = useState(false);
   const [consultaSeleccionada, setConsultaSeleccionada] = useState(null);
+  const [editConsultaIdx, setEditConsultaIdx] = useState(null);
+  const [editConsultaData, setEditConsultaData] = useState({
+    hora: '',
+    grupoSanguineoYFactorRh: '',
+    motivoDeConsulta: '',
+    alientoEtilico: '',
+    valorAlcoCheck: '',
+    antecedenteAlergico: '',
+    antecedenteClinico: '',
+    antecedenteGinecologico: '',
+    antecedenteTraumatologico: '',
+    antecedenteQuirurgico: '',
+    antecedenteFarmacoLogico: '',
+    antecedentePsiquiatrico: '',
+    antecedenteOtro: '',
+    enfermedadActual: '',
+    presionArterial: '',
+    frecuenciaCardiaca: '',
+    frecuenciaRespiratoria: '',
+    temperaturaBucal: '',
+    temperaturaAxilar: '',
+    peso: '',
+    talla: '',
+    gaslowOcular: '',
+    gaslowVerbal: '',
+    gaslowMotora: '',
+    gaslowTotal: '',
+    reaccionPupilaIzq: '',
+    reaccionPupilaDer: '',
+    tiempoLlenadoCapilar: '',
+    saturacionOxigeno: '',
+    viaAereaObstruida: '',
+    cabeza: '',
+    cuello: '',
+    torax: '',
+    abdomen: '',
+    columna: '',
+    pelvis: '',
+    extremidades: '',
+    heridaPenetrante: '',
+    heridaCortante: '',
+    fracturaExpuesta: '',
+    fracturaCerrada: '',
+    cuerpoExtrano: '',
+    hemorragia: '',
+    mordedura: '',
+    picadura: '',
+    excoriacion: '',
+    deformidadOMasa: '',
+    hematoma: '',
+    eritemaInflamacion: '',
+    luxacionEsguince: '',
+    quemadura: '',
+    solicitudExamenBiometria: false,
+    solicitudExamenUroanalisis: false,
+    solicitudExamenQuimicaSanguinea: false,
+    solicitudExamenElectrolitos: false,
+    solicitudExamenGasometria: false,
+    solicitudExamenElectrocardiograma: false,
+    solicitudExamenEndoscopia: false,
+    solicitudExamenRxTorax: false,
+    solicitudExamenRxAbdomen: false,
+    solicitudExamenRxOsea: false,
+    solicitudExamenTomografia: false,
+    solicitudExamenResonancia: false,
+    solicitudExamenEcografiaPelvica: false,
+    solicitudExamenEcografiaAbdomen: false,
+    solicitudExamenInterconsulta: false,
+    solicitudExamenOtros: false,
+    diagnosticodeIngreso: '',
+    diagnosticodeAltade: '',
+    planDeTratamientoIndicaciones: '',
+    planDeTratamientoMedicamentos: ''
+  });
+
   // Función para mostrar el formulario de agregar consulta
   const handleAgregarConsultaClick = () => {
     setShowConsultas(true);
@@ -187,6 +262,19 @@ const RevisarHistoriasClinicas = () => {
     setConsultasCedula('');
   };
 
+  const handleEditConsulta = (consulta) => {
+    setEditConsultaData({ ...consulta });
+    setEditConsultaIdx(consulta.id);
+  };
+
+  const handleSaveEditConsulta = async () => {
+    setLoading(true);
+    // Aquí deberías llamar a tu función de actualización, por ejemplo updateConsulta(editConsultaData)
+    // await updateConsulta(editConsultaData);
+    setEditConsultaIdx(null);
+    setLoading(false);
+  };
+
   return (
     <div className="revisar-historias-container">
       <h3 className="revisar-historias-titulo">Revisar Historias Clínicas</h3>
@@ -262,8 +350,8 @@ const RevisarHistoriasClinicas = () => {
                           flexDirection: 'column',
                           cursor: 'pointer'
                         }}
-                        onClick={() => setConsultaSeleccionada(con)}
-                        title="Ver manejo de consulta"
+                        onClick={() => handleEditConsulta(con)}
+                        title="Editar consulta"
                       >
                         <div>
                           <strong>Motivo:</strong> {con.motivoDeConsulta}
@@ -377,7 +465,7 @@ const RevisarHistoriasClinicas = () => {
           </div>
         </div>
       )}
-      {consultaSeleccionada && (
+      {consultaSeleccionada && false && (
         <div className="revisar-historias-popup-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1000, background: 'rgba(0,0,0,0.3)' }}>
           <div
             className="revisar-historias-popup-content"
@@ -488,6 +576,82 @@ const RevisarHistoriasClinicas = () => {
               <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
                 <button type="submit" className="revisar-historias-btn">Guardar</button>
                 <button type="button" className="revisar-historias-btn revisar-historias-btn-cancel" onClick={() => setEditIdx(null)}>Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {editConsultaIdx && (
+        <div className="revisar-historias-popup-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1000, background: 'rgba(0,0,0,0.3)' }}>
+          <div className="revisar-historias-popup-content" style={{ maxHeight: '90vh', overflowY: 'auto', width: '90vw', maxWidth: 600, margin: '5vh auto', background: '#fff', borderRadius: 12, boxShadow: '0 2px 16px rgba(0,0,0,0.15)', padding: 24, position: 'relative' }}>
+            <h4>Editar Consulta</h4>
+            <form onSubmit={e => { e.preventDefault(); handleSaveEditConsulta(); }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <label>Hora:</label>
+                <input value={editConsultaData.hora || ''} disabled style={{ color: '#222' }} />
+                <label>Grupo Sanguíneo y Factor RH:</label>
+                <input value={editConsultaData.grupoSanguineoYFactorRh || ''} onChange={e => setEditConsultaData(d => ({ ...d, grupoSanguineoYFactorRh: e.target.value }))} />
+                <label>Motivo de Consulta:</label>
+                <input value={editConsultaData.motivoDeConsulta || ''} onChange={e => setEditConsultaData(d => ({ ...d, motivoDeConsulta: e.target.value }))} />
+                <label>Aliento Etílico:</label>
+                <input value={editConsultaData.alientoEtilico || ''} onChange={e => setEditConsultaData(d => ({ ...d, alientoEtilico: e.target.value }))} />
+                <label>Valor AlcoCheck:</label>
+                <input value={editConsultaData.valorAlcoCheck || ''} onChange={e => setEditConsultaData(d => ({ ...d, valorAlcoCheck: e.target.value }))} />
+                <label>Antecedente Alérgico:</label>
+                <input value={editConsultaData.antecedenteAlergico || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedenteAlergico: e.target.value }))} />
+                <label>Antecedente Clínico:</label>
+                <input value={editConsultaData.antecedenteClinico || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedenteClinico: e.target.value }))} />
+                <label>Antecedente Ginecológico:</label>
+                <input value={editConsultaData.antecedenteGinecologico || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedenteGinecologico: e.target.value }))} />
+                <label>Antecedente Traumatológico:</label>
+                <input value={editConsultaData.antecedenteTraumatologico || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedenteTraumatologico: e.target.value }))} />
+                <label>Antecedente Quirúrgico:</label>
+                <input value={editConsultaData.antecedenteQuirurgico || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedenteQuirurgico: e.target.value }))} />
+                <label>Antecedente Farmacológico:</label>
+                <input value={editConsultaData.antecedenteFarmacoLogico || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedenteFarmacoLogico: e.target.value }))} />
+                <label>Antecedente Psiquiátrico:</label>
+                <input value={editConsultaData.antecedentePsiquiatrico || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedentePsiquiatrico: e.target.value }))} />
+                <label>Antecedente Otro:</label>
+                <input value={editConsultaData.antecedenteOtro || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedenteOtro: e.target.value }))} />
+                <label>Enfermedad Actual:</label>
+                <textarea value={editConsultaData.enfermedadActual || ''} onChange={e => setEditConsultaData(d => ({ ...d, enfermedadActual: e.target.value }))} rows={3} />
+                <label>Presión Arterial:</label>
+                <input value={editConsultaData.presionArterial || ''} onChange={e => setEditConsultaData(d => ({ ...d, presionArterial: e.target.value }))} />
+                <label>Frecuencia Cardíaca:</label>
+                <input value={editConsultaData.frecuenciaCardiaca || ''} onChange={e => setEditConsultaData(d => ({ ...d, frecuenciaCardiaca: e.target.value }))} />
+                <label>Frecuencia Respiratoria:</label>
+                <input value={editConsultaData.frecuenciaRespiratoria || ''} onChange={e => setEditConsultaData(d => ({ ...d, frecuenciaRespiratoria: e.target.value }))} />
+                <label>Temperatura Bucal:</label>
+                <input value={editConsultaData.temperaturaBucal || ''} onChange={e => setEditConsultaData(d => ({ ...d, temperaturaBucal: e.target.value }))} />
+                <label>Temperatura Axilar:</label>
+                <input value={editConsultaData.temperaturaAxilar || ''} onChange={e => setEditConsultaData(d => ({ ...d, temperaturaAxilar: e.target.value }))} />
+                <label>Peso:</label>
+                <input value={editConsultaData.peso || ''} onChange={e => setEditConsultaData(d => ({ ...d, peso: e.target.value }))} />
+                <label>Talla:</label>
+                <input value={editConsultaData.talla || ''} onChange={e => setEditConsultaData(d => ({ ...d, talla: e.target.value }))} />
+                <label>Gaslow Ocular:</label>
+                <input value={editConsultaData.gaslowOcular || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowOcular: e.target.value }))} />
+                <label>Gaslow Verbal:</label>
+                <input value={editConsultaData.gaslowVerbal || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowVerbal: e.target.value }))} />
+                <label>Gaslow Motora:</label>
+                <input value={editConsultaData.gaslowMotora || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowMotora: e.target.value }))} />
+                <label>Gaslow Total:</label>
+                <input value={editConsultaData.gaslowTotal || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowTotal: e.target.value }))} />
+                <label>Reacción Pupila Izquierda:</label>
+                <input value={editConsultaData.reaccionPupilaIzq || ''} onChange={e => setEditConsultaData(d => ({ ...d, reaccionPupilaIzq: e.target.value }))} />
+                <label>Reacción Pupila Derecha:</label>
+                <input value={editConsultaData.reaccionPupilaDer || ''} onChange={e => setEditConsultaData(d => ({ ...d, reaccionPupilaDer: e.target.value }))} />
+                <label>Tiempo Llenado Capilar:</label>
+                <input value={editConsultaData.tiempoLlenadoCapilar || ''} onChange={e => setEditConsultaData(d => ({ ...d, tiempoLlenadoCapilar: e.target.value }))} />
+                <label>Saturación Oxígeno:</label>
+                <input value={editConsultaData.saturacionOxigeno || ''} onChange={e => setEditConsultaData(d => ({ ...d, saturacionOxigeno: e.target.value }))} />
+                <label>Vía Aérea Obstruida:</label>
+                <input value={editConsultaData.viaAereaObstruida || ''} onChange={e => setEditConsultaData(d => ({ ...d, viaAereaObstruida: e.target.value }))} />
+                {/* Agrega los checkboxes y demás campos de la misma forma */}
+              </div>
+              <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
+                <button type="submit" className="revisar-historias-btn">Guardar</button>
+                <button type="button" className="revisar-historias-btn revisar-historias-btn-cancel" onClick={() => setEditConsultaIdx(null)}>Cancelar</button>
               </div>
             </form>
           </div>

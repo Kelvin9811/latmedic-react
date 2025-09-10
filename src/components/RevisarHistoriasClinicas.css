@@ -123,6 +123,11 @@
   color: #282c34;
 }
 
+.revisar-historias-popup-content label {
+  font-weight: bold;
+  color: #222;
+}
+
 .revisar-historias-btn-editar {
   background: #ffc107;
   color: #282c34;
