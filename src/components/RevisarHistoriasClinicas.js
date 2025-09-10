@@ -8,7 +8,34 @@ const RevisarHistoriasClinicas = () => {
   const [historias, setHistorias] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editIdx, setEditIdx] = useState(null);
-  const [editData, setEditData] = useState({ nombre: '', cedula: '', antecedentes: '' });
+  const [editData, setEditData] = useState({
+    nombre: '',
+    cedula: '',
+    direccionResidenciaHabitual: '',
+    calleYNumero: '',
+    barrio: '',
+    parroquia: '',
+    canton: '',
+    provincia: '',
+    zona: '',
+    telefono: '',
+    fechaNacimiento: '',
+    lugarNacimiento: '',
+    nacionalidad: '',
+    grupoCultural: '',
+    edadEnAnosCumplidos: '',
+    sexo: '',
+    estadoCivil: '',
+    nivelEducativo: '',
+    fechaAdmision: '',
+    ocupacion: '',
+    empresaDondeTrabaja: '',
+    tipoSeguroSalud: '',
+    referidoDe: '',
+    enCasoDeAvisarA: '',
+    parentescoAfinidad: '',
+    direccion: ''
+  });
   const [showConsultas, setShowConsultas] = useState(false);
   const [consultas, setConsultas] = useState([]);
   const [consultasCedula, setConsultasCedula] = useState('');
@@ -189,9 +216,10 @@ const RevisarHistoriasClinicas = () => {
                   <input value={editData.nombre} onChange={e => handleEditChange('nombre', e.target.value)} style={{ color: '#222' }} />
                 ) : h.nombre}</span>
                 <br />
-                <strong style={{ color: '#222' }}>Antecedentes:</strong> <span style={{ color: '#222' }}>{editIdx === idx ? (
-                  <textarea value={editData.antecedentes} onChange={e => handleEditChange('antecedentes', e.target.value)} rows={2} style={{ color: '#222' }} />
-                ) : <span style={{ whiteSpace: 'pre-line', color: '#222' }}>{h.antecedentes}</span>}</span>
+                <strong style={{ color: '#222' }}>Fecha de nacimiento:</strong> <span style={{ color: '#222' }}>{h.fechaNacimiento ? new Date(h.fechaNacimiento).toLocaleDateString() : 'Sin dato'}</span>
+                <br />
+                <strong style={{ color: '#222' }}>Teléfono:</strong> <span style={{ color: '#222' }}>{h.telefono || 'Sin dato'}</span>
+                <br />
               </div>
               <div style={{ marginBottom: 12 }}>
                 {editIdx === idx ? (
@@ -238,10 +266,10 @@ const RevisarHistoriasClinicas = () => {
                         title="Ver manejo de consulta"
                       >
                         <div>
-                          <strong>Motivo:</strong> {con.motivo}
+                          <strong>Motivo:</strong> {con.motivoDeConsulta}
                         </div>
                         <div>
-                          <strong>Diagnóstico:</strong> <span style={{ whiteSpace: 'pre-line', color: '#222' }}>{con.diagnostico}</span>
+                          <strong>Diagnóstico:</strong> <span style={{ whiteSpace: 'pre-line', color: '#222' }}>{con.diagnosticodeIngreso}</span>
                         </div>
                         <div>
                           <strong>Fecha de consulta:</strong> {con.createdAt ? new Date(con.createdAt).toLocaleString() : 'Sin fecha'}
@@ -395,6 +423,73 @@ const RevisarHistoriasClinicas = () => {
             >
               Cancelar
             </button>
+          </div>
+        </div>
+      )}
+      {editIdx !== null && (
+        <div className="revisar-historias-popup-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1000, background: 'rgba(0,0,0,0.3)' }}>
+          <div className="revisar-historias-popup-content" style={{ maxHeight: '90vh', overflowY: 'auto', width: '90vw', maxWidth: 600, margin: '5vh auto', background: '#fff', borderRadius: 12, boxShadow: '0 2px 16px rgba(0,0,0,0.15)', padding: 24, position: 'relative' }}>
+            <h4>Editar Historia Clínica</h4>
+            <form onSubmit={e => { e.preventDefault(); handleEditSave(); }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <label>Nombre:</label>
+                <input value={editData.nombre} disabled style={{ color: '#222' }} />
+                <label>Cédula:</label>
+                <input value={editData.cedula} disabled style={{ color: '#222' }} />
+                <label>Dirección residencia habitual:</label>
+                <input value={editData.direccionResidenciaHabitual || ''} onChange={e => handleEditChange('direccionResidenciaHabitual', e.target.value)} />
+                <label>Calle y número:</label>
+                <input value={editData.calleYNumero || ''} onChange={e => handleEditChange('calleYNumero', e.target.value)} />
+                <label>Barrio:</label>
+                <input value={editData.barrio || ''} onChange={e => handleEditChange('barrio', e.target.value)} />
+                <label>Parroquia:</label>
+                <input value={editData.parroquia || ''} onChange={e => handleEditChange('parroquia', e.target.value)} />
+                <label>Cantón:</label>
+                <input value={editData.canton || ''} onChange={e => handleEditChange('canton', e.target.value)} />
+                <label>Provincia:</label>
+                <input value={editData.provincia || ''} onChange={e => handleEditChange('provincia', e.target.value)} />
+                <label>Zona:</label>
+                <input value={editData.zona || ''} onChange={e => handleEditChange('zona', e.target.value)} />
+                <label>Teléfono:</label>
+                <input value={editData.telefono || ''} onChange={e => handleEditChange('telefono', e.target.value)} />
+                <label>Fecha de nacimiento:</label>
+                <input type="date" value={editData.fechaNacimiento ? editData.fechaNacimiento.substring(0,10) : ''} onChange={e => handleEditChange('fechaNacimiento', e.target.value)} />
+                <label>Lugar de nacimiento:</label>
+                <input value={editData.lugarNacimiento || ''} onChange={e => handleEditChange('lugarNacimiento', e.target.value)} />
+                <label>Nacionalidad:</label>
+                <input value={editData.nacionalidad || ''} onChange={e => handleEditChange('nacionalidad', e.target.value)} />
+                <label>Grupo cultural:</label>
+                <input value={editData.grupoCultural || ''} onChange={e => handleEditChange('grupoCultural', e.target.value)} />
+                <label>Edad en años cumplidos:</label>
+                <input type="number" value={editData.edadEnAnosCumplidos || ''} onChange={e => handleEditChange('edadEnAnosCumplidos', e.target.value)} min={0} max={120} />
+                <label>Sexo:</label>
+                <input value={editData.sexo || ''} onChange={e => handleEditChange('sexo', e.target.value)} />
+                <label>Estado civil:</label>
+                <input value={editData.estadoCivil || ''} onChange={e => handleEditChange('estadoCivil', e.target.value)} />
+                <label>Nivel educativo:</label>
+                <input value={editData.nivelEducativo || ''} onChange={e => handleEditChange('nivelEducativo', e.target.value)} />
+                <label>Fecha de admisión:</label>
+                <input type="date" value={editData.fechaAdmision ? editData.fechaAdmision.substring(0,10) : ''} onChange={e => handleEditChange('fechaAdmision', e.target.value)} />
+                <label>Ocupación:</label>
+                <input value={editData.ocupacion || ''} onChange={e => handleEditChange('ocupacion', e.target.value)} />
+                <label>Empresa donde trabaja:</label>
+                <input value={editData.empresaDondeTrabaja || ''} onChange={e => handleEditChange('empresaDondeTrabaja', e.target.value)} />
+                <label>Tipo seguro salud:</label>
+                <input value={editData.tipoSeguroSalud || ''} onChange={e => handleEditChange('tipoSeguroSalud', e.target.value)} />
+                <label>Referido de:</label>
+                <input value={editData.referidoDe || ''} onChange={e => handleEditChange('referidoDe', e.target.value)} />
+                <label>En caso de avisar a:</label>
+                <input value={editData.enCasoDeAvisarA || ''} onChange={e => handleEditChange('enCasoDeAvisarA', e.target.value)} />
+                <label>Parentesco/afinidad:</label>
+                <input value={editData.parentescoAfinidad || ''} onChange={e => handleEditChange('parentescoAfinidad', e.target.value)} />
+                <label>Dirección:</label>
+                <input value={editData.direccion || ''} onChange={e => handleEditChange('direccion', e.target.value)} />
+              </div>
+              <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
+                <button type="submit" className="revisar-historias-btn">Guardar</button>
+                <button type="button" className="revisar-historias-btn revisar-historias-btn-cancel" onClick={() => setEditIdx(null)}>Cancelar</button>
+              </div>
+            </form>
           </div>
         </div>
       )}

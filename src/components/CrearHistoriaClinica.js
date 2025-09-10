@@ -30,10 +30,17 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
   const [parentescoAfinidad, setParentescoAfinidad] = useState('');
   const [direccion, setDireccion] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    setShowConfirm(true);
+  };
+
+  const handleConfirm = async () => {
     setLoading(true);
+    const fechaNacimientoISO = fechaNacimiento ? new Date(fechaNacimiento).toISOString() : undefined;
+    const fechaAdmisionISO = fechaAdmision ? new Date(fechaAdmision).toISOString() : undefined;
     await upsertClienteByCedula({
       cedula,
       nombre,
@@ -45,7 +52,7 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
       provincia,
       zona,
       telefono,
-      fechaNacimiento,
+      fechaNacimiento: fechaNacimientoISO,
       lugarNacimiento,
       nacionalidad,
       grupoCultural,
@@ -53,7 +60,7 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
       sexo,
       estadoCivil,
       nivelEducativo,
-      fechaAdmision,
+      fechaAdmision: fechaAdmisionISO,
       ocupacion,
       empresaDondeTrabaja,
       tipoSeguroSalud,
@@ -119,240 +126,252 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
     setParentescoAfinidad('');
     setDireccion('');
     setLoading(false);
+    setShowConfirm(false);
   };
 
   return (
-    <form className="crear-historia-form" onSubmit={handleSubmit}>
-      <h3 className="crear-historia-titulo">Nueva Historia Clínica</h3>
-      <div className="crear-historia-campo">
-        <label>Nombre:</label>
-        <input
-          type="text"
-          value={nombre}
-          onChange={e => {
-            const val = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '');
-            setNombre(val);
-          }}
-          required
-          maxLength={60}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Cédula:</label>
-        <input
-          type="text"
-          value={cedula}
-          onChange={e => {
-            const val = e.target.value.replace(/\D/g, '');
-            setCedula(val);
-          }}
-          required
-          maxLength={10}
-          pattern="[0-9]*"
-          inputMode="numeric"
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Dirección residencia habitual:</label>
-        <input
-          type="text"
-          value={direccionResidenciaHabitual}
-          onChange={e => setDireccionResidenciaHabitual(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Calle y número:</label>
-        <input
-          type="text"
-          value={calleYNumero}
-          onChange={e => setCalleYNumero(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Barrio:</label>
-        <input
-          type="text"
-          value={barrio}
-          onChange={e => setBarrio(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Parroquia:</label>
-        <input
-          type="text"
-          value={parroquia}
-          onChange={e => setParroquia(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-      </div>
-      <div className="crear-historia-campo">
-        <label>Cantón:</label>
-        <input
-          type="text"
-          value={canton}
-          onChange={e => setCanton(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Provincia:</label>
-        <input
-          type="text"
-          value={provincia}
-          onChange={e => setProvincia(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Zona:</label>
-        <input
-          type="text"
-          value={zona}
-          onChange={e => setZona(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Teléfono:</label>
-        <input
-          type="text"
-          value={telefono}
-          onChange={e => setTelefono(e.target.value.replace(/\D/g, ''))}
-          maxLength={15}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Fecha de nacimiento:</label>
-        <input
-          type="date"
-          value={fechaNacimiento}
-          onChange={e => setFechaNacimiento(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Lugar de nacimiento:</label>
-        <input
-          type="text"
-          value={lugarNacimiento}
-          onChange={e => setLugarNacimiento(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Nacionalidad:</label>
-        <input
-          type="text"
-          value={nacionalidad}
-          onChange={e => setNacionalidad(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Grupo cultural:</label>
-        <input
-          type="text"
-          value={grupoCultural}
-          onChange={e => setGrupoCultural(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Edad en años cumplidos:</label>
-        <input
-          type="number"
-          value={edadEnAnosCumplidos}
-          onChange={e => setEdadEnAnosCumplidos(e.target.value)}
-          min={0}
-          max={120}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Sexo:</label>
-        <input
-          type="text"
-          value={sexo}
-          onChange={e => setSexo(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Estado civil:</label>
-        <input
-          type="text"
-          value={estadoCivil}
-          onChange={e => setEstadoCivil(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Nivel educativo:</label>
-        <input
-          type="text"
-          value={nivelEducativo}
-          onChange={e => setNivelEducativo(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Fecha de admisión:</label>
-        <input
-          type="date"
-          value={fechaAdmision}
-          onChange={e => setFechaAdmision(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Ocupación:</label>
-        <input
-          type="text"
-          value={ocupacion}
-          onChange={e => setOcupacion(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Empresa donde trabaja:</label>
-        <input
-          type="text"
-          value={empresaDondeTrabaja}
-          onChange={e => setEmpresaDondeTrabaja(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Tipo seguro salud:</label>
-        <input
-          type="text"
-          value={tipoSeguroSalud}
-          onChange={e => setTipoSeguroSalud(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Referido de:</label>
-        <input
-          type="text"
-          value={referidoDe}
-          onChange={e => setReferidoDe(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>En caso de avisar a:</label>
-        <input
-          type="text"
-          value={enCasoDeAvisarA}
-          onChange={e => setEnCasoDeAvisarA(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Parentesco/afinidad:</label>
-        <input
-          type="text"
-          value={parentescoAfinidad}
-          onChange={e => setParentescoAfinidad(e.target.value)}
-        />
-      </div>
-      <div className="crear-historia-campo">
-        <label>Dirección:</label>
-        <input
-          type="text"
-          value={direccion}
-          onChange={e => setDireccion(e.target.value)}
-        />
-      </div>
-      <button className="crear-historia-btn" type="submit" disabled={loading}>
-        {loading ? 'Guardando...' : 'Guardar'}
-      </button>
-    </form>
+    <>
+      <form className="crear-historia-form" onSubmit={handleSubmit}>
+        <h3 className="crear-historia-titulo">Nueva Historia Clínica</h3>
+        <div className="crear-historia-campo">
+          <label>Nombre:</label>
+          <input
+            type="text"
+            value={nombre}
+            onChange={e => {
+              const val = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]/g, '');
+              setNombre(val);
+            }}
+            required
+            maxLength={60}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Cédula:</label>
+          <input
+            type="text"
+            value={cedula}
+            onChange={e => {
+              const val = e.target.value.replace(/\D/g, '');
+              setCedula(val);
+            }}
+            required
+            maxLength={10}
+            pattern="[0-9]*"
+            inputMode="numeric"
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Dirección residencia habitual:</label>
+          <input
+            type="text"
+            value={direccionResidenciaHabitual}
+            onChange={e => setDireccionResidenciaHabitual(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Calle y número:</label>
+          <input
+            type="text"
+            value={calleYNumero}
+            onChange={e => setCalleYNumero(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Barrio:</label>
+          <input
+            type="text"
+            value={barrio}
+            onChange={e => setBarrio(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Parroquia:</label>
+          <input
+            type="text"
+            value={parroquia}
+            onChange={e => setParroquia(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+        </div>
+        <div className="crear-historia-campo">
+          <label>Cantón:</label>
+          <input
+            type="text"
+            value={canton}
+            onChange={e => setCanton(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Provincia:</label>
+          <input
+            type="text"
+            value={provincia}
+            onChange={e => setProvincia(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Zona:</label>
+          <input
+            type="text"
+            value={zona}
+            onChange={e => setZona(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Teléfono:</label>
+          <input
+            type="text"
+            value={telefono}
+            onChange={e => setTelefono(e.target.value.replace(/\D/g, ''))}
+            maxLength={15}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Fecha de nacimiento:</label>
+          <input
+            type="date"
+            value={fechaNacimiento}
+            onChange={e => setFechaNacimiento(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Lugar de nacimiento:</label>
+          <input
+            type="text"
+            value={lugarNacimiento}
+            onChange={e => setLugarNacimiento(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Nacionalidad:</label>
+          <input
+            type="text"
+            value={nacionalidad}
+            onChange={e => setNacionalidad(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Grupo cultural:</label>
+          <input
+            type="text"
+            value={grupoCultural}
+            onChange={e => setGrupoCultural(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Edad en años cumplidos:</label>
+          <input
+            type="number"
+            value={edadEnAnosCumplidos}
+            onChange={e => setEdadEnAnosCumplidos(e.target.value)}
+            min={0}
+            max={120}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Sexo:</label>
+          <input
+            type="text"
+            value={sexo}
+            onChange={e => setSexo(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Estado civil:</label>
+          <input
+            type="text"
+            value={estadoCivil}
+            onChange={e => setEstadoCivil(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Nivel educativo:</label>
+          <input
+            type="text"
+            value={nivelEducativo}
+            onChange={e => setNivelEducativo(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Fecha de admisión:</label>
+          <input
+            type="date"
+            value={fechaAdmision}
+            onChange={e => setFechaAdmision(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Ocupación:</label>
+          <input
+            type="text"
+            value={ocupacion}
+            onChange={e => setOcupacion(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Empresa donde trabaja:</label>
+          <input
+            type="text"
+            value={empresaDondeTrabaja}
+            onChange={e => setEmpresaDondeTrabaja(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Tipo seguro salud:</label>
+          <input
+            type="text"
+            value={tipoSeguroSalud}
+            onChange={e => setTipoSeguroSalud(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Referido de:</label>
+          <input
+            type="text"
+            value={referidoDe}
+            onChange={e => setReferidoDe(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>En caso de avisar a:</label>
+          <input
+            type="text"
+            value={enCasoDeAvisarA}
+            onChange={e => setEnCasoDeAvisarA(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Parentesco/afinidad:</label>
+          <input
+            type="text"
+            value={parentescoAfinidad}
+            onChange={e => setParentescoAfinidad(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Dirección:</label>
+          <input
+            type="text"
+            value={direccion}
+            onChange={e => setDireccion(e.target.value)}
+          />
+        </div>
+        <button className="crear-historia-btn" type="submit" disabled={loading}>
+          {loading ? 'Guardando...' : 'Guardar'}
+        </button>
+      </form>
+      {showConfirm && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <p>¿Está seguro que desea crear la historia clínica?</p>
+            <button onClick={handleConfirm} className="crear-historia-btn">Confirmar</button>
+            <button onClick={() => setShowConfirm(false)} className="crear-historia-btn crear-historia-btn-cancel">Cancelar</button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 export default CrearHistoriaClinica;
