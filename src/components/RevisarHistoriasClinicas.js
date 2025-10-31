@@ -524,10 +524,8 @@ const RevisarHistoriasClinicas = () => {
                 <input value={editData.nombre} disabled style={{ color: '#222' }} />
                 <label>Cédula:</label>
                 <input value={editData.cedula} disabled style={{ color: '#222' }} />
-                <label>Dirección residencia habitual:</label>
+                <label>Dirección:</label>
                 <input value={editData.direccionResidenciaHabitual || ''} onChange={e => handleEditChange('direccionResidenciaHabitual', e.target.value)} />
-                <label>Calle y número:</label>
-                <input value={editData.calleYNumero || ''} onChange={e => handleEditChange('calleYNumero', e.target.value)} />
                 <label>Barrio:</label>
                 <input value={editData.barrio || ''} onChange={e => handleEditChange('barrio', e.target.value)} />
                 <label>Parroquia:</label>
@@ -536,8 +534,6 @@ const RevisarHistoriasClinicas = () => {
                 <input value={editData.canton || ''} onChange={e => handleEditChange('canton', e.target.value)} />
                 <label>Provincia:</label>
                 <input value={editData.provincia || ''} onChange={e => handleEditChange('provincia', e.target.value)} />
-                <label>Zona:</label>
-                <input value={editData.zona || ''} onChange={e => handleEditChange('zona', e.target.value)} />
                 <label>Teléfono:</label>
                 <input value={editData.telefono || ''} onChange={e => handleEditChange('telefono', e.target.value)} />
                 <label>Fecha de nacimiento:</label>
@@ -566,11 +562,13 @@ const RevisarHistoriasClinicas = () => {
                 <input value={editData.tipoSeguroSalud || ''} onChange={e => handleEditChange('tipoSeguroSalud', e.target.value)} />
                 <label>Referido de:</label>
                 <input value={editData.referidoDe || ''} onChange={e => handleEditChange('referidoDe', e.target.value)} />
-                <label>En caso de avisar a:</label>
+                <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
+                <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>En caso de emergencia</h4>
+                <label>Notificar a:</label>
                 <input value={editData.enCasoDeAvisarA || ''} onChange={e => handleEditChange('enCasoDeAvisarA', e.target.value)} />
                 <label>Parentesco/afinidad:</label>
                 <input value={editData.parentescoAfinidad || ''} onChange={e => handleEditChange('parentescoAfinidad', e.target.value)} />
-                <label>Dirección:</label>
+                <label>Telefono:</label>
                 <input value={editData.direccion || ''} onChange={e => handleEditChange('direccion', e.target.value)} />
               </div>
               <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>

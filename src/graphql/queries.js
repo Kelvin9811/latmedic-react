@@ -8,13 +8,20 @@ export const getCliente = /* GraphQL */ `
       cedula
       nombre
       direccionResidenciaHabitual
-      calleYNumero
       barrio
       parroquia
       canton
       provincia
-      zona
       telefono
+      grupoSanguineoYFactorRh
+      antecedenteAlergico
+      antecedenteClinico
+      antecedenteGinecologico
+      antecedenteTraumatologico
+      antecedenteQuirurgico
+      antecedenteFarmacoLogico
+      antecedentePsiquiatrico
+      antecedenteOtro
       fechaNacimiento
       lugarNacimiento
       nacionalidad
@@ -37,18 +44,7 @@ export const getCliente = /* GraphQL */ `
           clienteID
           createdAt
           hora
-          grupoSanguineoYFactorRh
           motivoDeConsulta
-          alientoEtilico
-          valorAlcoCheck
-          antecedenteAlergico
-          antecedenteClinico
-          antecedenteGinecologico
-          antecedenteTraumatologico
-          antecedenteQuirurgico
-          antecedenteFarmacoLogico
-          antecedentePsiquiatrico
-          antecedenteOtro
           enfermedadActual
           presionArterial
           frecuenciaCardiaca
@@ -133,13 +129,20 @@ export const listClientes = /* GraphQL */ `
         cedula
         nombre
         direccionResidenciaHabitual
-        calleYNumero
         barrio
         parroquia
         canton
         provincia
-        zona
         telefono
+        grupoSanguineoYFactorRh
+        antecedenteAlergico
+        antecedenteClinico
+        antecedenteGinecologico
+        antecedenteTraumatologico
+        antecedenteQuirurgico
+        antecedenteFarmacoLogico
+        antecedentePsiquiatrico
+        antecedenteOtro
         fechaNacimiento
         lugarNacimiento
         nacionalidad
@@ -177,18 +180,7 @@ export const getConsulta = /* GraphQL */ `
       clienteID
       createdAt
       hora
-      grupoSanguineoYFactorRh
       motivoDeConsulta
-      alientoEtilico
-      valorAlcoCheck
-      antecedenteAlergico
-      antecedenteClinico
-      antecedenteGinecologico
-      antecedenteTraumatologico
-      antecedenteQuirurgico
-      antecedenteFarmacoLogico
-      antecedentePsiquiatrico
-      antecedenteOtro
       enfermedadActual
       presionArterial
       frecuenciaCardiaca
@@ -296,18 +288,7 @@ export const listConsultas = /* GraphQL */ `
         clienteID
         createdAt
         hora
-        grupoSanguineoYFactorRh
         motivoDeConsulta
-        alientoEtilico
-        valorAlcoCheck
-        antecedenteAlergico
-        antecedenteClinico
-        antecedenteGinecologico
-        antecedenteTraumatologico
-        antecedenteQuirurgico
-        antecedenteFarmacoLogico
-        antecedentePsiquiatrico
-        antecedenteOtro
         enfermedadActual
         presionArterial
         frecuenciaCardiaca
@@ -481,13 +462,20 @@ export const clienteByCedula = /* GraphQL */ `
         cedula
         nombre
         direccionResidenciaHabitual
-        calleYNumero
         barrio
         parroquia
         canton
         provincia
-        zona
         telefono
+        grupoSanguineoYFactorRh
+        antecedenteAlergico
+        antecedenteClinico
+        antecedenteGinecologico
+        antecedenteTraumatologico
+        antecedenteQuirurgico
+        antecedenteFarmacoLogico
+        antecedentePsiquiatrico
+        antecedenteOtro
         fechaNacimiento
         lugarNacimiento
         nacionalidad
@@ -540,18 +528,7 @@ export const consultasByCliente = /* GraphQL */ `
         clienteID
         createdAt
         hora
-        grupoSanguineoYFactorRh
         motivoDeConsulta
-        alientoEtilico
-        valorAlcoCheck
-        antecedenteAlergico
-        antecedenteClinico
-        antecedenteGinecologico
-        antecedenteTraumatologico
-        antecedenteQuirurgico
-        antecedenteFarmacoLogico
-        antecedentePsiquiatrico
-        antecedenteOtro
         enfermedadActual
         presionArterial
         frecuenciaCardiaca

@@ -179,21 +179,14 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
           />
         </div>
         <div className="crear-historia-campo">
-          <label>Dirección residencia habitual:</label>
+          <label>Dirección:</label>
           <input
             type="text"
             value={direccionResidenciaHabitual}
             onChange={e => setDireccionResidenciaHabitual(e.target.value)}
           />
         </div>
-        <div className="crear-historia-campo">
-          <label>Calle y número:</label>
-          <input
-            type="text"
-            value={calleYNumero}
-            onChange={e => setCalleYNumero(e.target.value)}
-          />
-        </div>
+
         <div className="crear-historia-campo">
           <label>Barrio:</label>
           <input
@@ -226,14 +219,6 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
             type="text"
             value={provincia}
             onChange={e => setProvincia(e.target.value)}
-          />
-        </div>
-        <div className="crear-historia-campo">
-          <label>Zona:</label>
-          <input
-            type="text"
-            value={zona}
-            onChange={e => setZona(e.target.value)}
           />
         </div>
         <div className="crear-historia-campo">
@@ -351,8 +336,10 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
             onChange={e => setReferidoDe(e.target.value)}
           />
         </div>
+        <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
+        <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>En caso de emergencia</h4>        
         <div className="crear-historia-campo">
-          <label>En caso de avisar a:</label>
+          <label>Notificar a:</label>
           <input
             type="text"
             value={enCasoDeAvisarA}
@@ -368,7 +355,7 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
           />
         </div>
         <div className="crear-historia-campo">
-          <label>Dirección:</label>
+          <label>Teléfono:</label>
           <input
             type="text"
             value={direccion}

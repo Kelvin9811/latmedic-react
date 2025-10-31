@@ -9,13 +9,20 @@ type Cliente
   cedula: String! @index(name: "byCedula", queryField: "clienteByCedula")
   nombre: String!
   direccionResidenciaHabitual: String
-  calleYNumero: String
   barrio: String
   parroquia: String
   canton: String
   provincia: String
-  zona: String
   telefono: String
+  grupoSanguineoYFactorRh: String
+  antecedenteAlergico: String
+  antecedenteClinico: String
+  antecedenteGinecologico: String
+  antecedenteTraumatologico: String
+  antecedenteQuirurgico: String
+  antecedenteFarmacoLogico: String
+  antecedentePsiquiatrico: String
+  antecedenteOtro: String  
   fechaNacimiento: AWSDateTime
   lugarNacimiento: String
   nacionalidad: String
@@ -45,18 +52,7 @@ type Consulta
   clienteID: ID! @index(name: "byCliente", queryField: "consultasByCliente", sortKeyFields: ["createdAt"])
   createdAt: AWSDateTime
   hora: String
-  grupoSanguineoYFactorRh: String
   motivoDeConsulta: String
-  alientoEtilico: String
-  valorAlcoCheck: String
-  antecedenteAlergico: String
-  antecedenteClinico: String
-  antecedenteGinecologico: String
-  antecedenteTraumatologico: String
-  antecedenteQuirurgico: String
-  antecedenteFarmacoLogico: String
-  antecedentePsiquiatrico: String
-  antecedenteOtro: String
   enfermedadActual: String
   presionArterial: String
   frecuenciaCardiaca: String
