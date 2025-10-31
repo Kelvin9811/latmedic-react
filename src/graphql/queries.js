@@ -37,7 +37,7 @@ export const getCliente = /* GraphQL */ `
       referidoDe
       enCasoDeAvisarA
       parentescoAfinidad
-      direccion
+      telefonoEmergencia
       consultas {
         items {
           id
@@ -45,6 +45,8 @@ export const getCliente = /* GraphQL */ `
           createdAt
           hora
           motivoDeConsulta
+          alientoEtilico
+          valorAlcoCheck
           enfermedadActual
           presionArterial
           frecuenciaCardiaca
@@ -158,7 +160,7 @@ export const listClientes = /* GraphQL */ `
         referidoDe
         enCasoDeAvisarA
         parentescoAfinidad
-        direccion
+        telefonoEmergencia
         consultas {
           nextToken
           __typename
@@ -181,6 +183,8 @@ export const getConsulta = /* GraphQL */ `
       createdAt
       hora
       motivoDeConsulta
+      alientoEtilico
+      valorAlcoCheck
       enfermedadActual
       presionArterial
       frecuenciaCardiaca
@@ -289,6 +293,8 @@ export const listConsultas = /* GraphQL */ `
         createdAt
         hora
         motivoDeConsulta
+        alientoEtilico
+        valorAlcoCheck
         enfermedadActual
         presionArterial
         frecuenciaCardiaca
@@ -491,7 +497,7 @@ export const clienteByCedula = /* GraphQL */ `
         referidoDe
         enCasoDeAvisarA
         parentescoAfinidad
-        direccion
+        telefonoEmergencia
         consultas {
           nextToken
           __typename
@@ -529,6 +535,8 @@ export const consultasByCliente = /* GraphQL */ `
         createdAt
         hora
         motivoDeConsulta
+        alientoEtilico
+        valorAlcoCheck
         enfermedadActual
         presionArterial
         frecuenciaCardiaca
