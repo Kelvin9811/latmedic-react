@@ -12,13 +12,12 @@ const RevisarHistoriasClinicas = () => {
     nombre: '',
     cedula: '',
     direccionResidenciaHabitual: '',
-    calleYNumero: '',
     barrio: '',
     parroquia: '',
     canton: '',
     provincia: '',
-    zona: '',
     telefono: '',
+    grupoSanguineoYFactorRh: '',
     fechaNacimiento: '',
     lugarNacimiento: '',
     nacionalidad: '',
@@ -34,7 +33,15 @@ const RevisarHistoriasClinicas = () => {
     referidoDe: '',
     enCasoDeAvisarA: '',
     parentescoAfinidad: '',
-    direccion: ''
+    telefonoEmergencia: '',
+    antecedenteAlergico: '',
+    antecedenteClinico: '',
+    antecedenteGinecologico: '',
+    antecedenteTraumatologico: '',
+    antecedenteQuirurgico: '',
+    antecedenteFarmacoLogico: '',
+    antecedentePsiquiatrico: '',
+    antecedenteOtro: ''
   });
   const [showConsultas, setShowConsultas] = useState(false);
   const [consultas, setConsultas] = useState([]);
@@ -49,18 +56,9 @@ const RevisarHistoriasClinicas = () => {
   const [editConsultaIdx, setEditConsultaIdx] = useState(null);
   const [editConsultaData, setEditConsultaData] = useState({
     hora: '',
-    grupoSanguineoYFactorRh: '',
     motivoDeConsulta: '',
     alientoEtilico: '',
     valorAlcoCheck: '',
-    antecedenteAlergico: '',
-    antecedenteClinico: '',
-    antecedenteGinecologico: '',
-    antecedenteTraumatologico: '',
-    antecedenteQuirurgico: '',
-    antecedenteFarmacoLogico: '',
-    antecedentePsiquiatrico: '',
-    antecedenteOtro: '',
     enfermedadActual: '',
     presionArterial: '',
     frecuenciaCardiaca: '',
@@ -536,6 +534,8 @@ const RevisarHistoriasClinicas = () => {
                 <input value={editData.provincia || ''} onChange={e => handleEditChange('provincia', e.target.value)} />
                 <label>Teléfono:</label>
                 <input value={editData.telefono || ''} onChange={e => handleEditChange('telefono', e.target.value)} />
+                <label>Grupo Sanguíneo y Factor RH:</label>
+                <input value={editData.grupoSanguineoYFactorRh || ''} onChange={e => handleEditChange('grupoSanguineoYFactorRh', e.target.value)} />
                 <label>Fecha de nacimiento:</label>
                 <input type="date" value={editData.fechaNacimiento ? editData.fechaNacimiento.substring(0,10) : ''} onChange={e => handleEditChange('fechaNacimiento', e.target.value)} />
                 <label>Lugar de nacimiento:</label>
@@ -568,8 +568,26 @@ const RevisarHistoriasClinicas = () => {
                 <input value={editData.enCasoDeAvisarA || ''} onChange={e => handleEditChange('enCasoDeAvisarA', e.target.value)} />
                 <label>Parentesco/afinidad:</label>
                 <input value={editData.parentescoAfinidad || ''} onChange={e => handleEditChange('parentescoAfinidad', e.target.value)} />
-                <label>Telefono:</label>
-                <input value={editData.direccion || ''} onChange={e => handleEditChange('direccion', e.target.value)} />
+                <label>Teléfono de emergencia:</label>
+                <input value={editData.telefonoEmergencia || ''} onChange={e => handleEditChange('telefonoEmergencia', e.target.value)} />
+                <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
+                <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Antecedentes personales y familiares</h4>
+                <label>Antecedente Alérgico:</label>
+                <input value={editData.antecedenteAlergico || ''} onChange={e => handleEditChange('antecedenteAlergico', e.target.value)} />
+                <label>Antecedente Clínico:</label>
+                <input value={editData.antecedenteClinico || ''} onChange={e => handleEditChange('antecedenteClinico', e.target.value)} />
+                <label>Antecedente Ginecológico:</label>
+                <input value={editData.antecedenteGinecologico || ''} onChange={e => handleEditChange('antecedenteGinecologico', e.target.value)} />
+                <label>Antecedente Traumatológico:</label>
+                <input value={editData.antecedenteTraumatologico || ''} onChange={e => handleEditChange('antecedenteTraumatologico', e.target.value)} />
+                <label>Antecedente Quirúrgico:</label>
+                <input value={editData.antecedenteQuirurgico || ''} onChange={e => handleEditChange('antecedenteQuirurgico', e.target.value)} />
+                <label>Antecedente Farmacológico:</label>
+                <input value={editData.antecedenteFarmacoLogico || ''} onChange={e => handleEditChange('antecedenteFarmacoLogico', e.target.value)} />
+                <label>Antecedente Psiquiátrico:</label>
+                <input value={editData.antecedentePsiquiatrico || ''} onChange={e => handleEditChange('antecedentePsiquiatrico', e.target.value)} />
+                <label>Antecedente Otro:</label>
+                <input value={editData.antecedenteOtro || ''} onChange={e => handleEditChange('antecedenteOtro', e.target.value)} />
               </div>
               <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
                 <button type="submit" className="revisar-historias-btn">Guardar</button>
@@ -587,30 +605,12 @@ const RevisarHistoriasClinicas = () => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 <label>Hora:</label>
                 <input value={editConsultaData.hora || ''} disabled style={{ color: '#222' }} />
-                <label>Grupo Sanguíneo y Factor RH:</label>
-                <input value={editConsultaData.grupoSanguineoYFactorRh || ''} onChange={e => setEditConsultaData(d => ({ ...d, grupoSanguineoYFactorRh: e.target.value }))} />
                 <label>Motivo de Consulta:</label>
                 <input value={editConsultaData.motivoDeConsulta || ''} onChange={e => setEditConsultaData(d => ({ ...d, motivoDeConsulta: e.target.value }))} />
                 <label>Aliento Etílico:</label>
                 <input value={editConsultaData.alientoEtilico || ''} onChange={e => setEditConsultaData(d => ({ ...d, alientoEtilico: e.target.value }))} />
                 <label>Valor AlcoCheck:</label>
                 <input value={editConsultaData.valorAlcoCheck || ''} onChange={e => setEditConsultaData(d => ({ ...d, valorAlcoCheck: e.target.value }))} />
-                <label>Antecedente Alérgico:</label>
-                <input value={editConsultaData.antecedenteAlergico || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedenteAlergico: e.target.value }))} />
-                <label>Antecedente Clínico:</label>
-                <input value={editConsultaData.antecedenteClinico || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedenteClinico: e.target.value }))} />
-                <label>Antecedente Ginecológico:</label>
-                <input value={editConsultaData.antecedenteGinecologico || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedenteGinecologico: e.target.value }))} />
-                <label>Antecedente Traumatológico:</label>
-                <input value={editConsultaData.antecedenteTraumatologico || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedenteTraumatologico: e.target.value }))} />
-                <label>Antecedente Quirúrgico:</label>
-                <input value={editConsultaData.antecedenteQuirurgico || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedenteQuirurgico: e.target.value }))} />
-                <label>Antecedente Farmacológico:</label>
-                <input value={editConsultaData.antecedenteFarmacoLogico || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedenteFarmacoLogico: e.target.value }))} />
-                <label>Antecedente Psiquiátrico:</label>
-                <input value={editConsultaData.antecedentePsiquiatrico || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedentePsiquiatrico: e.target.value }))} />
-                <label>Antecedente Otro:</label>
-                <input value={editConsultaData.antecedenteOtro || ''} onChange={e => setEditConsultaData(d => ({ ...d, antecedenteOtro: e.target.value }))} />
                 <label>Enfermedad Actual:</label>
                 <textarea value={editConsultaData.enfermedadActual || ''} onChange={e => setEditConsultaData(d => ({ ...d, enfermedadActual: e.target.value }))} rows={3} />
                 <label>Presión Arterial:</label>

@@ -38,7 +38,7 @@ type Cliente
   referidoDe: String
   enCasoDeAvisarA: String
   parentescoAfinidad: String
-  direccion: String
+  telefonoEmergencia: String
   consultas: [Consulta] @hasMany(indexName: "byCliente", fields: ["id"])
 }
 
@@ -53,6 +53,8 @@ type Consulta
   createdAt: AWSDateTime
   hora: String
   motivoDeConsulta: String
+  alientoEtilico: String
+  valorAlcoCheck: String
   enfermedadActual: String
   presionArterial: String
   frecuenciaCardiaca: String

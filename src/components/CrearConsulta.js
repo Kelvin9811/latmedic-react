@@ -4,18 +4,9 @@ import './CrearConsulta.css';
 
 const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
   const [hora, setHora] = useState('');
-  const [grupoSanguineoYFactorRh, setGrupoSanguineoYFactorRh] = useState('');
   const [motivoDeConsulta, setMotivoDeConsulta] = useState('');
   const [alientoEtilico, setAlientoEtilico] = useState('');
   const [valorAlcoCheck, setValorAlcoCheck] = useState('');
-  const [antecedenteAlergico, setAntecedenteAlergico] = useState('');
-  const [antecedenteClinico, setAntecedenteClinico] = useState('');
-  const [antecedenteGinecologico, setAntecedenteGinecologico] = useState('');
-  const [antecedenteTraumatologico, setAntecedenteTraumatologico] = useState('');
-  const [antecedenteQuirurgico, setAntecedenteQuirurgico] = useState('');
-  const [antecedenteFarmacoLogico, setAntecedenteFarmacoLogico] = useState('');
-  const [antecedentePsiquiatrico, setAntecedentePsiquiatrico] = useState('');
-  const [antecedenteOtro, setAntecedenteOtro] = useState('');
   const [enfermedadActual, setEnfermedadActual] = useState('');
   const [presionArterial, setPresionArterial] = useState('');
   const [frecuenciaCardiaca, setFrecuenciaCardiaca] = useState('');
@@ -90,18 +81,9 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
     try {
       const consulta = await createConsultaForCedula(cedula, {
         hora,
-        grupoSanguineoYFactorRh,
         motivoDeConsulta,
         alientoEtilico,
         valorAlcoCheck,
-        antecedenteAlergico,
-        antecedenteClinico,
-        antecedenteGinecologico,
-        antecedenteTraumatologico,
-        antecedenteQuirurgico,
-        antecedenteFarmacoLogico,
-        antecedentePsiquiatrico,
-        antecedenteOtro,
         enfermedadActual,
         presionArterial,
         frecuenciaCardiaca,
@@ -164,18 +146,9 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
       if (onConsultaCreada) onConsultaCreada(consulta);
       // Limpia todos los campos
       setHora('');
-      setGrupoSanguineoYFactorRh('');
       setMotivoDeConsulta('');
       setAlientoEtilico('');
       setValorAlcoCheck('');
-      setAntecedenteAlergico('');
-      setAntecedenteClinico('');
-      setAntecedenteGinecologico('');
-      setAntecedenteTraumatologico('');
-      setAntecedenteQuirurgico('');
-      setAntecedenteFarmacoLogico('');
-      setAntecedentePsiquiatrico('');
-      setAntecedenteOtro('');
       setEnfermedadActual('');
       setPresionArterial('');
       setFrecuenciaCardiaca('');
@@ -257,15 +230,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
         />
       </div>
       <div className="crear-consulta-campo">
-        <label>Grupo Sanguíneo y Factor RH:</label>
-        <input
-          type="text"
-          value={grupoSanguineoYFactorRh}
-          onChange={e => setGrupoSanguineoYFactorRh(e.target.value)}
-          className="crear-consulta-input"
-        />
-      </div>
-      <div className="crear-consulta-campo">
         <label>Motivo de Consulta:</label>
         <input
           type="text"
@@ -295,76 +259,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
       </div>
       <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
       <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Antecedentes personales y familiares</h4>
-      <div className="crear-consulta-campo">
-        <label>Antecedente Alérgico:</label>
-        <input
-          type="text"
-          value={antecedenteAlergico}
-          onChange={e => setAntecedenteAlergico(e.target.value)}
-          className="crear-consulta-input"
-        />
-      </div>
-      <div className="crear-consulta-campo">
-        <label>Antecedente Clínico:</label>
-        <input
-          type="text"
-          value={antecedenteClinico}
-          onChange={e => setAntecedenteClinico(e.target.value)}
-          className="crear-consulta-input"
-        />
-      </div>
-      <div className="crear-consulta-campo">
-        <label>Antecedente Ginecológico:</label>
-        <input
-          type="text"
-          value={antecedenteGinecologico}
-          onChange={e => setAntecedenteGinecologico(e.target.value)}
-          className="crear-consulta-input"
-        />
-      </div>
-      <div className="crear-consulta-campo">
-        <label>Antecedente Traumatológico:</label>
-        <input
-          type="text"
-          value={antecedenteTraumatologico}
-          onChange={e => setAntecedenteTraumatologico(e.target.value)}
-          className="crear-consulta-input"
-        />
-        <label>Antecedente Quirúrgico:</label>
-        <input
-          type="text"
-          value={antecedenteQuirurgico}
-          onChange={e => setAntecedenteQuirurgico(e.target.value)}
-          className="crear-consulta-input"
-        />
-      </div>
-      <div className="crear-consulta-campo">
-        <label>Antecedente Farmacológico:</label>
-        <input
-          type="text"
-          value={antecedenteFarmacoLogico}
-          onChange={e => setAntecedenteFarmacoLogico(e.target.value)}
-          className="crear-consulta-input"
-        />
-      </div>
-      <div className="crear-consulta-campo">
-        <label>Antecedente Psiquiátrico:</label>
-        <input
-          type="text"
-          value={antecedentePsiquiatrico}
-          onChange={e => setAntecedentePsiquiatrico(e.target.value)}
-          className="crear-consulta-input"
-        />
-      </div>
-      <div className="crear-consulta-campo">
-        <label>Antecedente Otro:</label>
-        <input
-          type="text"
-          value={antecedenteOtro}
-          onChange={e => setAntecedenteOtro(e.target.value)}
-          className="crear-consulta-input"
-        />
-      </div>
       <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
       <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Enfermedad Actual y Revisión de Sistemas</h4>
       <div className="crear-consulta-campo">

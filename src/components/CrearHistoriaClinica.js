@@ -6,13 +6,12 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
   const [nombre, setNombre] = useState('');
   const [cedula, setCedula] = useState('');
   const [direccionResidenciaHabitual, setDireccionResidenciaHabitual] = useState('');
-  const [calleYNumero, setCalleYNumero] = useState('');
   const [barrio, setBarrio] = useState('');
   const [parroquia, setParroquia] = useState('');
   const [canton, setCanton] = useState('');
   const [provincia, setProvincia] = useState('');
-  const [zona, setZona] = useState('');
   const [telefono, setTelefono] = useState('');
+  const [grupoSanguineoYFactorRh, setGrupoSanguineoYFactorRh] = useState('');
   const [fechaNacimiento, setFechaNacimiento] = useState('');
   const [lugarNacimiento, setLugarNacimiento] = useState('');
   const [nacionalidad, setNacionalidad] = useState('');
@@ -28,7 +27,15 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
   const [referidoDe, setReferidoDe] = useState('');
   const [enCasoDeAvisarA, setEnCasoDeAvisarA] = useState('');
   const [parentescoAfinidad, setParentescoAfinidad] = useState('');
-  const [direccion, setDireccion] = useState('');
+  const [telefonoEmergencia, setTelefonoEmergencia] = useState('');
+  const [antecedenteAlergico, setAntecedenteAlergico] = useState('');
+  const [antecedenteClinico, setAntecedenteClinico] = useState('');
+  const [antecedenteGinecologico, setAntecedenteGinecologico] = useState('');
+  const [antecedenteTraumatologico, setAntecedenteTraumatologico] = useState('');
+  const [antecedenteQuirurgico, setAntecedenteQuirurgico] = useState('');
+  const [antecedenteFarmacoLogico, setAntecedenteFarmacoLogico] = useState('');
+  const [antecedentePsiquiatrico, setAntecedentePsiquiatrico] = useState('');
+  const [antecedenteOtro, setAntecedenteOtro] = useState('');
   const [loading, setLoading] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -45,13 +52,12 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
       cedula,
       nombre,
       direccionResidenciaHabitual,
-      calleYNumero,
       barrio,
       parroquia,
       canton,
       provincia,
-      zona,
       telefono,
+      grupoSanguineoYFactorRh,
       fechaNacimiento: fechaNacimientoISO,
       lugarNacimiento,
       nacionalidad,
@@ -67,20 +73,27 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
       referidoDe,
       enCasoDeAvisarA,
       parentescoAfinidad,
-      direccion
+      telefonoEmergencia,
+      antecedenteAlergico,
+      antecedenteClinico,
+      antecedenteGinecologico,
+      antecedenteTraumatologico,
+      antecedenteQuirurgico,
+      antecedenteFarmacoLogico,
+      antecedentePsiquiatrico,
+      antecedenteOtro
     });
     if (onHistoriaCreada) {
       onHistoriaCreada({
         nombre,
         cedula,
         direccionResidenciaHabitual,
-        calleYNumero,
         barrio,
         parroquia,
         canton,
         provincia,
-        zona,
         telefono,
+        grupoSanguineoYFactorRh,
         fechaNacimiento,
         lugarNacimiento,
         nacionalidad,
@@ -96,19 +109,26 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
         referidoDe,
         enCasoDeAvisarA,
         parentescoAfinidad,
-        direccion
+        telefonoEmergencia,
+        antecedenteAlergico,
+        antecedenteClinico,
+        antecedenteGinecologico,
+        antecedenteTraumatologico,
+        antecedenteQuirurgico,
+        antecedenteFarmacoLogico,
+        antecedentePsiquiatrico,
+        antecedenteOtro
       });
     }
     setNombre('');
     setCedula('');
     setDireccionResidenciaHabitual('');
-    setCalleYNumero('');
     setBarrio('');
     setParroquia('');
     setCanton('');
     setProvincia('');
-    setZona('');
     setTelefono('');
+    setGrupoSanguineoYFactorRh('');
     setFechaNacimiento('');
     setLugarNacimiento('');
     setNacionalidad('');
@@ -124,7 +144,15 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
     setReferidoDe('');
     setEnCasoDeAvisarA('');
     setParentescoAfinidad('');
-    setDireccion('');
+    setTelefonoEmergencia('');
+    setAntecedenteAlergico('');
+    setAntecedenteClinico('');
+    setAntecedenteGinecologico('');
+    setAntecedenteTraumatologico('');
+    setAntecedenteQuirurgico('');
+    setAntecedenteFarmacoLogico('');
+    setAntecedentePsiquiatrico('');
+    setAntecedenteOtro('');
     setLoading(false);
     setShowConfirm(false);
   };
@@ -204,8 +232,6 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
           />
         </div>
         <div className="crear-historia-campo">
-        </div>
-        <div className="crear-historia-campo">
           <label>Cantón:</label>
           <input
             type="text"
@@ -228,6 +254,14 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
             value={telefono}
             onChange={e => setTelefono(e.target.value.replace(/\D/g, ''))}
             maxLength={15}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Grupo Sanguíneo y Factor RH:</label>
+          <input
+            type="text"
+            value={grupoSanguineoYFactorRh}
+            onChange={e => setGrupoSanguineoYFactorRh(e.target.value)}
           />
         </div>
         <div className="crear-historia-campo">
@@ -337,6 +371,72 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
           />
         </div>
         <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
+        <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Antecedentes personales y familiares</h4>
+        <div className="crear-historia-campo">
+          <label>Antecedente Alérgico:</label>
+          <input
+            type="text"
+            value={antecedenteAlergico}
+            onChange={e => setAntecedenteAlergico(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Antecedente Clínico:</label>
+          <input
+            type="text"
+            value={antecedenteClinico}
+            onChange={e => setAntecedenteClinico(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Antecedente Ginecológico:</label>
+          <input
+            type="text"
+            value={antecedenteGinecologico}
+            onChange={e => setAntecedenteGinecologico(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Antecedente Traumatológico:</label>
+          <input
+            type="text"
+            value={antecedenteTraumatologico}
+            onChange={e => setAntecedenteTraumatologico(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Antecedente Quirúrgico:</label>
+          <input
+            type="text"
+            value={antecedenteQuirurgico}
+            onChange={e => setAntecedenteQuirurgico(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Antecedente Farmacológico:</label>
+          <input
+            type="text"
+            value={antecedenteFarmacoLogico}
+            onChange={e => setAntecedenteFarmacoLogico(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Antecedente Psiquiátrico:</label>
+          <input
+            type="text"
+            value={antecedentePsiquiatrico}
+            onChange={e => setAntecedentePsiquiatrico(e.target.value)}
+          />
+        </div>
+        <div className="crear-historia-campo">
+          <label>Antecedente Otro:</label>
+          <input
+            type="text"
+            value={antecedenteOtro}
+            onChange={e => setAntecedenteOtro(e.target.value)}
+          />
+        </div>
+        <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
         <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>En caso de emergencia</h4>        
         <div className="crear-historia-campo">
           <label>Notificar a:</label>
@@ -355,13 +455,14 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
           />
         </div>
         <div className="crear-historia-campo">
-          <label>Teléfono:</label>
+          <label>Teléfono de emergencia:</label>
           <input
             type="text"
-            value={direccion}
-            onChange={e => setDireccion(e.target.value)}
+            value={telefonoEmergencia}
+            onChange={e => setTelefonoEmergencia(e.target.value.replace(/\D/g, ''))}
+            maxLength={15}
           />
-        </div>
+        </div>        
         <button className="crear-historia-btn" type="submit" disabled={loading}>
           {loading ? 'Guardando...' : 'Guardar'}
         </button>
