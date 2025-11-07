@@ -851,7 +851,22 @@ const RevisarHistoriasClinicas = () => {
                   <label>Vía Aérea Obstruida:</label>
                   <input type="text" value={editConsultaData.viaAereaObstruida || ''} onChange={e => setEditConsultaData(d => ({ ...d, viaAereaObstruida: e.target.value }))} />
 
-                  
+                  {/* NUEVOS CAMPOS - Examen Físico */}
+                  <label>Cabeza:</label>
+                  <input value={editConsultaData.cabeza || ''} onChange={e => setEditConsultaData(d => ({ ...d, cabeza: e.target.value }))} />
+                  <label>Cuello:</label>
+                  <input value={editConsultaData.cuello || ''} onChange={e => setEditConsultaData(d => ({ ...d, cuello: e.target.value }))} />
+                  <label>Tórax:</label>
+                  <input value={editConsultaData.torax || ''} onChange={e => setEditConsultaData(d => ({ ...d, torax: e.target.value }))} />
+                  <label>Abdomen:</label>
+                  <input value={editConsultaData.abdomen || ''} onChange={e => setEditConsultaData(d => ({ ...d, abdomen: e.target.value }))} />
+                  <label>Columna:</label>
+                  <input value={editConsultaData.columna || ''} onChange={e => setEditConsultaData(d => ({ ...d, columna: e.target.value }))} />
+                  <label>Pelvis:</label>
+                  <input value={editConsultaData.pelvis || ''} onChange={e => setEditConsultaData(d => ({ ...d, pelvis: e.target.value }))} />
+                  <label>Extremidades:</label>
+                  <input value={editConsultaData.extremidades || ''} onChange={e => setEditConsultaData(d => ({ ...d, extremidades: e.target.value }))} />
+
                   <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
                   <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Lesiones / Traumatismos</h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -1054,7 +1069,23 @@ const RevisarHistoriasClinicas = () => {
                   <input type="text" value={nuevaConsultaData.saturacionOxigeno || ''} onChange={e => handleNuevaConsultaChange('saturacionOxigeno', e.target.value)} />
                   <label>Vía Aérea Obstruida:</label>
                   <input type="text" value={nuevaConsultaData.viaAereaObstruida || ''} onChange={e => handleNuevaConsultaChange('viaAereaObstruida', e.target.value)} />
-                  {/* Agrega los checkboxes y demás campos de la misma forma */}
+
+                  {/* NUEVOS CAMPOS - Examen Físico */}
+                  <label>Cabeza:</label>
+                  <input value={nuevaConsultaData.cabeza || ''} onChange={e => handleNuevaConsultaChange('cabeza', e.target.value)} />
+                  <label>Cuello:</label>
+                  <input value={nuevaConsultaData.cuello || ''} onChange={e => handleNuevaConsultaChange('cuello', e.target.value)} />
+                  <label>Tórax:</label>
+                  <input value={nuevaConsultaData.torax || ''} onChange={e => handleNuevaConsultaChange('torax', e.target.value)} />
+                  <label>Abdomen:</label>
+                  <input value={nuevaConsultaData.abdomen || ''} onChange={e => handleNuevaConsultaChange('abdomen', e.target.value)} />
+                  <label>Columna:</label>
+                  <input value={nuevaConsultaData.columna || ''} onChange={e => handleNuevaConsultaChange('columna', e.target.value)} />
+                  <label>Pelvis:</label>
+                  <input value={nuevaConsultaData.pelvis || ''} onChange={e => handleNuevaConsultaChange('pelvis', e.target.value)} />
+                  <label>Extremidades:</label>
+                  <input value={nuevaConsultaData.extremidades || ''} onChange={e => handleNuevaConsultaChange('extremidades', e.target.value)} />
+
                   <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
                   <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Lesiones / Traumatismos</h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
