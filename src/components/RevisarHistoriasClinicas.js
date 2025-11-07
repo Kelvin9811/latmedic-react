@@ -116,40 +116,182 @@ const RevisarHistoriasClinicas = () => {
     planDeTratamientoIndicaciones: '',
     planDeTratamientoMedicamentos: ''
   });
+  const [nuevaConsultaData, setNuevaConsultaData] = useState({
+    hora: '',
+    motivoDeConsulta: '',
+    enfermedadActual: '',
+    presionArterial: '',
+    frecuenciaCardiaca: '',
+    frecuenciaRespiratoria: '',
+    temperaturaBucal: '',
+    temperaturaAxilar: '',
+    peso: '',
+    talla: '',
+    gaslowOcular: '',
+    gaslowVerbal: '',
+    gaslowMotora: '',
+    gaslowTotal: '',
+    reaccionPupilaIzq: '',
+    reaccionPupilaDer: '',
+    tiempoLlenadoCapilar: '',
+    saturacionOxigeno: '',
+    viaAereaObstruida: '',
+    cabeza: '',
+    cuello: '',
+    torax: '',
+    abdomen: '',
+    columna: '',
+    pelvis: '',
+    extremidades: '',
+    heridaPenetrante: '',
+    heridaCortante: '',
+    fracturaExpuesta: '',
+    fracturaCerrada: '',
+    cuerpoExtrano: '',
+    hemorragia: '',
+    mordedura: '',
+    picadura: '',
+    excoriacion: '',
+    deformidadOMasa: '',
+    hematoma: '',
+    eritemaInflamacion: '',
+    luxacionEsguince: '',
+    quemadura: '',
+    solicitudExamenBiometria: false,
+    solicitudExamenUroanalisis: false,
+    solicitudExamenQuimicaSanguinea: false,
+    solicitudExamenElectrolitos: false,
+    solicitudExamenGasometria: false,
+    solicitudExamenElectrocardiograma: false,
+    solicitudExamenEndoscopia: false,
+    solicitudExamenRxTorax: false,
+    solicitudExamenRxAbdomen: false,
+    solicitudExamenRxOsea: false,
+    solicitudExamenTomografia: false,
+    solicitudExamenResonancia: false,
+    solicitudExamenEcografiaPelvica: false,
+    solicitudExamenEcografiaAbdomen: false,
+    solicitudExamenInterconsulta: false,
+    solicitudExamenOtros: false,
+    diagnosticodeIngreso: '',
+    diagnosticodeAltade: '',
+    planDeTratamientoIndicaciones: '',
+    planDeTratamientoMedicamentos: ''
+  });
+
+
+  React.useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const currentTime = now.toLocaleString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).replace(',', ' -');
+       handleNuevaConsultaChange('hora', currentTime)
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+  
+  const [showAgregarConsultaDetalle, setShowAgregarConsultaDetalle] = useState(false);
 
   // Función para mostrar el formulario de agregar consulta
-  const handleAgregarConsultaClick = () => {
+  const handleAgregarConsultaClick = (cedula) => {
+    // abrir popup detallado vacío
+    setConsultasCedula(cedula || consultasCedula);
     setShowConsultas(true);
-    setNuevaConsulta({ motivo: '', diagnostico: '' });
+    setShowAgregarConsultaDetalle(true);
+    setNuevaConsultaData({
+      hora: '',
+      motivoDeConsulta: '',
+      enfermedadActual: '',
+      presionArterial: '',
+      frecuenciaCardiaca: '',
+      frecuenciaRespiratoria: '',
+      temperaturaBucal: '',
+      temperaturaAxilar: '',
+      peso: '',
+      talla: '',
+      gaslowOcular: '',
+      gaslowVerbal: '',
+      gaslowMotora: '',
+      gaslowTotal: '',
+      reaccionPupilaIzq: '',
+      reaccionPupilaDer: '',
+      tiempoLlenadoCapilar: '',
+      saturacionOxigeno: '',
+      viaAereaObstruida: '',
+      cabeza: '',
+      cuello: '',
+      torax: '',
+      abdomen: '',
+      columna: '',
+      pelvis: '',
+      extremidades: '',
+      heridaPenetrante: '',
+      heridaCortante: '',
+      fracturaExpuesta: '',
+      fracturaCerrada: '',
+      cuerpoExtrano: '',
+      hemorragia: '',
+      mordedura: '',
+      picadura: '',
+      excoriacion: '',
+      deformidadOMasa: '',
+      hematoma: '',
+      eritemaInflamacion: '',
+      luxacionEsguince: '',
+      quemadura: '',
+      solicitudExamenBiometria: false,
+      solicitudExamenUroanalisis: false,
+      solicitudExamenQuimicaSanguinea: false,
+      solicitudExamenElectrolitos: false,
+      solicitudExamenGasometria: false,
+      solicitudExamenElectrocardiograma: false,
+      solicitudExamenEndoscopia: false,
+      solicitudExamenRxTorax: false,
+      solicitudExamenRxAbdomen: false,
+      solicitudExamenRxOsea: false,
+      solicitudExamenTomografia: false,
+      solicitudExamenResonancia: false,
+      solicitudExamenEcografiaPelvica: false,
+      solicitudExamenEcografiaAbdomen: false,
+      solicitudExamenInterconsulta: false,
+      solicitudExamenOtros: false,
+      diagnosticodeIngreso: '',
+      diagnosticodeAltade: '',
+      planDeTratamientoIndicaciones: '',
+      planDeTratamientoMedicamentos: ''
+    });
   };
 
   // Función para cancelar agregar consulta
   const handleAgregarConsultaCancel = () => {
     setShowConsultas(false);
-    setNuevaConsulta({ motivo: '', diagnostico: '' });
+    setShowAgregarConsultaDetalle(false);
   };
 
   // Función para cambiar los campos del formulario de nueva consulta
   const handleNuevaConsultaChange = (field, value) => {
-    setNuevaConsulta(prev => ({ ...prev, [field]: value }));
+    setNuevaConsultaData(prev => ({ ...prev, [field]: value }));
   };
 
   // Función para guardar la nueva consulta
   const handleAgregarConsultaSave = async () => {
     setLoadingConsulta(true);
     try {
-      const nueva = await createConsultaForCedula(
-        consultasCedula,
-        {
-          motivo: nuevaConsulta.motivo,
-          diagnostico: nuevaConsulta.diagnostico
-        }
-      );
+      const nueva = await createConsultaForCedula(consultasCedula, { ...nuevaConsultaData });
       setConsultas(con => [{ ...nueva }, ...con]);
       setShowConsultas(false);
-      setNuevaConsulta({ motivo: '', diagnostico: '' });
+      setShowAgregarConsultaDetalle(false);
     } catch {
-      // Puedes mostrar un mensaje de error si lo deseas
+      // error opcional
     }
     setLoadingConsulta(false);
   };
@@ -362,7 +504,7 @@ const RevisarHistoriasClinicas = () => {
                     ))}
                   </ul>
                 )}
-                <button className="revisar-historias-btn revisar-historias-btn-agregar" onClick={() => { setShowConsultas(true); setConsultasCedula(h.cedula); }}>Agregar consulta</button>
+                <button className="revisar-historias-btn revisar-historias-btn-agregar" onClick={() => handleAgregarConsultaClick(h.cedula)}>Agregar consulta</button>
               </div>
             </div>
           ))}
@@ -796,6 +938,209 @@ const RevisarHistoriasClinicas = () => {
             <div style={{ position: 'sticky', bottom: 0, background: '#fff', padding: '12px 0', display: 'flex', justifyContent: 'center', gap: 8, borderTop: '1px solid #e0e0e0' }}>
               <button type="submit" form="editConsultaForm" className="revisar-historias-btn">Guardar</button>
               <button type="button" className="revisar-historias-btn revisar-historias-btn-cancel" onClick={() => setEditConsultaIdx(null)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showAgregarConsultaDetalle && (
+        <div className="revisar-historias-popup-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1100, background: 'rgba(0,0,0,0.3)' }}>
+          <div
+            className="revisar-historias-popup-content"
+            style={{
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              width: '90vw',
+              maxWidth: 1000,
+              margin: '5vh auto',
+              background: '#fff',
+              borderRadius: 12,
+              boxShadow: '0 2px 16px rgba(0,0,0,0.15)',
+              padding: 24,
+              position: 'relative',
+              display: 'flex',
+              flexDirection: 'column'
+            }}
+          >
+            <div style={{ overflowY: 'auto', paddingRight: 8 }}>
+              <h4 style={{ textAlign: 'center', margin: '0 0 16px 0', fontWeight: 'bold' }}>Agregar Consulta</h4>
+              <form id="addConsultaForm" onSubmit={e => { e.preventDefault(); handleAgregarConsultaSave(); }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <label>Hora:</label>
+                  <input value={nuevaConsultaData.hora || ''} onChange={e => handleNuevaConsultaChange('hora', e.target.value)} readOnly={true}/>
+                  <label>Motivo de Consulta:</label>
+                  <input value={nuevaConsultaData.motivoDeConsulta || ''} onChange={e => handleNuevaConsultaChange('motivoDeConsulta', e.target.value)} />
+                  <label>Enfermedad Actual:</label>
+                  <textarea value={nuevaConsultaData.enfermedadActual || ''} onChange={e => handleNuevaConsultaChange('enfermedadActual', e.target.value)} rows={3} />
+                  
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label>Presión Arterial:</label>
+                      <input value={nuevaConsultaData.presionArterial || ''} onChange={e => handleNuevaConsultaChange('presionArterial', e.target.value)} />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label>Frecuencia Cardíaca:</label>
+                      <input value={nuevaConsultaData.frecuenciaCardiaca || ''} onChange={e => handleNuevaConsultaChange('frecuenciaCardiaca', e.target.value)} />
+                    </div>
+                  </div>
+                  <label>Frecuencia Respiratoria:</label>
+                  <input value={nuevaConsultaData.frecuenciaRespiratoria || ''} onChange={e => handleNuevaConsultaChange('frecuenciaRespiratoria', e.target.value)} />
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label>Temperatura Bucal:</label>
+                      <input value={nuevaConsultaData.temperaturaBucal || ''} onChange={e => handleNuevaConsultaChange('temperaturaBucal', e.target.value)} />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label>Temperatura Axilar:</label>
+                      <input value={nuevaConsultaData.temperaturaAxilar || ''} onChange={e => handleNuevaConsultaChange('temperaturaAxilar', e.target.value)} />
+                    </div>
+                  </div>   
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label>Peso:</label>
+                      <input value={nuevaConsultaData.peso || ''} onChange={e => handleNuevaConsultaChange('peso', e.target.value)} />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label>Talla:</label>
+                      <input value={nuevaConsultaData.talla || ''} onChange={e => handleNuevaConsultaChange('talla', e.target.value)} />
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 6 }}>Glasgow Ocular</label>
+                      <input value={nuevaConsultaData.gaslowOcular || ''} onChange={e => handleNuevaConsultaChange('gaslowOcular', e.target.value)} />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 6 }}>Glasgow Verbal</label>
+                      <input value={nuevaConsultaData.gaslowVerbal || ''} onChange={e => handleNuevaConsultaChange('gaslowVerbal', e.target.value)} />
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
+
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 6 }}>Glasgow Motora</label>
+                      <input value={nuevaConsultaData.gaslowMotora || ''} onChange={e => handleNuevaConsultaChange('gaslowMotora', e.target.value)} />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 6 }}>Total</label>
+                      <input value={nuevaConsultaData.gaslowTotal || ''} onChange={e => handleNuevaConsultaChange('gaslowTotal', e.target.value)} />
+                    </div>
+                  </div>
+                  <label>Reacción Pupila Izquierda:</label>
+                  <input value={nuevaConsultaData.reaccionPupilaIzq || ''} onChange={e => handleNuevaConsultaChange('reaccionPupilaIzq', e.target.value)} />
+                  <label>Reacción Pupila Derecha:</label>
+                  <input value={nuevaConsultaData.reaccionPupilaDer || ''} onChange={e => handleNuevaConsultaChange('reaccionPupilaDer', e.target.value)} />
+                  <label>Tiempo Llenado Capilar:</label>
+                  <input value={nuevaConsultaData.tiempoLlenadoCapilar || ''} onChange={e => handleNuevaConsultaChange('tiempoLlenadoCapilar', e.target.value)} />
+                  <label>Saturación Oxígeno:</label>
+                  <input value={nuevaConsultaData.saturacionOxigeno || ''} onChange={e => handleNuevaConsultaChange('saturacionOxigeno', e.target.value)} />
+                  <label>Vía Aérea Obstruida:</label>
+                  <input value={nuevaConsultaData.viaAereaObstruida || ''} onChange={e => handleNuevaConsultaChange('viaAereaObstruida', e.target.value)} />
+                  {/* Agrega los checkboxes y demás campos de la misma forma */}
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Lesiones / Traumatismos</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <label>Herida Penetrante:</label>
+                    <input value={nuevaConsultaData.heridaPenetrante || ''} onChange={e => handleNuevaConsultaChange('heridaPenetrante', e.target.value)} />
+                    <label>Herida Cortante:</label>
+                    <input value={nuevaConsultaData.heridaCortante || ''} onChange={e => handleNuevaConsultaChange('heridaCortante', e.target.value)} />
+                    <label>Fractura Expuesta:</label>
+                    <input value={nuevaConsultaData.fracturaExpuesta || ''} onChange={e => handleNuevaConsultaChange('fracturaExpuesta', e.target.value)} />
+                    <label>Fractura Cerrada:</label>
+                    <input value={nuevaConsultaData.fracturaCerrada || ''} onChange={e => handleNuevaConsultaChange('fracturaCerrada', e.target.value)} />
+                    <label>Cuerpo Extraño:</label>
+                    <input value={nuevaConsultaData.cuerpoExtrano || ''} onChange={e => handleNuevaConsultaChange('cuerpoExtrano', e.target.value)} />
+                    <label>Hemorragia:</label>
+                    <input value={nuevaConsultaData.hemorragia || ''} onChange={e => handleNuevaConsultaChange('hemorragia', e.target.value)} />
+                    <label>Mordedura:</label>
+                    <input value={nuevaConsultaData.mordedura || ''} onChange={e => handleNuevaConsultaChange('mordedura', e.target.value)} />
+                    <label>Picadura:</label>
+                    <input value={nuevaConsultaData.picadura || ''} onChange={e => handleNuevaConsultaChange('picadura', e.target.value)} />
+                    <label>Excoriación:</label>
+                    <input value={nuevaConsultaData.excoriacion || ''} onChange={e => handleNuevaConsultaChange('excoriacion', e.target.value)} />
+                    <label>Deformidad o Masa:</label>
+                    <input value={nuevaConsultaData.deformidadOMasa || ''} onChange={e => handleNuevaConsultaChange('deformidadOMasa', e.target.value)} />
+                    <label>Hematoma:</label>
+                    <input value={nuevaConsultaData.hematoma || ''} onChange={e => handleNuevaConsultaChange('hematoma', e.target.value)} />
+                    <label>Eritema / Inflamación:</label>
+                    <input value={nuevaConsultaData.eritemaInflamacion || ''} onChange={e => handleNuevaConsultaChange('eritemaInflamacion', e.target.value)} />
+                    <label>Luxación / Esguince:</label>
+                    <input value={nuevaConsultaData.luxacionEsguince || ''} onChange={e => handleNuevaConsultaChange('luxacionEsguince', e.target.value)} />
+                    <label>Quemadura:</label>
+                    <input value={nuevaConsultaData.quemadura || ''} onChange={e => handleNuevaConsultaChange('quemadura', e.target.value)} />
+                  </div>
+
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Exámenes solicitados</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenBiometria} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenBiometria: e.target.checked }))} /> Examen Biometría
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenUroanalisis} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenUroanalisis: e.target.checked }))} /> Examen Uroanálisis
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenQuimicaSanguinea} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenQuimicaSanguinea: e.target.checked }))} /> Examen Química Sanguínea
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenElectrolitos} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenElectrolitos: e.target.checked }))} /> Examen Electrolitos
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenGasometria} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenGasometria: e.target.checked }))} /> Examen Gasometría
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenElectrocardiograma} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenElectrocardiograma: e.target.checked }))} /> Examen Electrocardiograma
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenEndoscopia} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenEndoscopia: e.target.checked }))} /> Examen Endoscopia
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenRxTorax} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenRxTorax: e.target.checked }))} /> Examen Rx Tórax
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenRxAbdomen} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenRxAbdomen: e.target.checked }))} /> Examen Rx Abdomen
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenRxOsea} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenRxOsea: e.target.checked }))} /> Examen Rx Ósea
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenTomografia} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenTomografia: e.target.checked }))} /> Examen Tomografía
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenResonancia} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenResonancia: e.target.checked }))} /> Examen Resonancia
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenEcografiaPelvica} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenEcografiaPelvica: e.target.checked }))} /> Examen Ecografía Pélvica
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenEcografiaAbdomen} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenEcografiaAbdomen: e.target.checked }))} /> Examen Ecografía Abdomen
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenInterconsulta} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenInterconsulta: e.target.checked }))} /> Interconsulta
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!nuevaConsultaData.solicitudExamenOtros} onChange={e => setNuevaConsultaData(d => ({ ...d, solicitudExamenOtros: e.target.checked }))} /> Otros Exámenes
+                    </label>
+                  </div>
+
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Diagnósticos</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <label>Diagnóstico de Ingreso:</label>
+                    <input value={nuevaConsultaData.diagnosticodeIngreso || ''} onChange={e => setNuevaConsultaData(d => ({ ...d, diagnosticodeIngreso: e.target.value }))} />
+                    <label>Diagnóstico de Alta:</label>
+                    <input value={nuevaConsultaData.diagnosticodeAltade || ''} onChange={e => setNuevaConsultaData(d => ({ ...d, diagnosticodeAltade: e.target.value }))} />
+                    <label>Plan de Tratamiento e Indicaciones:</label>
+                    <textarea value={nuevaConsultaData.planDeTratamientoIndicaciones || ''} onChange={e => setNuevaConsultaData(d => ({ ...d, planDeTratamientoIndicaciones: e.target.value }))} rows={3} />
+                    <label>Plan de Tratamiento (Medicamentos):</label>
+                    <textarea value={nuevaConsultaData.planDeTratamientoMedicamentos || ''} onChange={e => setNuevaConsultaData(d => ({ ...d, planDeTratamientoMedicamentos: e.target.value }))} rows={3} />
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div style={{ position: 'sticky', bottom: 0, background: '#fff', padding: '12px 0', display: 'flex', justifyContent: 'center', gap: 8, borderTop: '1px solid #e0e0e0' }}>
+              <button type="submit" form="addConsultaForm" className="revisar-historias-btn" disabled={loadingConsulta}>Guardar</button>
+              <button type="button" className="revisar-historias-btn revisar-historias-btn-cancel" onClick={handleAgregarConsultaCancel} disabled={loadingConsulta}>Cancelar</button>
             </div>
           </div>
         </div>
