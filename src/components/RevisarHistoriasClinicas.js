@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getClienteByCedula, upsertClienteByCedula, createConsultaForCedula, listConsultasByCedula, deleteHistoriaClinicaByCedula } from '../apiCrud';
+import { getClienteByCedula, upsertClienteByCedula, createConsultaForCedula, listConsultasByCedula, deleteHistoriaClinicaByCedula, updateConsulta } from '../apiCrud';
 import ManejoConsulta from './ManejoConsulta';
 import './RevisarHistoriasClinicas.css';
 
@@ -455,9 +455,22 @@ const RevisarHistoriasClinicas = () => {
 
   const handleSaveEditConsulta = async () => {
     setLoading(true);
-    await updateConsulta(editConsultaData);
-    setEditConsultaIdx(null);
-    setLoading(false);
+    try {
+      const updated = await updateConsulta(editConsultaData);
+      // Actualiza la lista de consultas mostrada en el popup (si existe)
+      setConsultas(prev => prev.map(c => (c.id === updated.id ? updated : c)));
+      // También actualizar dentro de historias (si la consulta aparece allí)
+      setHistorias(prev => prev.map(h => ({
+        ...h,
+        consultas: Array.isArray(h.consultas) ? h.consultas.map(c => (c.id === updated.id ? updated : c)) : h.consultas
+      })));
+      setEditConsultaIdx(null);
+    } catch (e) {
+      // error opcional: puedes agregar notificación
+      console.error('Error actualizando consulta', e);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
