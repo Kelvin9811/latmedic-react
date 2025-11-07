@@ -199,6 +199,17 @@ const RevisarHistoriasClinicas = () => {
     return () => clearInterval(interval);
   }, []);
   
+
+    React.useEffect(() => {
+      // Actualiza automáticamente gaslowTotal a partir de los tres componentes.
+      const ocular = parseInt(nuevaConsultaData.gaslowOcular, 10) || 0;
+      const verbal = parseInt(nuevaConsultaData.gaslowVerbal, 10) || 0;
+      const motora = parseInt(nuevaConsultaData.gaslowMotora, 10) || 0;
+      const total = ocular + verbal + motora;
+      // Usamos el handler existente para mantener la consistencia del estado
+      handleNuevaConsultaChange('gaslowTotal', total);
+    }, [nuevaConsultaData.gaslowOcular, nuevaConsultaData.gaslowVerbal, nuevaConsultaData.gaslowMotora]);
+  
   const [showAgregarConsultaDetalle, setShowAgregarConsultaDetalle] = useState(false);
 
   // Función para mostrar el formulario de agregar consulta
@@ -762,77 +773,85 @@ const RevisarHistoriasClinicas = () => {
               <h4 style={{ textAlign: 'center', margin: '0 0 16px 0', fontWeight: 'bold'}}>Editar Consulta</h4>
               <form id="editConsultaForm" onSubmit={e => { e.preventDefault(); handleSaveEditConsulta(); }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Inicio de Atención y Motivo</h4>
                   <label>Hora:</label>
-                  <input value={editConsultaData.hora || ''} disabled style={{ color: '#222' }} />
+                  <input type="text" value={editConsultaData.hora || ''} disabled style={{ color: '#222' }} />
                   <label>Motivo de Consulta:</label>
-                  <input value={editConsultaData.motivoDeConsulta || ''} onChange={e => setEditConsultaData(d => ({ ...d, motivoDeConsulta: e.target.value }))} />
+                  <input type="text" value={editConsultaData.motivoDeConsulta || ''} onChange={e => setEditConsultaData(d => ({ ...d, motivoDeConsulta: e.target.value }))} />
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Enfermedad Actual y Revisión de Sistemas</h4>
                   <label>Enfermedad Actual:</label>
                   <textarea value={editConsultaData.enfermedadActual || ''} onChange={e => setEditConsultaData(d => ({ ...d, enfermedadActual: e.target.value }))} rows={3} />
-                  
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Signos Vitales, Mediciones y Valores</h4>
                   <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label>Presión Arterial:</label>
-                      <input value={editConsultaData.presionArterial || ''} onChange={e => setEditConsultaData(d => ({ ...d, presionArterial: e.target.value }))} />
+                      <input type="text" value={editConsultaData.presionArterial || ''} onChange={e => setEditConsultaData(d => ({ ...d, presionArterial: e.target.value }))} />
                     </div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label>Frecuencia Cardíaca:</label>
-                      <input value={editConsultaData.frecuenciaCardiaca || ''} onChange={e => setEditConsultaData(d => ({ ...d, frecuenciaCardiaca: e.target.value }))} />
+                      <input type="text" value={editConsultaData.frecuenciaCardiaca || ''} onChange={e => setEditConsultaData(d => ({ ...d, frecuenciaCardiaca: e.target.value }))} />
                     </div>
                   </div>
                   <label>Frecuencia Respiratoria:</label>
-                  <input value={editConsultaData.frecuenciaRespiratoria || ''} onChange={e => setEditConsultaData(d => ({ ...d, frecuenciaRespiratoria: e.target.value }))} />
+                  <input type="text" value={editConsultaData.frecuenciaRespiratoria || ''} onChange={e => setEditConsultaData(d => ({ ...d, frecuenciaRespiratoria: e.target.value }))} />
                   <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label>Temperatura Bucal:</label>
-                      <input value={editConsultaData.temperaturaBucal || ''} onChange={e => setEditConsultaData(d => ({ ...d, temperaturaBucal: e.target.value }))} />
+                      <input type="text" value={editConsultaData.temperaturaBucal || ''} onChange={e => setEditConsultaData(d => ({ ...d, temperaturaBucal: e.target.value }))} />
                     </div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label>Temperatura Axilar:</label>
-                      <input value={editConsultaData.temperaturaAxilar || ''} onChange={e => setEditConsultaData(d => ({ ...d, temperaturaAxilar: e.target.value }))} />
+                      <input type="text" value={editConsultaData.temperaturaAxilar || ''} onChange={e => setEditConsultaData(d => ({ ...d, temperaturaAxilar: e.target.value }))} />
                     </div>
                   </div>   
                   <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label>Peso:</label>
-                      <input value={editConsultaData.peso || ''} onChange={e => setEditConsultaData(d => ({ ...d, peso: e.target.value }))} />
+                      <input type="text" value={editConsultaData.peso || ''} onChange={e => setEditConsultaData(d => ({ ...d, peso: e.target.value }))} />
                     </div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label>Talla:</label>
-                      <input value={editConsultaData.talla || ''} onChange={e => setEditConsultaData(d => ({ ...d, talla: e.target.value }))} />
+                      <input type="text" value={editConsultaData.talla || ''} onChange={e => setEditConsultaData(d => ({ ...d, talla: e.target.value }))} />
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label style={{ marginBottom: 6 }}>Glasgow Ocular</label>
-                      <input value={editConsultaData.gaslowOcular || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowOcular: e.target.value }))} />
+                      <input type="number" value={editConsultaData.gaslowOcular || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowOcular: e.target.value }))} />
                     </div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label style={{ marginBottom: 6 }}>Glasgow Verbal</label>
-                      <input value={editConsultaData.gaslowVerbal || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowVerbal: e.target.value }))} />
+                      <input type="number" value={editConsultaData.gaslowVerbal || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowVerbal: e.target.value }))} />
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
 
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label style={{ marginBottom: 6 }}>Glasgow Motora</label>
-                      <input value={editConsultaData.gaslowMotora || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowMotora: e.target.value }))} />
+                      <input type="number" value={editConsultaData.gaslowMotora || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowMotora: e.target.value }))} />
                     </div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label style={{ marginBottom: 6 }}>Total</label>
-                      <input value={editConsultaData.gaslowTotal || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowTotal: e.target.value }))} />
+                      <input type="number" value={editConsultaData.gaslowTotal || ''} readOnly />
                     </div>
                   </div>
                   <label>Reacción Pupila Izquierda:</label>
-                  <input value={editConsultaData.reaccionPupilaIzq || ''} onChange={e => setEditConsultaData(d => ({ ...d, reaccionPupilaIzq: e.target.value }))} />
+                  <input type="text" value={editConsultaData.reaccionPupilaIzq || ''} onChange={e => setEditConsultaData(d => ({ ...d, reaccionPupilaIzq: e.target.value }))} />
                   <label>Reacción Pupila Derecha:</label>
-                  <input value={editConsultaData.reaccionPupilaDer || ''} onChange={e => setEditConsultaData(d => ({ ...d, reaccionPupilaDer: e.target.value }))} />
+                  <input type="text" value={editConsultaData.reaccionPupilaDer || ''} onChange={e => setEditConsultaData(d => ({ ...d, reaccionPupilaDer: e.target.value }))} />
                   <label>Tiempo Llenado Capilar:</label>
-                  <input value={editConsultaData.tiempoLlenadoCapilar || ''} onChange={e => setEditConsultaData(d => ({ ...d, tiempoLlenadoCapilar: e.target.value }))} />
+                  <input type="text" value={editConsultaData.tiempoLlenadoCapilar || ''} onChange={e => setEditConsultaData(d => ({ ...d, tiempoLlenadoCapilar: e.target.value }))} />
                   <label>Saturación Oxígeno:</label>
-                  <input value={editConsultaData.saturacionOxigeno || ''} onChange={e => setEditConsultaData(d => ({ ...d, saturacionOxigeno: e.target.value }))} />
+                  <input type="text" value={editConsultaData.saturacionOxigeno || ''} onChange={e => setEditConsultaData(d => ({ ...d, saturacionOxigeno: e.target.value }))} />
+
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Examen Físico y Diagnóstico</h4>
                   <label>Vía Aérea Obstruida:</label>
-                  <input value={editConsultaData.viaAereaObstruida || ''} onChange={e => setEditConsultaData(d => ({ ...d, viaAereaObstruida: e.target.value }))} />
-                  {/* Agrega los checkboxes y demás campos de la misma forma */}
+                  <input type="text" value={editConsultaData.viaAereaObstruida || ''} onChange={e => setEditConsultaData(d => ({ ...d, viaAereaObstruida: e.target.value }))} />
+
+                  
                   <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
                   <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Lesiones / Traumatismos</h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -966,75 +985,75 @@ const RevisarHistoriasClinicas = () => {
               <form id="addConsultaForm" onSubmit={e => { e.preventDefault(); handleAgregarConsultaSave(); }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <label>Hora:</label>
-                  <input value={nuevaConsultaData.hora || ''} onChange={e => handleNuevaConsultaChange('hora', e.target.value)} readOnly={true}/>
+                  <input type="text" value={nuevaConsultaData.hora || ''} onChange={e => handleNuevaConsultaChange('hora', e.target.value)} readOnly={true}/>
                   <label>Motivo de Consulta:</label>
-                  <input value={nuevaConsultaData.motivoDeConsulta || ''} onChange={e => handleNuevaConsultaChange('motivoDeConsulta', e.target.value)} />
+                  <input type="text" value={nuevaConsultaData.motivoDeConsulta || ''} onChange={e => handleNuevaConsultaChange('motivoDeConsulta', e.target.value)} />
                   <label>Enfermedad Actual:</label>
                   <textarea value={nuevaConsultaData.enfermedadActual || ''} onChange={e => handleNuevaConsultaChange('enfermedadActual', e.target.value)} rows={3} />
                   
                   <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label>Presión Arterial:</label>
-                      <input value={nuevaConsultaData.presionArterial || ''} onChange={e => handleNuevaConsultaChange('presionArterial', e.target.value)} />
+                      <input type="text" value={nuevaConsultaData.presionArterial || ''} onChange={e => handleNuevaConsultaChange('presionArterial', e.target.value)} />
                     </div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label>Frecuencia Cardíaca:</label>
-                      <input value={nuevaConsultaData.frecuenciaCardiaca || ''} onChange={e => handleNuevaConsultaChange('frecuenciaCardiaca', e.target.value)} />
+                      <input type="text" value={nuevaConsultaData.frecuenciaCardiaca || ''} onChange={e => handleNuevaConsultaChange('frecuenciaCardiaca', e.target.value)} />
                     </div>
                   </div>
                   <label>Frecuencia Respiratoria:</label>
-                  <input value={nuevaConsultaData.frecuenciaRespiratoria || ''} onChange={e => handleNuevaConsultaChange('frecuenciaRespiratoria', e.target.value)} />
+                  <input type="text" value={nuevaConsultaData.frecuenciaRespiratoria || ''} onChange={e => handleNuevaConsultaChange('frecuenciaRespiratoria', e.target.value)} />
                   <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label>Temperatura Bucal:</label>
-                      <input value={nuevaConsultaData.temperaturaBucal || ''} onChange={e => handleNuevaConsultaChange('temperaturaBucal', e.target.value)} />
+                      <input type="text" value={nuevaConsultaData.temperaturaBucal || ''} onChange={e => handleNuevaConsultaChange('temperaturaBucal', e.target.value)} />
                     </div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label>Temperatura Axilar:</label>
-                      <input value={nuevaConsultaData.temperaturaAxilar || ''} onChange={e => handleNuevaConsultaChange('temperaturaAxilar', e.target.value)} />
+                      <input type="text" value={nuevaConsultaData.temperaturaAxilar || ''} onChange={e => handleNuevaConsultaChange('temperaturaAxilar', e.target.value)} />
                     </div>
                   </div>   
                   <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label>Peso:</label>
-                      <input value={nuevaConsultaData.peso || ''} onChange={e => handleNuevaConsultaChange('peso', e.target.value)} />
+                      <input type="text" value={nuevaConsultaData.peso || ''} onChange={e => handleNuevaConsultaChange('peso', e.target.value)} />
                     </div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label>Talla:</label>
-                      <input value={nuevaConsultaData.talla || ''} onChange={e => handleNuevaConsultaChange('talla', e.target.value)} />
+                      <input type="text" value={nuevaConsultaData.talla || ''} onChange={e => handleNuevaConsultaChange('talla', e.target.value)} />
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label style={{ marginBottom: 6 }}>Glasgow Ocular</label>
-                      <input value={nuevaConsultaData.gaslowOcular || ''} onChange={e => handleNuevaConsultaChange('gaslowOcular', e.target.value)} />
+                      <input type="number" value={nuevaConsultaData.gaslowOcular || ''} onChange={e => handleNuevaConsultaChange('gaslowOcular', e.target.value)} />
                     </div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label style={{ marginBottom: 6 }}>Glasgow Verbal</label>
-                      <input value={nuevaConsultaData.gaslowVerbal || ''} onChange={e => handleNuevaConsultaChange('gaslowVerbal', e.target.value)} />
+                      <input type="number" value={nuevaConsultaData.gaslowVerbal || ''} onChange={e => handleNuevaConsultaChange('gaslowVerbal', e.target.value)} />
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
 
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label style={{ marginBottom: 6 }}>Glasgow Motora</label>
-                      <input value={nuevaConsultaData.gaslowMotora || ''} onChange={e => handleNuevaConsultaChange('gaslowMotora', e.target.value)} />
+                      <input type="number" value={nuevaConsultaData.gaslowMotora || ''} onChange={e => handleNuevaConsultaChange('gaslowMotora', e.target.value)} />
                     </div>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label style={{ marginBottom: 6 }}>Total</label>
-                      <input value={nuevaConsultaData.gaslowTotal || ''} onChange={e => handleNuevaConsultaChange('gaslowTotal', e.target.value)} />
+                      <input type="number" value={nuevaConsultaData.gaslowTotal || ''} readOnly />                      
                     </div>
                   </div>
                   <label>Reacción Pupila Izquierda:</label>
-                  <input value={nuevaConsultaData.reaccionPupilaIzq || ''} onChange={e => handleNuevaConsultaChange('reaccionPupilaIzq', e.target.value)} />
+                  <input type="text" value={nuevaConsultaData.reaccionPupilaIzq || ''} onChange={e => handleNuevaConsultaChange('reaccionPupilaIzq', e.target.value)} />
                   <label>Reacción Pupila Derecha:</label>
-                  <input value={nuevaConsultaData.reaccionPupilaDer || ''} onChange={e => handleNuevaConsultaChange('reaccionPupilaDer', e.target.value)} />
+                  <input type="text" value={nuevaConsultaData.reaccionPupilaDer || ''} onChange={e => handleNuevaConsultaChange('reaccionPupilaDer', e.target.value)} />
                   <label>Tiempo Llenado Capilar:</label>
-                  <input value={nuevaConsultaData.tiempoLlenadoCapilar || ''} onChange={e => handleNuevaConsultaChange('tiempoLlenadoCapilar', e.target.value)} />
+                  <input type="text" value={nuevaConsultaData.tiempoLlenadoCapilar || ''} onChange={e => handleNuevaConsultaChange('tiempoLlenadoCapilar', e.target.value)} />
                   <label>Saturación Oxígeno:</label>
-                  <input value={nuevaConsultaData.saturacionOxigeno || ''} onChange={e => handleNuevaConsultaChange('saturacionOxigeno', e.target.value)} />
+                  <input type="text" value={nuevaConsultaData.saturacionOxigeno || ''} onChange={e => handleNuevaConsultaChange('saturacionOxigeno', e.target.value)} />
                   <label>Vía Aérea Obstruida:</label>
-                  <input value={nuevaConsultaData.viaAereaObstruida || ''} onChange={e => handleNuevaConsultaChange('viaAereaObstruida', e.target.value)} />
+                  <input type="text" value={nuevaConsultaData.viaAereaObstruida || ''} onChange={e => handleNuevaConsultaChange('viaAereaObstruida', e.target.value)} />
                   {/* Agrega los checkboxes y demás campos de la misma forma */}
                   <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
                   <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Lesiones / Traumatismos</h4>
