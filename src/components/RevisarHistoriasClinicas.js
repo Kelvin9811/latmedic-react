@@ -999,13 +999,17 @@ const RevisarHistoriasClinicas = () => {
               <h4 style={{ textAlign: 'center', margin: '0 0 16px 0', fontWeight: 'bold' }}>Agregar Consulta</h4>
               <form id="addConsultaForm" onSubmit={e => { e.preventDefault(); handleAgregarConsultaSave(); }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Inicio de Atención y Motivo</h4>
                   <label>Hora:</label>
                   <input type="text" value={nuevaConsultaData.hora || ''} onChange={e => handleNuevaConsultaChange('hora', e.target.value)} readOnly={true}/>
                   <label>Motivo de Consulta:</label>
                   <input type="text" value={nuevaConsultaData.motivoDeConsulta || ''} onChange={e => handleNuevaConsultaChange('motivoDeConsulta', e.target.value)} />
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Enfermedad Actual y Revisión de Sistemas</h4>
                   <label>Enfermedad Actual:</label>
                   <textarea value={nuevaConsultaData.enfermedadActual || ''} onChange={e => handleNuevaConsultaChange('enfermedadActual', e.target.value)} rows={3} />
-                  
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Signos Vitales, Mediciones y Valores</h4>
                   <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <label>Presión Arterial:</label>
@@ -1071,6 +1075,8 @@ const RevisarHistoriasClinicas = () => {
                   <input type="text" value={nuevaConsultaData.viaAereaObstruida || ''} onChange={e => handleNuevaConsultaChange('viaAereaObstruida', e.target.value)} />
 
                   {/* NUEVOS CAMPOS - Examen Físico */}
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Examen Físico</h4>
                   <label>Cabeza:</label>
                   <input value={nuevaConsultaData.cabeza || ''} onChange={e => handleNuevaConsultaChange('cabeza', e.target.value)} />
                   <label>Cuello:</label>
