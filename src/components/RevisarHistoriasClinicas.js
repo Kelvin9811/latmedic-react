@@ -7,6 +7,7 @@ const RevisarHistoriasClinicas = () => {
   const [cedulaBusqueda, setCedulaBusqueda] = useState('');
   const [historias, setHistorias] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showPlaceholders, setShowPlaceholders] = useState(false);
   const [editIdx, setEditIdx] = useState(null);
   const [editData, setEditData] = useState({
     nombre: '',
@@ -309,6 +310,7 @@ const RevisarHistoriasClinicas = () => {
 
   const handleBuscar = async (e) => {
     e.preventDefault();
+    setShowPlaceholders(true);
     setLoading(true);
     try {
       const resultado = await getClienteByCedula(cedulaBusqueda);
@@ -324,8 +326,43 @@ const RevisarHistoriasClinicas = () => {
       }
     } catch {
       setHistorias([]);
+    } finally {
+      setLoading(false);
+      setShowPlaceholders(false);
     }
-    setLoading(false);
+  };
+
+  // Render de placeholders que imitan la forma de una consulta (vacíos)
+  const renderPlaceholders = () => {
+    const phStyle = {
+      marginBottom: 32,
+      border: '1px solid #e0e0e0',
+      borderRadius: 8,
+      padding: 16,
+      background: '#fff',
+      opacity: 0.9
+    };
+    const greyBar = { height: 14, background: '#e8e8e8', borderRadius: 4, marginBottom: 8 };
+    const greyBox = { height: 60, background: '#f0f0f0', borderRadius: 6, marginBottom: 8 };
+
+    return (
+      <div className="revisar-historias-placeholder-lista" style={{ marginTop: 12 }}>
+        {[0].map(i => (
+          <div key={i} style={phStyle}>
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ ...greyBar, width: '35%' }} />
+              <div style={{ ...greyBar, width: '60%' }} />
+              <div style={{ ...greyBar, width: '45%' }} />
+              <div style={{ ...greyBar, width: '30%' }} />
+            </div>
+            <div style={{ marginTop: 8, background: '#f5f5f5', padding: 12, borderRadius: 8 }}>
+              <div style={{ ...greyBox, width: '100%' }} />
+              <div style={{ ...greyBar, width: '50%' }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   const handleEdit = (idx) => {
@@ -418,8 +455,7 @@ const RevisarHistoriasClinicas = () => {
 
   const handleSaveEditConsulta = async () => {
     setLoading(true);
-    // Aquí deberías llamar a tu función de actualización, por ejemplo updateConsulta(editConsultaData)
-    // await updateConsulta(editConsultaData);
+    await updateConsulta(editConsultaData);
     setEditConsultaIdx(null);
     setLoading(false);
   };
@@ -438,7 +474,7 @@ const RevisarHistoriasClinicas = () => {
           Buscar
         </button>
       </form>
-      {loading && <p className="revisar-historias-loading">Cargando...</p>}
+      {showPlaceholders ? renderPlaceholders() : (loading && <p className="revisar-historias-loading">Cargando...</p>)}
       {historias.length === 0 && !loading && <p className="revisar-historias-vacio">No se encontraron historias clínicas.</p>}
       {historias.length > 0 && !consultaSeleccionada && (
         <div className="revisar-historias-lista">
@@ -474,7 +510,7 @@ const RevisarHistoriasClinicas = () => {
               <div className="revisar-historias-consultas" style={{ marginTop: 16, background: '#f5f5f5', padding: 16, borderRadius: 8, border: '1px solid #c5c5c5ff' }}>
                 <h4 style={{ color: '#222', margin: '8px 0' }}>Consultas</h4>
                 {Array.isArray(h.consultas) && h.consultas.length === 0 ? (
-                  <p>No hay consultas para este paciente.</p>
+                  <p style={{ color: '#000' }}>No hay consultas para este paciente.</p>
                 ) : (
                   <ul style={{
                     marginBottom: 12,
