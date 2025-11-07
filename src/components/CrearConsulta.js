@@ -5,8 +5,6 @@ import './CrearConsulta.css';
 const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
   const [hora, setHora] = useState('');
   const [motivoDeConsulta, setMotivoDeConsulta] = useState('');
-  const [alientoEtilico, setAlientoEtilico] = useState('');
-  const [valorAlcoCheck, setValorAlcoCheck] = useState('');
   const [enfermedadActual, setEnfermedadActual] = useState('');
   const [presionArterial, setPresionArterial] = useState('');
   const [frecuenciaCardiaca, setFrecuenciaCardiaca] = useState('');
@@ -67,13 +65,34 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
   const [planDeTratamientoMedicamentos, setPlanDeTratamientoMedicamentos] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Calcula Gaslow Total automáticamente
+  // Calcula Glasgow Total automáticamente
   React.useEffect(() => {
     const ocular = parseInt(gaslowOcular) || 0;
     const verbal = parseInt(gaslowVerbal) || 0;
     const motora = parseInt(gaslowMotora) || 0;
     setGaslowTotal(ocular + verbal + motora);
   }, [gaslowOcular, gaslowVerbal, gaslowMotora]);
+
+
+    // Actualizar la hora cada segundo
+  React.useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const currentTime = now.toLocaleString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).replace(',', ' -');
+      setHora(currentTime);
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -82,8 +101,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
       const consulta = await createConsultaForCedula(cedula, {
         hora,
         motivoDeConsulta,
-        alientoEtilico,
-        valorAlcoCheck,
         enfermedadActual,
         presionArterial,
         frecuenciaCardiaca,
@@ -147,8 +164,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
       // Limpia todos los campos
       setHora('');
       setMotivoDeConsulta('');
-      setAlientoEtilico('');
-      setValorAlcoCheck('');
       setEnfermedadActual('');
       setPresionArterial('');
       setFrecuenciaCardiaca('');
@@ -227,6 +242,7 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           value={hora}
           onChange={e => setHora(e.target.value)}
           className="crear-consulta-input"
+          readOnly={true}
         />
       </div>
       <div className="crear-consulta-campo">
@@ -239,26 +255,6 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           className="crear-consulta-input"
         />
       </div>
-      <div className="crear-consulta-campo">
-        <label>Aliento Etílico:</label>
-        <input
-          type="text"
-          value={alientoEtilico}
-          onChange={e => setAlientoEtilico(e.target.value)}
-          className="crear-consulta-input"
-        />
-      </div>
-      <div className="crear-consulta-campo">
-        <label>Valor AlcoCheck:</label>
-        <input
-          type="text"
-          value={valorAlcoCheck}
-          onChange={e => setValorAlcoCheck(e.target.value)}
-          className="crear-consulta-input"
-        />
-      </div>
-      <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
-      <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Antecedentes personales y familiares</h4>
       <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
       <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Enfermedad Actual y Revisión de Sistemas</h4>
       <div className="crear-consulta-campo">
@@ -331,28 +327,28 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
         />
       </div>
       <div className="crear-consulta-campo">
-        <label>Gaslow Ocular:</label>
+        <label>Glasgow Ocular:</label>
         <input
           type="number"
           value={gaslowOcular}
           onChange={e => setGaslowOcular(e.target.value)}
           className="crear-consulta-input"
         />
-        <label>Gaslow Verbal:</label>
+        <label>Glasgow Verbal:</label>
         <input
           type="number"
           value={gaslowVerbal}
           onChange={e => setGaslowVerbal(e.target.value)}
           className="crear-consulta-input"
         />
-        <label>Gaslow Motora:</label>
+        <label>Glasgow Motora:</label>
         <input
           type="number"
           value={gaslowMotora}
           onChange={e => setGaslowMotora(e.target.value)}
           className="crear-consulta-input"
         />
-        <label>Gaslow Total:</label>
+        <label>Glasgow Total:</label>
         <input
           type="number"
           value={gaslowTotal}
@@ -414,7 +410,7 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           className="crear-consulta-input"
         />
       </div>
-      <div className="crear-consulta-campo">        
+      <div className="crear-consulta-campo">
         <label>Cuello:</label>
         <input
           type="text"
@@ -430,7 +426,7 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           className="crear-consulta-input"
         />
       </div>
-      <div className="crear-consulta-campo">        
+      <div className="crear-consulta-campo">
         <label>Abdomen:</label>
         <input
           type="text"
@@ -446,7 +442,7 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           className="crear-consulta-input"
         />
       </div>
-      <div className="crear-consulta-campo">        
+      <div className="crear-consulta-campo">
         <label>Pelvis:</label>
         <input
           type="text"

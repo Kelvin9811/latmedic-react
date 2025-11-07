@@ -57,8 +57,6 @@ const RevisarHistoriasClinicas = () => {
   const [editConsultaData, setEditConsultaData] = useState({
     hora: '',
     motivoDeConsulta: '',
-    alientoEtilico: '',
-    valorAlcoCheck: '',
     enfermedadActual: '',
     presionArterial: '',
     frecuenciaCardiaca: '',
@@ -320,8 +318,8 @@ const RevisarHistoriasClinicas = () => {
                   </>
                 )}
               </div>
-              <div className="revisar-historias-consultas" style={{ marginTop: 16 }}>
-                <h4 style={{ marginBottom: 8 , color: '#222' }}>Consultas</h4>
+              <div className="revisar-historias-consultas" style={{ marginTop: 16, background: '#f5f5f5', padding: 16, borderRadius: 8, border: '1px solid #c5c5c5ff' }}>
+                <h4 style={{ color: '#222', margin: '8px 0' }}>Consultas</h4>
                 {Array.isArray(h.consultas) && h.consultas.length === 0 ? (
                   <p>No hay consultas para este paciente.</p>
                 ) : (
@@ -514,144 +512,193 @@ const RevisarHistoriasClinicas = () => {
       )}
       {editIdx !== null && (
         <div className="revisar-historias-popup-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1000, background: 'rgba(0,0,0,0.3)' }}>
-          <div className="revisar-historias-popup-content" style={{ maxHeight: '90vh', overflowY: 'auto', width: '90vw', maxWidth: 600, margin: '5vh auto', background: '#fff', borderRadius: 12, boxShadow: '0 2px 16px rgba(0,0,0,0.15)', padding: 24, position: 'relative' }}>
-            <h4>Editar Historia Clínica</h4>
-            <form onSubmit={e => { e.preventDefault(); handleEditSave(); }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <label>Nombre:</label>
-                <input value={editData.nombre} disabled style={{ color: '#222' }} />
-                <label>Cédula:</label>
-                <input value={editData.cedula} disabled style={{ color: '#222' }} />
-                <label>Dirección:</label>
-                <input value={editData.direccionResidenciaHabitual || ''} onChange={e => handleEditChange('direccionResidenciaHabitual', e.target.value)} />
-                <label>Barrio:</label>
-                <input value={editData.barrio || ''} onChange={e => handleEditChange('barrio', e.target.value)} />
-                <label>Parroquia:</label>
-                <input value={editData.parroquia || ''} onChange={e => handleEditChange('parroquia', e.target.value)} />
-                <label>Cantón:</label>
-                <input value={editData.canton || ''} onChange={e => handleEditChange('canton', e.target.value)} />
-                <label>Provincia:</label>
-                <input value={editData.provincia || ''} onChange={e => handleEditChange('provincia', e.target.value)} />
-                <label>Teléfono:</label>
-                <input value={editData.telefono || ''} onChange={e => handleEditChange('telefono', e.target.value)} />
-                <label>Grupo Sanguíneo y Factor RH:</label>
-                <input value={editData.grupoSanguineoYFactorRh || ''} onChange={e => handleEditChange('grupoSanguineoYFactorRh', e.target.value)} />
-                <label>Fecha de nacimiento:</label>
-                <input type="date" value={editData.fechaNacimiento ? editData.fechaNacimiento.substring(0,10) : ''} onChange={e => handleEditChange('fechaNacimiento', e.target.value)} />
-                <label>Lugar de nacimiento:</label>
-                <input value={editData.lugarNacimiento || ''} onChange={e => handleEditChange('lugarNacimiento', e.target.value)} />
-                <label>Nacionalidad:</label>
-                <input value={editData.nacionalidad || ''} onChange={e => handleEditChange('nacionalidad', e.target.value)} />
-                <label>Grupo cultural:</label>
-                <input value={editData.grupoCultural || ''} onChange={e => handleEditChange('grupoCultural', e.target.value)} />
-                <label>Edad en años cumplidos:</label>
-                <input type="number" value={editData.edadEnAnosCumplidos || ''} onChange={e => handleEditChange('edadEnAnosCumplidos', e.target.value)} min={0} max={120} />
-                <label>Sexo:</label>
-                <input value={editData.sexo || ''} onChange={e => handleEditChange('sexo', e.target.value)} />
-                <label>Estado civil:</label>
-                <input value={editData.estadoCivil || ''} onChange={e => handleEditChange('estadoCivil', e.target.value)} />
-                <label>Nivel educativo:</label>
-                <input value={editData.nivelEducativo || ''} onChange={e => handleEditChange('nivelEducativo', e.target.value)} />
-                <label>Fecha de admisión:</label>
-                <input type="date" value={editData.fechaAdmision ? editData.fechaAdmision.substring(0,10) : ''} onChange={e => handleEditChange('fechaAdmision', e.target.value)} />
-                <label>Ocupación:</label>
-                <input value={editData.ocupacion || ''} onChange={e => handleEditChange('ocupacion', e.target.value)} />
-                <label>Empresa donde trabaja:</label>
-                <input value={editData.empresaDondeTrabaja || ''} onChange={e => handleEditChange('empresaDondeTrabaja', e.target.value)} />
-                <label>Tipo seguro salud:</label>
-                <input value={editData.tipoSeguroSalud || ''} onChange={e => handleEditChange('tipoSeguroSalud', e.target.value)} />
-                <label>Referido de:</label>
-                <input value={editData.referidoDe || ''} onChange={e => handleEditChange('referidoDe', e.target.value)} />
-                <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
-                <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>En caso de emergencia</h4>
-                <label>Notificar a:</label>
-                <input value={editData.enCasoDeAvisarA || ''} onChange={e => handleEditChange('enCasoDeAvisarA', e.target.value)} />
-                <label>Parentesco/afinidad:</label>
-                <input value={editData.parentescoAfinidad || ''} onChange={e => handleEditChange('parentescoAfinidad', e.target.value)} />
-                <label>Teléfono de emergencia:</label>
-                <input value={editData.telefonoEmergencia || ''} onChange={e => handleEditChange('telefonoEmergencia', e.target.value)} />
-                <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
-                <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Antecedentes personales y familiares</h4>
-                <label>Antecedente Alérgico:</label>
-                <input value={editData.antecedenteAlergico || ''} onChange={e => handleEditChange('antecedenteAlergico', e.target.value)} />
-                <label>Antecedente Clínico:</label>
-                <input value={editData.antecedenteClinico || ''} onChange={e => handleEditChange('antecedenteClinico', e.target.value)} />
-                <label>Antecedente Ginecológico:</label>
-                <input value={editData.antecedenteGinecologico || ''} onChange={e => handleEditChange('antecedenteGinecologico', e.target.value)} />
-                <label>Antecedente Traumatológico:</label>
-                <input value={editData.antecedenteTraumatologico || ''} onChange={e => handleEditChange('antecedenteTraumatologico', e.target.value)} />
-                <label>Antecedente Quirúrgico:</label>
-                <input value={editData.antecedenteQuirurgico || ''} onChange={e => handleEditChange('antecedenteQuirurgico', e.target.value)} />
-                <label>Antecedente Farmacológico:</label>
-                <input value={editData.antecedenteFarmacoLogico || ''} onChange={e => handleEditChange('antecedenteFarmacoLogico', e.target.value)} />
-                <label>Antecedente Psiquiátrico:</label>
-                <input value={editData.antecedentePsiquiatrico || ''} onChange={e => handleEditChange('antecedentePsiquiatrico', e.target.value)} />
-                <label>Antecedente Otro:</label>
-                <input value={editData.antecedenteOtro || ''} onChange={e => handleEditChange('antecedenteOtro', e.target.value)} />
-              </div>
-              <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
-                <button type="submit" className="revisar-historias-btn">Guardar</button>
-                <button type="button" className="revisar-historias-btn revisar-historias-btn-cancel" onClick={() => setEditIdx(null)}>Cancelar</button>
-              </div>
-            </form>
+          <div
+            className="revisar-historias-popup-content"
+            style={{
+              maxHeight: '90vh',
+              width: '90vw',
+              maxWidth: 1000,
+              margin: '5vh auto',
+              background: '#fff',
+              borderRadius: 12,
+              boxShadow: '0 2px 16px rgba(0,0,0,0.15)',
+              padding: 24,
+              position: 'relative',
+              display: 'flex',
+              flexDirection: 'column'
+            }}
+          >
+            <div style={{ overflowY: 'auto', paddingRight: 8 , paddingLeft: 8}}>
+              <h4 style={{ textAlign: 'center', margin: '0 0 16px 0' }}>Editar Historia Clínica</h4>
+              <form id="editHistoriaForm" onSubmit={e => { e.preventDefault(); handleEditSave(); }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <label>Nombre:</label>
+                  <input value={editData.nombre} disabled style={{ color: '#222' }} />
+                  <label>Cédula:</label>
+                  <input value={editData.cedula} disabled style={{ color: '#222' }} />
+                  <label>Dirección:</label>
+                  <input value={editData.direccionResidenciaHabitual || ''} onChange={e => handleEditChange('direccionResidenciaHabitual', e.target.value)} />
+                  <label>Barrio:</label>
+                  <input value={editData.barrio || ''} onChange={e => handleEditChange('barrio', e.target.value)} />
+                  <label>Parroquia:</label>
+                  <input value={editData.parroquia || ''} onChange={e => handleEditChange('parroquia', e.target.value)} />
+                  <label>Cantón:</label>
+                  <input value={editData.canton || ''} onChange={e => handleEditChange('canton', e.target.value)} />
+                  <label>Provincia:</label>
+                  <input value={editData.provincia || ''} onChange={e => handleEditChange('provincia', e.target.value)} />
+                  <label>Teléfono:</label>
+                  <input value={editData.telefono || ''} onChange={e => handleEditChange('telefono', e.target.value)} />
+                  <label>Grupo Sanguíneo y Factor RH:</label>
+                  <input value={editData.grupoSanguineoYFactorRh || ''} onChange={e => handleEditChange('grupoSanguineoYFactorRh', e.target.value)} />
+                  <label>Fecha de nacimiento:</label>
+                  <input type="date" value={editData.fechaNacimiento ? editData.fechaNacimiento.substring(0,10) : ''} onChange={e => handleEditChange('fechaNacimiento', e.target.value)} />
+                  <label>Lugar de nacimiento:</label>
+                  <input value={editData.lugarNacimiento || ''} onChange={e => handleEditChange('lugarNacimiento', e.target.value)} />
+                  <label>Nacionalidad:</label>
+                  <input value={editData.nacionalidad || ''} onChange={e => handleEditChange('nacionalidad', e.target.value)} />
+                  <label>Grupo cultural:</label>
+                  <input value={editData.grupoCultural || ''} onChange={e => handleEditChange('grupoCultural', e.target.value)} />
+                  <label>Edad en años cumplidos:</label>
+                  <input type="number" value={editData.edadEnAnosCumplidos || ''} onChange={e => handleEditChange('edadEnAnosCumplidos', e.target.value)} min={0} max={120} />
+                  <label>Sexo:</label>
+                  <input value={editData.sexo || ''} onChange={e => handleEditChange('sexo', e.target.value)} />
+                  <label>Estado civil:</label>
+                  <input value={editData.estadoCivil || ''} onChange={e => handleEditChange('estadoCivil', e.target.value)} />
+                  <label>Nivel educativo:</label>
+                  <input value={editData.nivelEducativo || ''} onChange={e => handleEditChange('nivelEducativo', e.target.value)} />
+                  <label>Fecha de admisión:</label>
+                  <input type="date" value={editData.fechaAdmision ? editData.fechaAdmision.substring(0,10) : ''} onChange={e => handleEditChange('fechaAdmision', e.target.value)} />
+                  <label>Ocupación:</label>
+                  <input value={editData.ocupacion || ''} onChange={e => handleEditChange('ocupacion', e.target.value)} />
+                  <label>Empresa donde trabaja:</label>
+                  <input value={editData.empresaDondeTrabaja || ''} onChange={e => handleEditChange('empresaDondeTrabaja', e.target.value)} />
+                  <label>Tipo seguro salud:</label>
+                  <input value={editData.tipoSeguroSalud || ''} onChange={e => handleEditChange('tipoSeguroSalud', e.target.value)} />
+                  <label>Referido de:</label>
+                  <input value={editData.referidoDe || ''} onChange={e => handleEditChange('referidoDe', e.target.value)} />
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>En caso de emergencia</h4>
+                  <label>Notificar a:</label>
+                  <input value={editData.enCasoDeAvisarA || ''} onChange={e => handleEditChange('enCasoDeAvisarA', e.target.value)} />
+                  <label>Parentesco/afinidad:</label>
+                  <input value={editData.parentescoAfinidad || ''} onChange={e => handleEditChange('parentescoAfinidad', e.target.value)} />
+                  <label>Teléfono de emergencia:</label>
+                  <input value={editData.telefonoEmergencia || ''} onChange={e => handleEditChange('telefonoEmergencia', e.target.value)} />
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Antecedentes personales y familiares</h4>
+                  <label>Antecedente Alérgico:</label>
+                  <input value={editData.antecedenteAlergico || ''} onChange={e => handleEditChange('antecedenteAlergico', e.target.value)} />
+                  <label>Antecedente Clínico:</label>
+                  <input value={editData.antecedenteClinico || ''} onChange={e => handleEditChange('antecedenteClinico', e.target.value)} />
+                  <label>Antecedente Ginecológico:</label>
+                  <input value={editData.antecedenteGinecologico || ''} onChange={e => handleEditChange('antecedenteGinecologico', e.target.value)} />
+                  <label>Antecedente Traumatológico:</label>
+                  <input value={editData.antecedenteTraumatologico || ''} onChange={e => handleEditChange('antecedenteTraumatologico', e.target.value)} />
+                  <label>Antecedente Quirúrgico:</label>
+                  <input value={editData.antecedenteQuirurgico || ''} onChange={e => handleEditChange('antecedenteQuirurgico', e.target.value)} />
+                  <label>Antecedente Farmacológico:</label>
+                  <input value={editData.antecedenteFarmacoLogico || ''} onChange={e => handleEditChange('antecedenteFarmacoLogico', e.target.value)} />
+                  <label>Antecedente Psiquiátrico:</label>
+                  <input value={editData.antecedentePsiquiatrico || ''} onChange={e => handleEditChange('antecedentePsiquiatrico', e.target.value)} />
+                  <label>Antecedente Otro:</label>
+                  <input value={editData.antecedenteOtro || ''} onChange={e => handleEditChange('antecedenteOtro', e.target.value)} />
+                </div>
+              </form>
+            </div>
+
+            <div style={{ position: 'sticky', background: '#fff', padding: '10px', display: 'flex', justifyContent: 'center', gap: 20, border: '10px solid #fff'}}>
+              <button type="submit" form="editHistoriaForm" className="revisar-historias-btn">Guardar</button>
+              <button type="button" className="revisar-historias-btn revisar-historias-btn-cancel" onClick={() => setEditIdx(null)}>Cancelar</button>
+            </div>
           </div>
         </div>
       )}
       {editConsultaIdx && (
         <div className="revisar-historias-popup-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1000, background: 'rgba(0,0,0,0.3)' }}>
-          <div className="revisar-historias-popup-content" style={{ maxHeight: '90vh', overflowY: 'auto', width: '90vw', maxWidth: 600, margin: '5vh auto', background: '#fff', borderRadius: 12, boxShadow: '0 2px 16px rgba(0,0,0,0.15)', padding: 24, position: 'relative' }}>
-            <h4>Editar Consulta</h4>
-            <form onSubmit={e => { e.preventDefault(); handleSaveEditConsulta(); }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <label>Hora:</label>
-                <input value={editConsultaData.hora || ''} disabled style={{ color: '#222' }} />
-                <label>Motivo de Consulta:</label>
-                <input value={editConsultaData.motivoDeConsulta || ''} onChange={e => setEditConsultaData(d => ({ ...d, motivoDeConsulta: e.target.value }))} />
-                <label>Aliento Etílico:</label>
-                <input value={editConsultaData.alientoEtilico || ''} onChange={e => setEditConsultaData(d => ({ ...d, alientoEtilico: e.target.value }))} />
-                <label>Valor AlcoCheck:</label>
-                <input value={editConsultaData.valorAlcoCheck || ''} onChange={e => setEditConsultaData(d => ({ ...d, valorAlcoCheck: e.target.value }))} />
-                <label>Enfermedad Actual:</label>
-                <textarea value={editConsultaData.enfermedadActual || ''} onChange={e => setEditConsultaData(d => ({ ...d, enfermedadActual: e.target.value }))} rows={3} />
-                <label>Presión Arterial:</label>
-                <input value={editConsultaData.presionArterial || ''} onChange={e => setEditConsultaData(d => ({ ...d, presionArterial: e.target.value }))} />
-                <label>Frecuencia Cardíaca:</label>
-                <input value={editConsultaData.frecuenciaCardiaca || ''} onChange={e => setEditConsultaData(d => ({ ...d, frecuenciaCardiaca: e.target.value }))} />
-                <label>Frecuencia Respiratoria:</label>
-                <input value={editConsultaData.frecuenciaRespiratoria || ''} onChange={e => setEditConsultaData(d => ({ ...d, frecuenciaRespiratoria: e.target.value }))} />
-                <label>Temperatura Bucal:</label>
-                <input value={editConsultaData.temperaturaBucal || ''} onChange={e => setEditConsultaData(d => ({ ...d, temperaturaBucal: e.target.value }))} />
-                <label>Temperatura Axilar:</label>
-                <input value={editConsultaData.temperaturaAxilar || ''} onChange={e => setEditConsultaData(d => ({ ...d, temperaturaAxilar: e.target.value }))} />
-                <label>Peso:</label>
-                <input value={editConsultaData.peso || ''} onChange={e => setEditConsultaData(d => ({ ...d, peso: e.target.value }))} />
-                <label>Talla:</label>
-                <input value={editConsultaData.talla || ''} onChange={e => setEditConsultaData(d => ({ ...d, talla: e.target.value }))} />
-                <label>Gaslow Ocular:</label>
-                <input value={editConsultaData.gaslowOcular || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowOcular: e.target.value }))} />
-                <label>Gaslow Verbal:</label>
-                <input value={editConsultaData.gaslowVerbal || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowVerbal: e.target.value }))} />
-                <label>Gaslow Motora:</label>
-                <input value={editConsultaData.gaslowMotora || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowMotora: e.target.value }))} />
-                <label>Gaslow Total:</label>
-                <input value={editConsultaData.gaslowTotal || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowTotal: e.target.value }))} />
-                <label>Reacción Pupila Izquierda:</label>
-                <input value={editConsultaData.reaccionPupilaIzq || ''} onChange={e => setEditConsultaData(d => ({ ...d, reaccionPupilaIzq: e.target.value }))} />
-                <label>Reacción Pupila Derecha:</label>
-                <input value={editConsultaData.reaccionPupilaDer || ''} onChange={e => setEditConsultaData(d => ({ ...d, reaccionPupilaDer: e.target.value }))} />
-                <label>Tiempo Llenado Capilar:</label>
-                <input value={editConsultaData.tiempoLlenadoCapilar || ''} onChange={e => setEditConsultaData(d => ({ ...d, tiempoLlenadoCapilar: e.target.value }))} />
-                <label>Saturación Oxígeno:</label>
-                <input value={editConsultaData.saturacionOxigeno || ''} onChange={e => setEditConsultaData(d => ({ ...d, saturacionOxigeno: e.target.value }))} />
-                <label>Vía Aérea Obstruida:</label>
-                <input value={editConsultaData.viaAereaObstruida || ''} onChange={e => setEditConsultaData(d => ({ ...d, viaAereaObstruida: e.target.value }))} />
-                {/* Agrega los checkboxes y demás campos de la misma forma */}
-              </div>
-              <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
-                <button type="submit" className="revisar-historias-btn">Guardar</button>
-                <button type="button" className="revisar-historias-btn revisar-historias-btn-cancel" onClick={() => setEditConsultaIdx(null)}>Cancelar</button>
-              </div>
-            </form>
+          <div className="revisar-historias-popup-content" style={{ maxHeight: '90vh', width: '90vw', maxWidth: 1000, margin: '5vh auto', background: '#fff', borderRadius: 12, boxShadow: '0 2px 16px rgba(0,0,0,0.15)', padding: 24, position: 'relative', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ overflowY: 'auto', paddingRight: 8 }}>
+              <h4>Editar Consulta</h4>
+              <form id="editConsultaForm" onSubmit={e => { e.preventDefault(); handleSaveEditConsulta(); }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <label>Hora:</label>
+                  <input value={editConsultaData.hora || ''} disabled style={{ color: '#222' }} />
+                  <label>Motivo de Consulta:</label>
+                  <input value={editConsultaData.motivoDeConsulta || ''} onChange={e => setEditConsultaData(d => ({ ...d, motivoDeConsulta: e.target.value }))} />
+                  <label>Enfermedad Actual:</label>
+                  <textarea value={editConsultaData.enfermedadActual || ''} onChange={e => setEditConsultaData(d => ({ ...d, enfermedadActual: e.target.value }))} rows={3} />
+                  
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label>Presión Arterial:</label>
+                      <input value={editConsultaData.presionArterial || ''} onChange={e => setEditConsultaData(d => ({ ...d, presionArterial: e.target.value }))} />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label>Frecuencia Cardíaca:</label>
+                      <input value={editConsultaData.frecuenciaCardiaca || ''} onChange={e => setEditConsultaData(d => ({ ...d, frecuenciaCardiaca: e.target.value }))} />
+                    </div>
+                  </div>
+                  <label>Frecuencia Respiratoria:</label>
+                  <input value={editConsultaData.frecuenciaRespiratoria || ''} onChange={e => setEditConsultaData(d => ({ ...d, frecuenciaRespiratoria: e.target.value }))} />
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label>Temperatura Bucal:</label>
+                      <input value={editConsultaData.temperaturaBucal || ''} onChange={e => setEditConsultaData(d => ({ ...d, temperaturaBucal: e.target.value }))} />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label>Temperatura Axilar:</label>
+                      <input value={editConsultaData.temperaturaAxilar || ''} onChange={e => setEditConsultaData(d => ({ ...d, temperaturaAxilar: e.target.value }))} />
+                    </div>
+                  </div>   
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label>Peso:</label>
+                      <input value={editConsultaData.peso || ''} onChange={e => setEditConsultaData(d => ({ ...d, peso: e.target.value }))} />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label>Talla:</label>
+                      <input value={editConsultaData.talla || ''} onChange={e => setEditConsultaData(d => ({ ...d, talla: e.target.value }))} />
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 6 }}>Glasgow Ocular</label>
+                      <input value={editConsultaData.gaslowOcular || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowOcular: e.target.value }))} />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 6 }}>Glasgow Verbal</label>
+                      <input value={editConsultaData.gaslowVerbal || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowVerbal: e.target.value }))} />
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
+
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 6 }}>Glasgow Motora</label>
+                      <input value={editConsultaData.gaslowMotora || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowMotora: e.target.value }))} />
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <label style={{ marginBottom: 6 }}>Total</label>
+                      <input value={editConsultaData.gaslowTotal || ''} onChange={e => setEditConsultaData(d => ({ ...d, gaslowTotal: e.target.value }))} />
+                    </div>
+                  </div>
+                  <label>Reacción Pupila Izquierda:</label>
+                  <input value={editConsultaData.reaccionPupilaIzq || ''} onChange={e => setEditConsultaData(d => ({ ...d, reaccionPupilaIzq: e.target.value }))} />
+                  <label>Reacción Pupila Derecha:</label>
+                  <input value={editConsultaData.reaccionPupilaDer || ''} onChange={e => setEditConsultaData(d => ({ ...d, reaccionPupilaDer: e.target.value }))} />
+                  <label>Tiempo Llenado Capilar:</label>
+                  <input value={editConsultaData.tiempoLlenadoCapilar || ''} onChange={e => setEditConsultaData(d => ({ ...d, tiempoLlenadoCapilar: e.target.value }))} />
+                  <label>Saturación Oxígeno:</label>
+                  <input value={editConsultaData.saturacionOxigeno || ''} onChange={e => setEditConsultaData(d => ({ ...d, saturacionOxigeno: e.target.value }))} />
+                  <label>Vía Aérea Obstruida:</label>
+                  <input value={editConsultaData.viaAereaObstruida || ''} onChange={e => setEditConsultaData(d => ({ ...d, viaAereaObstruida: e.target.value }))} />
+                  
+                </div>
+              </form>
+            </div>
+
+            <div style={{ position: 'sticky', bottom: 0, background: '#fff', padding: '12px 0', display: 'flex', justifyContent: 'center', gap: 8, borderTop: '1px solid #e0e0e0' }}>
+              <button type="submit" form="editConsultaForm" className="revisar-historias-btn">Guardar</button>
+              <button type="button" className="revisar-historias-btn revisar-historias-btn-cancel" onClick={() => setEditConsultaIdx(null)}>Cancelar</button>
+            </div>
           </div>
         </div>
       )}

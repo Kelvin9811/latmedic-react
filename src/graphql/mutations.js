@@ -48,8 +48,6 @@ export const createCliente = /* GraphQL */ `
           createdAt
           hora
           motivoDeConsulta
-          alientoEtilico
-          valorAlcoCheck
           enfermedadActual
           presionArterial
           frecuenciaCardiaca
@@ -169,8 +167,6 @@ export const updateCliente = /* GraphQL */ `
           createdAt
           hora
           motivoDeConsulta
-          alientoEtilico
-          valorAlcoCheck
           enfermedadActual
           presionArterial
           frecuenciaCardiaca
@@ -290,8 +286,6 @@ export const deleteCliente = /* GraphQL */ `
           createdAt
           hora
           motivoDeConsulta
-          alientoEtilico
-          valorAlcoCheck
           enfermedadActual
           presionArterial
           frecuenciaCardiaca
@@ -375,8 +369,6 @@ export const createConsulta = /* GraphQL */ `
       createdAt
       hora
       motivoDeConsulta
-      alientoEtilico
-      valorAlcoCheck
       enfermedadActual
       presionArterial
       frecuenciaCardiaca
@@ -483,8 +475,6 @@ export const updateConsulta = /* GraphQL */ `
       createdAt
       hora
       motivoDeConsulta
-      alientoEtilico
-      valorAlcoCheck
       enfermedadActual
       presionArterial
       frecuenciaCardiaca
@@ -591,8 +581,6 @@ export const deleteConsulta = /* GraphQL */ `
       createdAt
       hora
       motivoDeConsulta
-      alientoEtilico
-      valorAlcoCheck
       enfermedadActual
       presionArterial
       frecuenciaCardiaca

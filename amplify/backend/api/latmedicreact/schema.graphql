@@ -53,8 +53,6 @@ type Consulta
   createdAt: AWSDateTime
   hora: String
   motivoDeConsulta: String
-  alientoEtilico: String
-  valorAlcoCheck: String
   enfermedadActual: String
   presionArterial: String
   frecuenciaCardiaca: String
