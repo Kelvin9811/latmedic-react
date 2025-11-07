@@ -458,7 +458,151 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           className="crear-consulta-input"
         />
       </div>
+
+      {/* START: Lesiones / Traumatismos */}
       <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
+      <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Lesiones / Traumatismos</h4>
+      <div className="crear-consulta-campo" style={{ flexDirection: 'column', gap: 8 }}>
+        <div>
+          <label>Herida Penetrante:</label>
+          <input
+            type="text"
+            value={heridaPenetrante}
+            onChange={e => setHeridaPenetrante(e.target.value)}
+            className="crear-consulta-input"
+          />
+        </div>
+        <div>
+          <label>Herida Cortante:</label>
+          <input
+            type="text"
+            value={heridaCortante}
+            onChange={e => setHeridaCortante(e.target.value)}
+            className="crear-consulta-input"
+          />
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ flex: 1 }}>
+            <label>Fractura Expuesta:</label>
+            <input
+              type="text"
+              value={fracturaExpuesta}
+              onChange={e => setFracturaExpuesta(e.target.value)}
+              className="crear-consulta-input"
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <label>Fractura Cerrada:</label>
+            <input
+              type="text"
+              value={fracturaCerrada}
+              onChange={e => setFracturaCerrada(e.target.value)}
+              className="crear-consulta-input"
+            />
+          </div>
+        </div>
+        <div>
+          <label>Cuerpo Extraño:</label>
+          <input
+            type="text"
+            value={cuerpoExtrano}
+            onChange={e => setCuerpoExtrano(e.target.value)}
+            className="crear-consulta-input"
+          />
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ flex: 1 }}>
+            <label>Hemorragia:</label>
+            <input
+              type="text"
+              value={hemorragia}
+              onChange={e => setHemorragia(e.target.value)}
+              className="crear-consulta-input"
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <label>Mordedura:</label>
+            <input
+              type="text"
+              value={mordedura}
+              onChange={e => setMordedura(e.target.value)}
+              className="crear-consulta-input"
+            />
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ flex: 1 }}>
+            <label>Picadura:</label>
+            <input
+              type="text"
+              value={picadura}
+              onChange={e => setPicadura(e.target.value)}
+              className="crear-consulta-input"
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <label>Excoriación:</label>
+            <input
+              type="text"
+              value={excoriacion}
+              onChange={e => setExcoriacion(e.target.value)}
+              className="crear-consulta-input"
+            />
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ flex: 1 }}>
+            <label>Deformidad o Masa:</label>
+            <input
+              type="text"
+              value={deformidadOMasa}
+              onChange={e => setDeformidadOMasa(e.target.value)}
+              className="crear-consulta-input"
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <label>Hematoma:</label>
+            <input
+              type="text"
+              value={hematoma}
+              onChange={e => setHematoma(e.target.value)}
+              className="crear-consulta-input"
+            />
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ flex: 1 }}>
+            <label>Eritema / Inflamación:</label>
+            <input
+              type="text"
+              value={eritemaInflamacion}
+              onChange={e => setEritemaInflamacion(e.target.value)}
+              className="crear-consulta-input"
+            />
+          </div>
+          <div style={{ flex: 1 }}>
+            <label>Luxación / Esguince:</label>
+            <input
+              type="text"
+              value={luxacionEsguince}
+              onChange={e => setLuxacionEsguince(e.target.value)}
+              className="crear-consulta-input"
+            />
+          </div>
+        </div>
+        <div>
+          <label>Quemadura:</label>
+          <input
+            type="text"
+            value={quemadura}
+            onChange={e => setQuemadura(e.target.value)}
+            className="crear-consulta-input"
+          />
+        </div>
+      </div>
+      {/* END: Lesiones / Traumatismos */}
+
+      <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
       <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Exámenes solicitados</h4>
       <div className="crear-consulta-campo">
         <label>Examen Biometría:</label>

@@ -529,7 +529,7 @@ const RevisarHistoriasClinicas = () => {
             }}
           >
             <div style={{ overflowY: 'auto', paddingRight: 8 , paddingLeft: 8}}>
-              <h4 style={{ textAlign: 'center', margin: '0 0 16px 0' }}>Editar Historia Clínica</h4>
+              <h4 style={{ textAlign: 'center', margin: '0 0 16px 0', fontWeight: 'bold' }}>Editar Historia Clínica</h4>
               <form id="editHistoriaForm" onSubmit={e => { e.preventDefault(); handleEditSave(); }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <label>Nombre:</label>
@@ -617,7 +617,7 @@ const RevisarHistoriasClinicas = () => {
         <div className="revisar-historias-popup-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1000, background: 'rgba(0,0,0,0.3)' }}>
           <div className="revisar-historias-popup-content" style={{ maxHeight: '90vh', width: '90vw', maxWidth: 1000, margin: '5vh auto', background: '#fff', borderRadius: 12, boxShadow: '0 2px 16px rgba(0,0,0,0.15)', padding: 24, position: 'relative', display: 'flex', flexDirection: 'column' }}>
             <div style={{ overflowY: 'auto', paddingRight: 8 }}>
-              <h4>Editar Consulta</h4>
+              <h4 style={{ textAlign: 'center', margin: '0 0 16px 0', fontWeight: 'bold'}}>Editar Consulta</h4>
               <form id="editConsultaForm" onSubmit={e => { e.preventDefault(); handleSaveEditConsulta(); }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <label>Hora:</label>
@@ -690,7 +690,105 @@ const RevisarHistoriasClinicas = () => {
                   <input value={editConsultaData.saturacionOxigeno || ''} onChange={e => setEditConsultaData(d => ({ ...d, saturacionOxigeno: e.target.value }))} />
                   <label>Vía Aérea Obstruida:</label>
                   <input value={editConsultaData.viaAereaObstruida || ''} onChange={e => setEditConsultaData(d => ({ ...d, viaAereaObstruida: e.target.value }))} />
-                  
+                  {/* Agrega los checkboxes y demás campos de la misma forma */}
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Lesiones / Traumatismos</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <label>Herida Penetrante:</label>
+                    <input value={editConsultaData.heridaPenetrante || ''} onChange={e => setEditConsultaData(d => ({ ...d, heridaPenetrante: e.target.value }))} />
+                    <label>Herida Cortante:</label>
+                    <input value={editConsultaData.heridaCortante || ''} onChange={e => setEditConsultaData(d => ({ ...d, heridaCortante: e.target.value }))} />
+                    <label>Fractura Expuesta:</label>
+                    <input value={editConsultaData.fracturaExpuesta || ''} onChange={e => setEditConsultaData(d => ({ ...d, fracturaExpuesta: e.target.value }))} />
+                    <label>Fractura Cerrada:</label>
+                    <input value={editConsultaData.fracturaCerrada || ''} onChange={e => setEditConsultaData(d => ({ ...d, fracturaCerrada: e.target.value }))} />
+                    <label>Cuerpo Extraño:</label>
+                    <input value={editConsultaData.cuerpoExtrano || ''} onChange={e => setEditConsultaData(d => ({ ...d, cuerpoExtrano: e.target.value }))} />
+                    <label>Hemorragia:</label>
+                    <input value={editConsultaData.hemorragia || ''} onChange={e => setEditConsultaData(d => ({ ...d, hemorragia: e.target.value }))} />
+                    <label>Mordedura:</label>
+                    <input value={editConsultaData.mordedura || ''} onChange={e => setEditConsultaData(d => ({ ...d, mordedura: e.target.value }))} />
+                    <label>Picadura:</label>
+                    <input value={editConsultaData.picadura || ''} onChange={e => setEditConsultaData(d => ({ ...d, picadura: e.target.value }))} />
+                    <label>Excoriación:</label>
+                    <input value={editConsultaData.excoriacion || ''} onChange={e => setEditConsultaData(d => ({ ...d, excoriacion: e.target.value }))} />
+                    <label>Deformidad o Masa:</label>
+                    <input value={editConsultaData.deformidadOMasa || ''} onChange={e => setEditConsultaData(d => ({ ...d, deformidadOMasa: e.target.value }))} />
+                    <label>Hematoma:</label>
+                    <input value={editConsultaData.hematoma || ''} onChange={e => setEditConsultaData(d => ({ ...d, hematoma: e.target.value }))} />
+                    <label>Eritema / Inflamación:</label>
+                    <input value={editConsultaData.eritemaInflamacion || ''} onChange={e => setEditConsultaData(d => ({ ...d, eritemaInflamacion: e.target.value }))} />
+                    <label>Luxación / Esguince:</label>
+                    <input value={editConsultaData.luxacionEsguince || ''} onChange={e => setEditConsultaData(d => ({ ...d, luxacionEsguince: e.target.value }))} />
+                    <label>Quemadura:</label>
+                    <input value={editConsultaData.quemadura || ''} onChange={e => setEditConsultaData(d => ({ ...d, quemadura: e.target.value }))} />
+                  </div>
+
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Exámenes solicitados</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenBiometria} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenBiometria: e.target.checked }))} /> Examen Biometría
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenUroanalisis} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenUroanalisis: e.target.checked }))} /> Examen Uroanálisis
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenQuimicaSanguinea} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenQuimicaSanguinea: e.target.checked }))} /> Examen Química Sanguínea
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenElectrolitos} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenElectrolitos: e.target.checked }))} /> Examen Electrolitos
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenGasometria} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenGasometria: e.target.checked }))} /> Examen Gasometría
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenElectrocardiograma} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenElectrocardiograma: e.target.checked }))} /> Examen Electrocardiograma
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenEndoscopia} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenEndoscopia: e.target.checked }))} /> Examen Endoscopia
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenRxTorax} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenRxTorax: e.target.checked }))} /> Examen Rx Tórax
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenRxAbdomen} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenRxAbdomen: e.target.checked }))} /> Examen Rx Abdomen
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenRxOsea} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenRxOsea: e.target.checked }))} /> Examen Rx Ósea
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenTomografia} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenTomografia: e.target.checked }))} /> Examen Tomografía
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenResonancia} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenResonancia: e.target.checked }))} /> Examen Resonancia
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenEcografiaPelvica} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenEcografiaPelvica: e.target.checked }))} /> Examen Ecografía Pélvica
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenEcografiaAbdomen} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenEcografiaAbdomen: e.target.checked }))} /> Examen Ecografía Abdomen
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenInterconsulta} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenInterconsulta: e.target.checked }))} /> Interconsulta
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <input type="checkbox" checked={!!editConsultaData.solicitudExamenOtros} onChange={e => setEditConsultaData(d => ({ ...d, solicitudExamenOtros: e.target.checked }))} /> Otros Exámenes
+                    </label>
+                  </div>
+
+                  <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
+                  <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Diagnósticos</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <label>Diagnóstico de Ingreso:</label>
+                    <input value={editConsultaData.diagnosticodeIngreso || ''} onChange={e => setEditConsultaData(d => ({ ...d, diagnosticodeIngreso: e.target.value }))} />
+                    <label>Diagnóstico de Alta:</label>
+                    <input value={editConsultaData.diagnosticodeAltade || ''} onChange={e => setEditConsultaData(d => ({ ...d, diagnosticodeAltade: e.target.value }))} />
+                    <label>Plan de Tratamiento e Indicaciones:</label>
+                    <textarea value={editConsultaData.planDeTratamientoIndicaciones || ''} onChange={e => setEditConsultaData(d => ({ ...d, planDeTratamientoIndicaciones: e.target.value }))} rows={3} />
+                    <label>Plan de Tratamiento (Medicamentos):</label>
+                    <textarea value={editConsultaData.planDeTratamientoMedicamentos || ''} onChange={e => setEditConsultaData(d => ({ ...d, planDeTratamientoMedicamentos: e.target.value }))} rows={3} />
+                  </div>
                 </div>
               </form>
             </div>
