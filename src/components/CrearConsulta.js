@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { createConsultaForCedula } from '../apiCrud';
+import React, { useState, useRef } from 'react';
+import { createConsultaForCedula, addDocumentoToConsulta } from '../apiCrud';
+import { uploadData,getUrl  } from '@aws-amplify/storage';
 import './CrearConsulta.css';
+import { getDefaultNormalizer } from '@testing-library/dom';
 
 const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
   const [hora, setHora] = useState('');
@@ -64,6 +66,51 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
   const [planDeTratamientoIndicaciones, setPlanDeTratamientoIndicaciones] = useState('');
   const [planDeTratamientoMedicamentos, setPlanDeTratamientoMedicamentos] = useState('');
   const [loading, setLoading] = useState(false);
+  // archivos adjuntos
+  const [adjuntos, setAdjuntos] = useState([]); // array<File>
+  const [uploadingAdjuntos, setUploadingAdjuntos] = useState(false);
+  const fileInputRef = useRef(null);
+
+  // Sube los archivos a S3 y devuelve array de URLs
+  const uploadFiles = async (files) => {
+    if (!files || files.length === 0) return [];
+
+    const uploads = await Promise.all(
+      Array.from(files).map(async (file) => {
+        
+        console.log('Preparing to upload file:', file.name);
+        const path = `documentos/${Date.now()}_${Math.random()
+          .toString(36)
+          .slice(2, 8)}_${file.name.replace(/\s+/g, '_')}`;
+
+        console.log('Uploading file to S3 at path:', path);
+
+        try {
+        await uploadData({
+          path,           // ruta dentro del bucket (v6 usa "path" en vez de "key")
+          data: file,
+          options: {
+            contentType: file.type || 'application/octet-stream',
+          },
+        }).result;
+        } catch (error) {
+          console.error('Error uploading file:', error);
+        }
+        console.log('File uploaded. Getting URL for path:', path);
+        const { url } = await getUrl({ path });
+
+        return {
+          key: path,              // lo puedes guardar en tu modelo Documento.s3key
+          url: url.toString(),    // URL lista para usar en <a> o <img>
+          name: file.name,
+        };
+
+
+      })
+    );
+
+  return uploads;
+};
 
   // Calcula Glasgow Total automáticamente
   React.useEffect(() => {
@@ -98,6 +145,17 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
     e.preventDefault();
     setLoading(true);
     try {
+      // si hay archivos, subirlos primero y obtener resultados (key + url + name)
+      let uploadResults = [];
+      if (adjuntos && adjuntos.length > 0) {
+        setUploadingAdjuntos(true);
+        try {
+          uploadResults = await uploadFiles(adjuntos);
+        } finally {
+          setUploadingAdjuntos(false);
+        }
+      }
+      // crear consulta incluyendo las urls (opcional) y luego registrar documentos
       const consulta = await createConsultaForCedula(cedula, {
         hora,
         motivoDeConsulta,
@@ -158,9 +216,25 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
         diagnosticodeIngreso,
         diagnosticodeAltade,
         planDeTratamientoIndicaciones,
-        planDeTratamientoMedicamentos
+        planDeTratamientoMedicamentos,
+        // incluir adjuntos (array de URLs) en el payload (si subimos)
+        adjuntos: (uploadResults && uploadResults.length) ? uploadResults.map(r => r.url) : [],
       });
       if (onConsultaCreada) onConsultaCreada(consulta);
+      // si subimos archivos, registrar cada uno como Documento asociado a la consulta
+      if (uploadResults && uploadResults.length) {
+        try {
+          console.log('Registering uploaded documents for consulta:', consulta.id);
+          await Promise.all(uploadResults.map(r =>
+            addDocumentoToConsulta(consulta.id, { tipo: 'OTRO', titulo: r.name, s3key: r.key, notas: null })
+          ));
+        } catch (errDoc) {
+          // opcional: manejar error al crear metadatos de documento (no abortamos la consulta)
+          console.error('Error registrando documentos:', errDoc);
+        }
+      }
+      // limpiar archivos seleccionados
+      setAdjuntos([]);
       // Limpia todos los campos
       setHora('');
       setMotivoDeConsulta('');
@@ -226,6 +300,23 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
       // Manejo de error si lo deseas
     }
     setLoading(false);
+  };
+
+  const handleAddDocumentoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleSingleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAdjuntos(prev => [...prev, file]);
+    }
+    // limpiar el input para permitir re-elegir el mismo archivo si se desea
+    e.target.value = null;
+  };
+
+  const handleRemoveAdjunto = (index) => {
+    setAdjuntos(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -675,11 +766,45 @@ const CrearConsulta = ({ cedula, onConsultaCreada, nombreCliente }) => {
           className="crear-consulta-textarea"
         />
       </div>
-      <button className="crear-consulta-btn" type="submit" disabled={loading}>
-        Guardar
+      <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0 24px 0' }} />
+      <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Documentos adjuntos a la consulta</h4>
+      <div className="crear-consulta-campo">
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 8, flexDirection: 'column' }}>
+          <button type="button" className="crear-consulta-btn" onClick={handleAddDocumentoClick} style={{ padding: '6px 10px' }}>
+            Agregar documento
+          </button>
+          <div style={{ fontSize: 13, color: '#666' }}>{adjuntos.length} seleccionado(s)</div>
+        </div>
+
+        {/* input oculto para seleccionar un único archivo y agregarlo a la lista */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          style={{ display: 'none' }}
+          onChange={handleSingleFileChange}
+        />
+
+        {/* Lista de archivos seleccionados con botón X para eliminar individualmente */}
+        {adjuntos && adjuntos.length > 0 && (
+          <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 ,borderWidth: 1,borderStyle: 'solid',borderColor: '#e0e0e0',padding: 10,borderRadius: 6,backgroundColor: '#fff',flex: 1}}>
+            {adjuntos.map((f, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#fafafa', padding: '8px 10px', borderRadius: 6, border: '1px solid #e6e6e6', maxWidth: '100%' }}>
+                <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginRight: 8, flex: 1 ,color: '#333',fontSize: 20}}>
+                  {f.name} <span style={{ color: '#999', fontSize: 12 }}>({Math.round(f.size/1024)} KB)</span>
+                </div>
+                <button type="button" onClick={() => handleRemoveAdjunto(i)} style={{ background: '#ff6b6b', color: '#fff', border: 'none', borderRadius: 4, padding: '4px 8px', cursor: 'pointer' }} aria-label={`Eliminar ${f.name}`}>
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <button className="crear-consulta-btn" type="submit" disabled={loading || uploadingAdjuntos}>
+        {loading || uploadingAdjuntos ? 'Guardando...' : 'Guardar'}
       </button>
     </form>
   );
 };
 
-export default CrearConsulta;         
+export default CrearConsulta;

@@ -374,16 +374,23 @@ const RevisarHistoriasClinicas = () => {
     setEditData(prev => ({ ...prev, [field]: value }));
   };
 
+  const [loadingButtonState, setLoadingButtonState] = useState(false);
+  const setLoadingButton = (val) => setLoadingButtonState(!!val);
+
   const handleEditSave = async () => {
+    // Usamos el nuevo control del botón para bloquear la acción y mostrar spinner
+    setLoadingButton(true);
     setLoading(true);
-    await upsertClienteByCedula(editData);
-    setHistorias(hist => hist.map((h, idx) => idx === editIdx ? editData : h));
-    setEditIdx(null);
-    setLoading(false);
-    // Mostrar pantalla de agregar consulta
-    setConsultasCedula(editData.cedula);
-    setShowConsultas(true);
-    setShowConsultas(true);
+    try {
+      await upsertClienteByCedula(editData);
+      setHistorias(hist => hist.map((h, idx) => idx === editIdx ? editData : h));
+      setEditIdx(null);
+    } catch {
+      // manejo opcional de error
+    } finally {
+      setLoading(false);
+      setLoadingButton(false);
+    }
   };
 
   const handleEliminarClick = (idx) => {
@@ -456,6 +463,7 @@ const RevisarHistoriasClinicas = () => {
   const handleSaveEditConsulta = async () => {
     setLoading(true);
     try {
+      console.log('Guardando consulta editada:', editConsultaData);
       const updated = await updateConsulta(editConsultaData);
       // Actualiza la lista de consultas mostrada en el popup (si existe)
       setConsultas(prev => prev.map(c => (c.id === updated.id ? updated : c)));
@@ -468,6 +476,7 @@ const RevisarHistoriasClinicas = () => {
     } catch (e) {
       // error opcional: puedes agregar notificación
       console.error('Error actualizando consulta', e);
+      console.error('Error actualizando consulta', e.message);
     } finally {
       setLoading(false);
     }
@@ -510,14 +519,35 @@ const RevisarHistoriasClinicas = () => {
               <div style={{ marginBottom: 12 }}>
                 {editIdx === idx ? (
                   <>
-                    <button onClick={handleEditSave} className="revisar-historias-btn">Guardar</button>
+                    <button
+                      onClick={handleEditSave}
+                      className="revisar-historias-btn"
+                      disabled={loadingButtonState}
+                      style={loadingButtonState ? { background: '#f0f0f0', color: '#666', cursor: 'not-allowed', opacity: 0.95 } : undefined}
+                    >
+                      {loadingButtonState ? (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <g>
+                              <circle cx="12" cy="12" r="10" stroke="#666" strokeWidth="2" strokeOpacity="0.25" />
+                              <path d="M22 12a10 10 0 00-10-10" stroke="#666" strokeWidth="2" strokeLinecap="round">
+                                <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite" />
+                              </path>
+                            </g>
+                          </svg>
+                          <span>Guardando...</span>
+                        </span>
+                      ) : (
+                        'Guardar'
+                      )}
+                    </button>
                     <button onClick={() => setEditIdx(null)} className="revisar-historias-btn revisar-historias-btn-cancel">Cancelar</button>
                   </>
                 ) : (
-                  <>
-                    <button onClick={() => handleEdit(idx)} className="revisar-historias-btn">Editar</button>
-                    <button onClick={() => handleEliminarClick(idx)} className="revisar-historias-btn revisar-historias-btn-eliminar">Eliminar</button>
-                  </>
+                 <>
+                   <button onClick={() => handleEdit(idx)} className="revisar-historias-btn">Editar</button>
+                   <button onClick={() => handleEliminarClick(idx)} className="revisar-historias-btn revisar-historias-btn-eliminar">Eliminar</button>
+                 </>
                 )}
               </div>
               <div className="revisar-historias-consultas" style={{ marginTop: 16, background: '#f5f5f5', padding: 16, borderRadius: 8, border: '1px solid #c5c5c5ff' }}>
@@ -809,8 +839,30 @@ const RevisarHistoriasClinicas = () => {
             </div>
 
             <div style={{ position: 'sticky', background: '#fff', padding: '10px', display: 'flex', justifyContent: 'center', gap: 20, border: '10px solid #fff'}}>
-              <button type="submit" form="editHistoriaForm" className="revisar-historias-btn">Guardar</button>
-              <button type="button" className="revisar-historias-btn revisar-historias-btn-cancel" onClick={() => setEditIdx(null)}>Cancelar</button>
+              <button
+                type="submit"
+                form="editHistoriaForm"
+                className="revisar-historias-btn"
+                disabled={loadingButtonState}
+                style={loadingButtonState ? { background: '#f0f0f0', color: '#666', cursor: 'not-allowed', opacity: 0.95 } : undefined}
+              >
+                 {loadingButtonState ? (
+                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                       <g>
+                         <circle cx="12" cy="12" r="10" stroke="#444" strokeWidth="3" strokeOpacity="0.25" />
+                         <path d="M22 12a10 10 0 00-10-10" stroke="#444" strokeWidth="3" strokeLinecap="round">
+                           <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite" />
+                         </path>
+                       </g>
+                     </svg>
+                     <span>Guardando...</span>
+                   </span>
+                 ) : (
+                   'Guardar'
+                 )}
+               </button>
+               <button type="button" className="revisar-historias-btn revisar-historias-btn-cancel" onClick={() => setEditIdx(null)}>Cancelar</button>
             </div>
           </div>
         </div>
@@ -1018,9 +1070,35 @@ const RevisarHistoriasClinicas = () => {
               </form>
             </div>
 
-            <div style={{ position: 'sticky', bottom: 0, background: '#fff', padding: '12px 0', display: 'flex', justifyContent: 'center', gap: 8, borderTop: '1px solid #e0e0e0' }}>
+            {/* <div style={{ position: 'sticky', bottom: 0, background: '#fff', padding: '12px 0', display: 'flex', justifyContent: 'center', gap: 8, borderTop: '1px solid #e0e0e0' }}>
               <button type="submit" form="editConsultaForm" className="revisar-historias-btn">Guardar</button>
               <button type="button" className="revisar-historias-btn revisar-historias-btn-cancel" onClick={() => setEditConsultaIdx(null)}>Cancelar</button>
+            </div> */}
+            <div style={{ position: 'sticky', background: '#fff', padding: '10px', display: 'flex', justifyContent: 'center', gap: 20, border: '10px solid #fff'}}>
+              <button
+                type="submit"
+                form="editConsultaForm"
+                className="revisar-historias-btn"
+                disabled={loadingButtonState}
+                style={loadingButtonState ? { background: '#f0f0f0', color: '#666', cursor: 'not-allowed', opacity: 0.95 } : undefined}
+              >
+                 {loadingButtonState ? (
+                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                       <g>
+                         <circle cx="12" cy="12" r="10" stroke="#444" strokeWidth="3" strokeOpacity="0.25" />
+                         <path d="M22 12a10 10 0 00-10-10" stroke="#444" strokeWidth="3" strokeLinecap="round">
+                           <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite" />
+                         </path>
+                       </g>
+                     </svg>
+                     <span>Guardando...</span>
+                   </span>
+                 ) : (
+                   'Guardar'
+                 )}
+               </button>
+               <button type="button" className="revisar-historias-btn revisar-historias-btn-cancel" onClick={() => setEditConsultaIdx(null)}>Cancelar</button>
             </div>
           </div>
         </div>
@@ -1255,3 +1333,4 @@ const RevisarHistoriasClinicas = () => {
 };
 
 export default RevisarHistoriasClinicas;
+

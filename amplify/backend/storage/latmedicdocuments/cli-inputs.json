@@ -1,0 +1,13 @@
+{
+  "resourceName": "latmedicdocuments",
+  "policyUUID": "d15e11bc",
+  "bucketName": "latmedicdocuments",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "groupAccess": {}
+}

@@ -21,6 +21,115 @@ async function collectAll(fn, limit = 100) {
   return all;
 }
 
+// ----------------- NEW HELPERS: normalizar inputs -----------------
+function normalizeClienteInput(input = {}) {
+  // Mantén los nombres tal como aparecen en el schema.graphql
+  return {
+    cedula: input.cedula ?? null,
+    nombre: input.nombre ?? null,
+    direccionResidenciaHabitual: input.direccionResidenciaHabitual ?? null,
+    barrio: input.barrio ?? null,
+    parroquia: input.parroquia ?? null,
+    canton: input.canton ?? null,
+    provincia: input.provincia ?? null,
+    telefono: input.telefono ?? null,
+    grupoSanguineoYFactorRh: input.grupoSanguineoYFactorRh ?? null,
+    antecedenteAlergico: input.antecedenteAlergico ?? null,
+    antecedenteClinico: input.antecedenteClinico ?? null,
+    antecedenteGinecologico: input.antecedenteGinecologico ?? null,
+    antecedenteTraumatologico: input.antecedenteTraumatologico ?? null,
+    antecedenteQuirurgico: input.antecedenteQuirurgico ?? null,
+    antecedenteFarmacoLogico: input.antecedenteFarmacoLogico ?? null,
+    antecedentePsiquiatrico: input.antecedentePsiquiatrico ?? null,
+    antecedenteOtro: input.antecedenteOtro ?? null,
+    fechaNacimiento: input.fechaNacimiento ?? null,
+    lugarNacimiento: input.lugarNacimiento ?? null,
+    nacionalidad: input.nacionalidad ?? null,
+    grupoCultural: input.grupoCultural ?? null,
+    edadEnAnosCumplidos: (input.edadEnAnosCumplidos !== undefined) ? input.edadEnAnosCumplidos : null,
+    sexo: input.sexo ?? null,
+    estadoCivil: input.estadoCivil ?? null,
+    nivelEducativo: input.nivelEducativo ?? null,
+    fechaAdmision: input.fechaAdmision ?? null,
+    ocupacion: input.ocupacion ?? null,
+    empresaDondeTrabaja: input.empresaDondeTrabaja ?? null,
+    tipoSeguroSalud: input.tipoSeguroSalud ?? null,
+    referidoDe: input.referidoDe ?? null,
+    enCasoDeAvisarA: input.enCasoDeAvisarA ?? null,
+    parentescoAfinidad: input.parentescoAfinidad ?? null,
+    telefonoEmergencia: input.telefonoEmergencia ?? null,
+  };
+}
+
+function normalizeConsultaInput(input = {}) {
+  // Strings -> null por defecto, Booleans -> false por defecto (según schema)
+  const boolDefault = (v) => (v === undefined ? false : v);
+  return {
+    createdAt: input.createdAt ?? new Date().toISOString(),
+    hora: input.hora ?? null,
+    motivoDeConsulta: input.motivoDeConsulta ?? null,
+    enfermedadActual: input.enfermedadActual ?? null,
+    presionArterial: input.presionArterial ?? null,
+    frecuenciaCardiaca: input.frecuenciaCardiaca ?? null,
+    frecuenciaRespiratoria: input.frecuenciaRespiratoria ?? null,
+    temperaturaBucal: input.temperaturaBucal ?? null,
+    temperaturaAxilar: input.temperaturaAxilar ?? null,
+    peso: input.peso ?? null,
+    talla: input.talla ?? null,
+    gaslowOcular: input.gaslowOcular ?? null,
+    gaslowVerbal: input.gaslowVerbal ?? null,
+    gaslowMotora: input.gaslowMotora ?? null,
+    gaslowTotal: input.gaslowTotal ?? null,
+    reaccionPupilaIzq: input.reaccionPupilaIzq ?? null,
+    reaccionPupilaDer: input.reaccionPupilaDer ?? null,
+    tiempoLlenadoCapilar: input.tiempoLlenadoCapilar ?? null,
+    saturacionOxigeno: input.saturacionOxigeno ?? null,
+    viaAereaObstruida: input.viaAereaObstruida ?? null,
+    cabeza: input.cabeza ?? null,
+    cuello: input.cuello ?? null,
+    torax: input.torax ?? null,
+    abdomen: input.abdomen ?? null,
+    columna: input.columna ?? null,
+    pelvis: input.pelvis ?? null,
+    extremidades: input.extremidades ?? null,
+    heridaPenetrante: input.heridaPenetrante ?? null,
+    heridaCortante: input.heridaCortante ?? null,
+    fracturaExpuesta: input.fracturaExpuesta ?? null,
+    fracturaCerrada: input.fracturaCerrada ?? null,
+    cuerpoExtrano: input.cuerpoExtrano ?? null,
+    hemorragia: input.hemorragia ?? null,
+    mordedura: input.mordedura ?? null,
+    picadura: input.picadura ?? null,
+    excoriacion: input.excoriacion ?? null,
+    deformidadOMasa: input.deformidadOMasa ?? null,
+    hematoma: input.hematoma ?? null,
+    eritemaInflamacion: input.eritemaInflamacion ?? null,
+    luxacionEsguince: input.luxacionEsguince ?? null,
+    quemadura: input.quemadura ?? null,
+    solicitudExamenBiometria: boolDefault(input.solicitudExamenBiometria),
+    solicitudExamenUroanalisis: boolDefault(input.solicitudExamenUroanalisis),
+    solicitudExamenQuimicaSanguinea: boolDefault(input.solicitudExamenQuimicaSanguinea),
+    solicitudExamenElectrolitos: boolDefault(input.solicitudExamenElectrolitos),
+    solicitudExamenGasometria: boolDefault(input.solicitudExamenGasometria),
+    solicitudExamenElectrocardiograma: boolDefault(input.solicitudExamenElectrocardiograma),
+    solicitudExamenEndoscopia: boolDefault(input.solicitudExamenEndoscopia),
+    solicitudExamenRxTorax: boolDefault(input.solicitudExamenRxTorax),
+    solicitudExamenRxAbdomen: boolDefault(input.solicitudExamenRxAbdomen),
+    solicitudExamenRxOsea: boolDefault(input.solicitudExamenRxOsea),
+    solicitudExamenTomografia: boolDefault(input.solicitudExamenTomografia),
+    solicitudExamenResonancia: boolDefault(input.solicitudExamenResonancia),
+    solicitudExamenEcografiaPelvica: boolDefault(input.solicitudExamenEcografiaPelvica),
+    solicitudExamenEcografiaAbdomen: boolDefault(input.solicitudExamenEcografiaAbdomen),
+    solicitudExamenInterconsulta: boolDefault(input.solicitudExamenInterconsulta),
+    solicitudExamenOtros: boolDefault(input.solicitudExamenOtros),
+    diagnosticodeIngreso: input.diagnosticodeIngreso ?? null,
+    diagnosticodeAltade: input.diagnosticodeAltade ?? null,
+    planDeTratamientoIndicaciones: input.planDeTratamientoIndicaciones ?? null,
+    planDeTratamientoMedicamentos: input.planDeTratamientoMedicamentos ?? null,
+  };
+}
+// ----------------- end NEW HELPERS -----------------
+
 // =====================================================
 //                      CLIENTE
 // =====================================================
@@ -42,7 +151,8 @@ export async function upsertClienteByCedula(input) {
   const existing = found?.data?.clienteByCedula?.items?.[0];
 
   if (existing) {
-    const updateInput = { id: existing.id, ...rest };
+    const normalized = normalizeClienteInput({ cedula, ...rest });
+    const updateInput = { id: existing.id, ...normalized };
     if (existing._version !== undefined) updateInput._version = existing._version; // si activaste conflictos
     const res = await client.graphql({
       query: mutations.updateCliente,
@@ -51,7 +161,9 @@ export async function upsertClienteByCedula(input) {
     });
     return res.data.updateCliente;
   } else {
-    const createInput = { id: cedula, cedula, ...rest };
+    // Normalize cliente fields for creation
+    const normalized = normalizeClienteInput({ cedula, ...rest });
+    const createInput = { id: cedula, ...normalized, cedula };
     const res = await client.graphql({
       query: mutations.createCliente,
       variables: { input: createInput },
@@ -119,13 +231,13 @@ export async function createConsultaForCedula(cedula, fields = {}) {
   const cli = found?.data?.clienteByCedula?.items?.[0];
   if (!cli) throw new Error('CLIENTE_NOT_FOUND');
 
+  const consultaInput = normalizeConsultaInput(fields);
   const res = await client.graphql({
     query: mutations.createConsulta,
     variables: {
       input: {
         clienteID: cli.id,
-        createdAt: new Date().toISOString(),
-        ...fields,
+        ...consultaInput,
       },
     },
     authMode: 'userPool',
@@ -166,13 +278,44 @@ export async function getConsultaById(id) {
 /** Actualiza una consulta (envía solo campos que cambian). */
 export async function updateConsulta(input) {
   if (!input?.id) throw new Error('Falta id');
+  // Para updates dejamos que el caller envíe solo los campos que cambian.
+  // Si desean normalizar booleans, pueden pasar valores explícitos.
+
+  const toSend = sanitizeConsultaForUpdate(input);
+  console.log('[updateConsulta] variables.input =', toSend);
+
+
   const res = await client.graphql({
     query: mutations.updateConsulta,
-    variables: { input },
+    variables: { input : toSend },
     authMode: 'userPool',
   });
   return res.data.updateConsulta;
 }
+
+export function sanitizeConsultaForUpdate(data) {
+  const forbidden = new Set([
+    'recetas',
+    'documentos',
+    'createdAt',
+    'updatedAt',
+    'owner',
+    '__typename',
+    '_deleted',
+    '_lastChangedAt',
+  ]);
+
+  const clean = {};
+
+  for (const [key, value] of Object.entries(data)) {
+    if (forbidden.has(key)) continue;      // no enviar campos prohibidos
+    if (value === undefined) continue;     // AppSync no soporta undefined
+    clean[key] = value;
+  }
+
+  return clean;
+}
+
 
 /** Elimina una consulta por id. Si cascade=true, borra sus Recetas y Documentos. */
 export async function deleteConsultaById(id, { cascade = true } = {}) {
@@ -231,7 +374,7 @@ export async function deleteConsultaById(id, { cascade = true } = {}) {
 // =====================================================
 
 /** Crea una receta bajo una consulta. (El archivo S3 es aparte; aquí guardas el s3key) */
-export async function addRecetaToConsulta(consultaID, { indicaciones, s3key } = {}) {
+export async function addRecetaToConsulta(consultaID, { indicaciones, s3key, createdAt } = {}) {
   const res = await client.graphql({
     query: mutations.createReceta,
     variables: {
@@ -239,7 +382,7 @@ export async function addRecetaToConsulta(consultaID, { indicaciones, s3key } = 
         consultaID,
         indicaciones: indicaciones ?? null,
         s3key: s3key ?? null,
-        createdAt: new Date().toISOString(),
+        createdAt: createdAt ?? new Date().toISOString(),
       },
     },
     authMode: 'userPool',
@@ -294,7 +437,7 @@ export async function deleteReceta({ id, _version }) {
 // =====================================================
 
 /** Crea un documento (metadatos). El archivo real lo subes a S3 aparte y guardas su s3key aquí. */
-export async function addDocumentoToConsulta(consultaID, { tipo, titulo, s3key, notas } = {}) {
+export async function addDocumentoToConsulta(consultaID, { tipo, titulo, s3key, notas, createdAt } = {}) {
   const res = await client.graphql({
     query: mutations.createDocumento,
     variables: {
@@ -304,7 +447,7 @@ export async function addDocumentoToConsulta(consultaID, { tipo, titulo, s3key, 
         titulo: titulo ?? null,
         s3key: s3key ?? null,
         notas: notas ?? null,
-        createdAt: new Date().toISOString(),
+        createdAt: createdAt ?? new Date().toISOString(),
       },
     },
     authMode: 'userPool',
