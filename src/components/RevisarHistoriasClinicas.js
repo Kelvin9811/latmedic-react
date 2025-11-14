@@ -3,7 +3,7 @@ import { getClienteByCedula, upsertClienteByCedula, createConsultaForCedula, lis
 import ManejoConsulta from './ManejoConsulta';
 import ConsultaPopup from './ConsultaPopup';
 import EditHistoriaPopup from './EditHistoriaPopup';
-import { uploadData,getUrl  } from '@aws-amplify/storage';
+import { uploadData,getUrl, remove } from '@aws-amplify/storage';
 import './RevisarHistoriasClinicas.css';
 
 const RevisarHistoriasClinicas = () => {
@@ -589,12 +589,35 @@ const RevisarHistoriasClinicas = () => {
   const handleDeleteDocumento = async (id, _version) => {
     if (!id) return;
     if (!window.confirm?.('¿Eliminar documento? Esta acción no se puede deshacer.')) return;
+
+    // Buscar info del documento localmente para obtener s3key si existe
+    const doc = documentos.find(d => d.id === id);
+
     try {
+      // Intentar borrar el archivo del bucket (si tiene s3key)
+      if (doc?.s3key) {
+        try {
+          // Preferimos remove({ path }) de @aws-amplify/storage (v6)
+          if (typeof remove === 'function') {
+            await remove({ path: doc.s3key });
+          } else if (Storage && typeof Storage.remove === 'function') {
+            // Fallback a Storage.remove(key) si está disponible
+            await Storage.remove(doc.s3key);
+          } else {
+            console.warn('No se encontró método para eliminar en storage (remove/Storage.remove).');
+          }
+        } catch (err) {
+          console.error('Error eliminando archivo en S3, continuando con borrado de metadata:', err);
+          // No abortamos: intentamos borrar la metadata aunque la eliminación en S3 falle.
+        }
+      }
+
+      // Borrar metadata del documento en la API (GraphQL)
       await deleteDocumento({ id, _version });
+      // Actualizar estado local
       setDocumentos(prev => prev.filter(d => d.id !== id));
     } catch (err) {
-      console.error('Error eliminando documento', err);
-      // feedback mínimo al usuario
+      console.error('Error eliminando documento (metadata o storage):', err);
       try { alert('No se pudo eliminar el documento.'); } catch (_) {}
     }
   };
