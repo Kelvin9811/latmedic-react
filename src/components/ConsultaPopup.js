@@ -34,18 +34,11 @@ const ConsultaPopup = ({
         if (!d) return;
         setPreviewLoading(true);
         try {
-            // Si ya tenemos una URL en la metadata (notas o url), la usamos
-            const candidate = d.url || d.notas || d.urlDocumento || null;
-            if (candidate) {
-                setPreviewUrl(candidate);
-                // set iframe src via state; the iframe element with id="previewFrame" will reflect it
-                return;
-            }
-
-            // Si no hay URL, intentar obtenerla desde el s3key con getUrl({ path })
+              // Si no hay URL, intentar obtenerla desde el s3key con getUrl({ path })
             if (d.s3key) {
                 const resp = await getUrl({ path: d.s3key });
-                const url = resp?.url ? resp.url.toString() : null;
+                console.log('URL obtenida de storage:', resp);
+                const url = resp.url.toString();
                 if (url) setPreviewUrl(url);
                 else throw new Error('No se obtuvo URL de storage');
                 return;
@@ -295,38 +288,33 @@ const ConsultaPopup = ({
                                 ) : (
                                     <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
                                         {docs.map((d) => (
-                                            <li key={d.id} style={{ padding: 8, borderRadius: 6, background: '#fff', border: '1px solid #eaeaea', display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
-                                                <div style={{  padding: '4px 8px', marginRight: 8, borderWidth: 1, borderStyle: 'solid', borderColor: '#e0e0e0', borderRadius: 4, padding: 4, display: 'flex', alignItems: 'center', justifyContent: 'center',height: '100%' }}>
-                                                    <button
-                                                        type="button"
-                                                        aria-label={`Eliminar documento ${d.titulo || d.id}`}
-                                                        onClick={() => onDeleteDocumento(d.id, d._version)}
-                                                        style={{ background: '#ff6b6b', color: '#fff', border: 'none', borderRadius: 4,  cursor: 'pointer', height: 35, width: 35, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                                                    >
-                                                        ×
-                                                    </button>
-                                                </div>
-                                                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
+                                            <li key={d.id} style={{ padding: 8, borderRadius: 6, background: '#fff', border: '1px solid #eaeaea', display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'flex-start', alignItems: 'center' }}>
+                                                <button
+                                                    type="button"
+                                                    aria-label={`Eliminar documento ${d.titulo || d.id}`}
+                                                    onClick={() => onDeleteDocumento(d.id, d._version)}
+                                                    style={{ margin: 6, background: '#ff6b6b', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer', height: 35, width: 35, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                                >
+                                                    ×
+                                                </button>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1, borderWidth: 1, borderStyle: 'solid', borderColor: '#e0e0e0', padding: 8, borderRadius: 6 }}>
+
                                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-                                                        <div style={{ fontWeight: 600, color: '#222' }}>{d.titulo || d.tipo || 'Sin título'}</div>
-                                                        <div style={{ display: 'flex', gap: 8 }}>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => handlePreviewDocument(d)}
-                                                                style={{ background: '#4a90e2', color: '#fff', border: 'none', borderRadius: 4, padding: '4px 8px', cursor: 'pointer' }}
-                                                            >
-                                                                Vista
-                                                            </button>
-                                                        </div>
+                                                        <div style={{ fontWeight: 600, color: '#222', fontSize: 24 }}>{d.titulo || d.tipo || 'Sin título'}</div>
+
                                                     </div>
                                                     <div style={{ fontSize: 12, color: '#666' }}>
                                                         {d.createdAt ? new Date(d.createdAt).toLocaleString() : 'Sin fecha'}
                                                     </div>
-                                                    {d.url ? (
-                                                        <div>
-                                                            <a href={d.url} target="_blank" rel="noopener noreferrer">Abrir documento</a>
-                                                        </div>
-                                                    ) : null}
+                                                </div>
+                                                <div style={{ display: 'flex', gap: 8}}>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handlePreviewDocument(d)}
+                                                        style={{ background: '#4a90e2', color: '#fff', border: 'none', borderRadius: 4, padding: '4px 8px', cursor: 'pointer' }}
+                                                    >
+                                                        👁
+                                                    </button>
                                                 </div>
                                             </li>
                                         ))}
