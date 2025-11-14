@@ -1,4 +1,5 @@
 import React from 'react';
+import { getUrl } from '@aws-amplify/storage';
 
 const ConsultaPopup = ({
     mode = 'edit', // 'edit' | 'create'
@@ -24,6 +25,42 @@ const ConsultaPopup = ({
     // soportar ambos: si el padre pasa 'documentos' los usamos, si no usamos 'recetas' (compatibilidad)
     const docs = Array.isArray(documentos) ? documentos : recetas;
     const docsLoading = typeof documentosLoading === 'boolean' ? documentosLoading : recetasLoading;
+
+    // estado para previsualización
+    const [previewUrl, setPreviewUrl] = React.useState('');
+    const [previewLoading, setPreviewLoading] = React.useState(false);
+
+    const handlePreviewDocument = async (d) => {
+        if (!d) return;
+        setPreviewLoading(true);
+        try {
+            // Si ya tenemos una URL en la metadata (notas o url), la usamos
+            const candidate = d.url || d.notas || d.urlDocumento || null;
+            if (candidate) {
+                setPreviewUrl(candidate);
+                // set iframe src via state; the iframe element with id="previewFrame" will reflect it
+                return;
+            }
+
+            // Si no hay URL, intentar obtenerla desde el s3key con getUrl({ path })
+            if (d.s3key) {
+                const resp = await getUrl({ path: d.s3key });
+                const url = resp?.url ? resp.url.toString() : null;
+                if (url) setPreviewUrl(url);
+                else throw new Error('No se obtuvo URL de storage');
+                return;
+            }
+
+            throw new Error('Documento no tiene s3key ni url disponible');
+        } catch (err) {
+            console.error('Error al obtener URL del documento para previsualizar', err);
+            try { alert('No se pudo obtener la vista previa del documento.'); } catch (_) { }
+        } finally {
+            setPreviewLoading(false);
+        }
+    };
+
+    const handleClosePreview = () => setPreviewUrl('');
 
     return (
         <div className="revisar-historias-popup-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1200, background: 'rgba(0,0,0,0.3)' }}>
@@ -259,19 +296,28 @@ const ConsultaPopup = ({
                                     <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
                                         {docs.map((d) => (
                                             <li key={d.id} style={{ padding: 8, borderRadius: 6, background: '#fff', border: '1px solid #eaeaea', display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
-                                                <button
-                                                    type="button"
-                                                    aria-label={`Eliminar documento ${d.titulo || d.id}`}
-                                                    onClick={() => onDeleteDocumento(d.id, d._version)}
-                                                    style={{ background: '#ff6b6b', color: '#fff', border: 'none', borderRadius: 4, padding: '4px 8px', cursor: 'pointer', marginRight: 8 }}
-                                                >
-                                                    ×
-                                                </button>
+                                                <div style={{  padding: '4px 8px', marginRight: 8, borderWidth: 1, borderStyle: 'solid', borderColor: '#e0e0e0', borderRadius: 4, padding: 4, display: 'flex', alignItems: 'center', justifyContent: 'center',height: '100%' }}>
+                                                    <button
+                                                        type="button"
+                                                        aria-label={`Eliminar documento ${d.titulo || d.id}`}
+                                                        onClick={() => onDeleteDocumento(d.id, d._version)}
+                                                        style={{ background: '#ff6b6b', color: '#fff', border: 'none', borderRadius: 4,  cursor: 'pointer', height: 35, width: 35, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </div>
                                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
-                                                    <div style={{ fontWeight: 600, color: '#222' }}>{d.titulo || d.tipo || 'Sin título'}</div>
-                                                    <div style={{ fontSize: 13, color: '#444' }}>
-                                                        <span style={{ color: '#666', fontSize: 12 }}>{d.tipo ? `Tipo: ${d.tipo}` : ''}</span>
-                                                        {d.s3key ? <span style={{ marginLeft: 8, color: '#666' }}>S3key: {d.s3key}</span> : null}
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                                                        <div style={{ fontWeight: 600, color: '#222' }}>{d.titulo || d.tipo || 'Sin título'}</div>
+                                                        <div style={{ display: 'flex', gap: 8 }}>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handlePreviewDocument(d)}
+                                                                style={{ background: '#4a90e2', color: '#fff', border: 'none', borderRadius: 4, padding: '4px 8px', cursor: 'pointer' }}
+                                                            >
+                                                                Vista
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                     <div style={{ fontSize: 12, color: '#666' }}>
                                                         {d.createdAt ? new Date(d.createdAt).toLocaleString() : 'Sin fecha'}
@@ -286,6 +332,26 @@ const ConsultaPopup = ({
                                         ))}
                                     </ul>
                                 )}
+                            </div>
+
+                            {/* Previsualización */}
+                            <div style={{ marginTop: 12 }}>
+                                {previewLoading ? (
+                                    <div style={{ color: '#666', marginBottom: 8 }}>Cargando vista previa...</div>
+                                ) : null}
+                                {previewUrl ? (
+                                    <div style={{ marginTop: 8 }}>
+                                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 8 }}>
+                                            <button type="button" onClick={handleClosePreview} className="revisar-historias-btn revisar-historias-btn-cancel">Cerrar vista</button>
+                                        </div>
+                                        <iframe
+                                            id="previewFrame"
+                                            title="Vista previa documento"
+                                            src={previewUrl}
+                                            style={{ width: '100%', height: 600, border: '1px solid #e6e6e6', borderRadius: 6 }}
+                                        />
+                                    </div>
+                                ) : null}
                             </div>
 
                         </div>
