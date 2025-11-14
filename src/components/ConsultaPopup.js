@@ -16,7 +16,8 @@ const ConsultaPopup = ({
     onSingleFileChange = () => { },
     onRemoveAdjunto = () => { },
     uploadingAdjuntos = false,
-    loadingButtonState = false
+    loadingButtonState = false,
+    onDeleteDocumento = () => { },
 }) => {
     const title = mode === 'create' ? 'Agregar Consulta' : 'Editar Consulta';
 
@@ -257,20 +258,30 @@ const ConsultaPopup = ({
                                 ) : (
                                     <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
                                         {docs.map((d) => (
-                                            <li key={d.id} style={{ padding: 8, borderRadius: 6, background: '#fff', border: '1px solid #eaeaea', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                                                <div style={{ fontWeight: 600, color: '#222' }}>{d.titulo || d.tipo || 'Sin título'}</div>
-                                                <div style={{ fontSize: 13, color: '#444' }}>
-                                                    <span style={{ color: '#666', fontSize: 12 }}>{d.tipo ? `Tipo: ${d.tipo}` : ''}</span>
-                                                    {d.s3key ? <span style={{ marginLeft: 8, color: '#666' }}>S3key: {d.s3key}</span> : null}
-                                                </div>
-                                                <div style={{ fontSize: 12, color: '#666' }}>
-                                                    {d.createdAt ? new Date(d.createdAt).toLocaleString() : 'Sin fecha'}
-                                                </div>
-                                                {d.url ? (
-                                                    <div>
-                                                        <a href={d.url} target="_blank" rel="noopener noreferrer">Abrir documento</a>
+                                            <li key={d.id} style={{ padding: 8, borderRadius: 6, background: '#fff', border: '1px solid #eaeaea', display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
+                                                <button
+                                                    type="button"
+                                                    aria-label={`Eliminar documento ${d.titulo || d.id}`}
+                                                    onClick={() => onDeleteDocumento(d.id, d._version)}
+                                                    style={{ background: '#ff6b6b', color: '#fff', border: 'none', borderRadius: 4, padding: '4px 8px', cursor: 'pointer', marginRight: 8 }}
+                                                >
+                                                    ×
+                                                </button>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
+                                                    <div style={{ fontWeight: 600, color: '#222' }}>{d.titulo || d.tipo || 'Sin título'}</div>
+                                                    <div style={{ fontSize: 13, color: '#444' }}>
+                                                        <span style={{ color: '#666', fontSize: 12 }}>{d.tipo ? `Tipo: ${d.tipo}` : ''}</span>
+                                                        {d.s3key ? <span style={{ marginLeft: 8, color: '#666' }}>S3key: {d.s3key}</span> : null}
                                                     </div>
-                                                ) : null}
+                                                    <div style={{ fontSize: 12, color: '#666' }}>
+                                                        {d.createdAt ? new Date(d.createdAt).toLocaleString() : 'Sin fecha'}
+                                                    </div>
+                                                    {d.url ? (
+                                                        <div>
+                                                            <a href={d.url} target="_blank" rel="noopener noreferrer">Abrir documento</a>
+                                                        </div>
+                                                    ) : null}
+                                                </div>
                                             </li>
                                         ))}
                                     </ul>

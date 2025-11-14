@@ -1,5 +1,5 @@
 import React, { useEffect, useState,useRef } from 'react';
-import { getClienteByCedula, upsertClienteByCedula, createConsultaForCedula, listConsultasByCedula, deleteHistoriaClinicaByCedula, updateConsulta, listRecetasByConsulta, listDocumentosByConsulta, addDocumentoToConsulta } from '../apiCrud';
+import { getClienteByCedula, upsertClienteByCedula, createConsultaForCedula, listConsultasByCedula, deleteHistoriaClinicaByCedula, updateConsulta, listRecetasByConsulta, listDocumentosByConsulta, addDocumentoToConsulta, deleteDocumento } from '../apiCrud';
 import ManejoConsulta from './ManejoConsulta';
 import ConsultaPopup from './ConsultaPopup';
 import EditHistoriaPopup from './EditHistoriaPopup';
@@ -584,6 +584,20 @@ const RevisarHistoriasClinicas = () => {
       setDocumentosLoading(false);
     }
   };
+
+  // Elimina un documento y actualiza el estado local de documentos
+  const handleDeleteDocumento = async (id, _version) => {
+    if (!id) return;
+    if (!window.confirm?.('¿Eliminar documento? Esta acción no se puede deshacer.')) return;
+    try {
+      await deleteDocumento({ id, _version });
+      setDocumentos(prev => prev.filter(d => d.id !== id));
+    } catch (err) {
+      console.error('Error eliminando documento', err);
+      // feedback mínimo al usuario
+      try { alert('No se pudo eliminar el documento.'); } catch (_) {}
+    }
+  };
  
    const handleSaveEditConsulta = async () => {
      setLoading(true);
@@ -928,6 +942,7 @@ const RevisarHistoriasClinicas = () => {
           onRemoveAdjunto={handleRemoveAdjunto}
           uploadingAdjuntos={uploadingAdjuntos}
           loadingButtonState={loadingButtonState}
+          onDeleteDocumento={handleDeleteDocumento}
         />
       )}
       {editConsultaIdx && (
@@ -948,6 +963,7 @@ const RevisarHistoriasClinicas = () => {
           onRemoveAdjunto={handleRemoveAdjunto}
           uploadingAdjuntos={uploadingAdjuntos}
           loadingButtonState={loadingButtonState}
+          onDeleteDocumento={handleDeleteDocumento}
         />
       )}
     </div>
