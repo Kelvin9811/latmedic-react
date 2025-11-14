@@ -1,5 +1,5 @@
 import React, { useEffect, useState,useRef } from 'react';
-import { getClienteByCedula, upsertClienteByCedula, createConsultaForCedula, listConsultasByCedula, deleteHistoriaClinicaByCedula, updateConsulta, listRecetasByConsulta } from '../apiCrud';
+import { getClienteByCedula, upsertClienteByCedula, createConsultaForCedula, listConsultasByCedula, deleteHistoriaClinicaByCedula, updateConsulta, listRecetasByConsulta, listDocumentosByConsulta, addDocumentoToConsulta } from '../apiCrud';
 import ManejoConsulta from './ManejoConsulta';
 import ConsultaPopup from './ConsultaPopup';
 import EditHistoriaPopup from './EditHistoriaPopup';
@@ -14,6 +14,8 @@ const RevisarHistoriasClinicas = () => {
   const [editIdx, setEditIdx] = useState(null);
   const [recetas, setRecetas] = useState([]);
   const [recetasLoading, setRecetasLoading] = useState(false);
+  const [documentos, setDocumentos] = useState([]); // documentos metadata desde API
+  const [documentosLoading, setDocumentosLoading] = useState(false);
   const [adjuntos, setAdjuntos] = useState([]); // array<File>
   const [uploadingAdjuntos, setUploadingAdjuntos] = useState(false);
   const fileInputRef = useRef(null);
@@ -363,17 +365,49 @@ const RevisarHistoriasClinicas = () => {
   // Función para guardar la nueva consulta
   const handleAgregarConsultaSave = async () => {
     setLoadingConsulta(true);
+    let uploadResults = [];
     try {
+      // subir adjuntos primero (si hay)
+      if (adjuntos && adjuntos.length > 0) {
+        setUploadingAdjuntos(true);
+        try {
+          uploadResults = await uploadFiles(adjuntos);
+        } finally {
+          setUploadingAdjuntos(false);
+        }
+      }
+
+      // crear consulta
       const nueva = await createConsultaForCedula(consultasCedula, { ...nuevaConsultaData });
+
+      // crear registros Documento asociados a la nueva consulta
+      if (uploadResults && uploadResults.length > 0) {
+        for (const u of uploadResults) {
+          try {
+            await addDocumentoToConsulta(nueva.id, {
+              tipo: 'OTRO',
+              titulo: u.name,
+              s3key: u.key,
+              notas: u.url, // guardamos la URL en notas para referencia
+            });
+          } catch (err) {
+            console.error('Error creando documento para nueva consulta:', err);
+          }
+        }
+      }
+
       setConsultas(con => [{ ...nueva }, ...con]);
       setShowConsultas(false);
       setShowAgregarConsultaDetalle(false);
-    } catch {
-      // error opcional
+      setAdjuntos([]); // limpiar adjuntos del UI
+    } catch (err) {
+      console.error('Error creando consulta:', err);
+    } finally {
+      setUploadingAdjuntos(false);
+      setLoadingConsulta(false);
     }
-    setLoadingConsulta(false);
   };
-
+ 
   const handleBuscar = async (e) => {
     e.preventDefault();
     setShowPlaceholders(true);
@@ -527,6 +561,9 @@ const RevisarHistoriasClinicas = () => {
     // cargar recetas asociadas a la consulta
     setRecetas([]);
     setRecetasLoading(true);
+    // cargar documentos asociados a la consulta
+    setDocumentos([]);
+    setDocumentosLoading(true);
     try {
       const resp = await listRecetasByConsulta(consulta.id);
       setRecetas(Array.isArray(resp.items) ? resp.items : []);
@@ -535,14 +572,23 @@ const RevisarHistoriasClinicas = () => {
       setRecetas([]);
     } finally {
       setRecetasLoading(false);
+      // cargar documentos en bloque separado (si el servicio falla no bloquea recetas)
+    }
+    try {
+      const docsResp = await listDocumentosByConsulta(consulta.id);
+      setDocumentos(Array.isArray(docsResp.items) ? docsResp.items : []);
+    } catch (e) {
+      console.error('Error cargando documentos', e);
+      setDocumentos([]);
+    } finally {
+      setDocumentosLoading(false);
     }
   };
-
-  const handleSaveEditConsulta = async () => {
-    setLoading(true);
-    try {
-            // si hay archivos, subirlos primero y obtener resultados (key + url + name)
-
+ 
+   const handleSaveEditConsulta = async () => {
+     setLoading(true);
+     try {
+      // si hay archivos, subirlos primero y obtener resultados (key + url + name)
       let uploadResults = [];
       if (adjuntos && adjuntos.length > 0) {
         setUploadingAdjuntos(true);
@@ -555,6 +601,30 @@ const RevisarHistoriasClinicas = () => {
 
       console.log('Guardando consulta editada:', editConsultaData);
       const updated = await updateConsulta(editConsultaData);
+
+      // crear registros Documento asociados a la consulta actualizada
+      if (uploadResults && uploadResults.length > 0) {
+        for (const u of uploadResults) {
+          try {
+            await addDocumentoToConsulta(updated.id, {
+              tipo: 'OTRO',
+              titulo: u.name,
+              s3key: u.key,
+              notas: u.url,
+            });
+          } catch (err) {
+            console.error('Error creando documento para consulta editada:', err);
+          }
+        }
+        // recargar lista de documentos para la consulta (si quieres mantener documentos actualizados)
+        // try {
+        //   const docsResp = await listDocumentosByConsulta(updated.id);
+        //   setDocumentos(Array.isArray(docsResp.items) ? docsResp.items : []);
+        // } catch (e) {
+        //   console.error('Error recargando documentos después de guardar:', e);
+        // }
+      }
+
       // Actualiza la lista de consultas mostrada en el popup (si existe)
       setConsultas(prev => prev.map(c => (c.id === updated.id ? updated : c)));
       // También actualizar dentro de historias (si la consulta aparece allí)
@@ -563,15 +633,15 @@ const RevisarHistoriasClinicas = () => {
         consultas: Array.isArray(h.consultas) ? h.consultas.map(c => (c.id === updated.id ? updated : c)) : h.consultas
       })));
       setEditConsultaIdx(null);
-    } catch (e) {
-      // error opcional: puedes agregar notificación
-      console.error('Error actualizando consulta', e);
-      console.error('Error actualizando consulta', e.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+      setAdjuntos([]); // limpiar adjuntos después de asociarlos
+     } catch (e) {
+       // error opcional: puedes agregar notificación
+       console.error('Error actualizando consulta', e);
+     } finally {
+       setLoading(false);
+     }
+   };
+ 
   return (
     <div className="revisar-historias-container">
       <h3 className="revisar-historias-titulo">Revisar Historias Clínicas</h3>
@@ -869,6 +939,8 @@ const RevisarHistoriasClinicas = () => {
           onCancel={() => setEditConsultaIdx(null)}
           recetas={recetas}
           recetasLoading={recetasLoading}
+          documentos={documentos}
+          documentosLoading={documentosLoading}
           adjuntos={adjuntos}
           onAddDocumentoClick={handleAddDocumentoClick}
           fileInputRef={fileInputRef}

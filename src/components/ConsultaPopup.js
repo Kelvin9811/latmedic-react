@@ -6,8 +6,10 @@ const ConsultaPopup = ({
     setConsultaData = () => { },
     onSave = () => { },
     onCancel = () => { },
-    recetas = [],
-    recetasLoading = false,
+    recetas = [], // fallback (compatibilidad)
+    recetasLoading = false, // fallback
+    documentos = null, // preferir estos cuando estén disponibles
+    documentosLoading = false,
     adjuntos = [],
     onAddDocumentoClick = () => { },
     fileInputRef = null,
@@ -17,6 +19,11 @@ const ConsultaPopup = ({
     loadingButtonState = false
 }) => {
     const title = mode === 'create' ? 'Agregar Consulta' : 'Editar Consulta';
+
+    // soportar ambos: si el padre pasa 'documentos' los usamos, si no usamos 'recetas' (compatibilidad)
+    const docs = Array.isArray(documentos) ? documentos : recetas;
+    const docsLoading = typeof documentosLoading === 'boolean' ? documentosLoading : recetasLoading;
+
     return (
         <div className="revisar-historias-popup-overlay" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1200, background: 'rgba(0,0,0,0.3)' }}>
             <div className="revisar-historias-popup-content" style={{ maxHeight: '90vh', width: '90vw', maxWidth: 1000, margin: '5vh auto', background: '#fff', borderRadius: 12, boxShadow: '0 2px 16px rgba(0,0,0,0.15)', padding: 24, position: 'relative', display: 'flex', flexDirection: 'column' }}>
@@ -239,24 +246,31 @@ const ConsultaPopup = ({
                                 )}
                             </div>
 
-                            {/* Recetas (solo lectura en este popup) */}
+                            {/* Documentos (solo lectura en este popup) */}
                             <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0' }} />
-                            <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Recetas</h4>
+                            <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>{Array.isArray(documentos) ? 'Documentos' : 'Recetas/Documentos'}</h4>
                             <div style={{ padding: 8, background: '#fafafa', borderRadius: 6, border: '1px solid #e6e6e6' }}>
-                                {recetasLoading ? (
-                                    <div style={{ color: '#666' }}>Cargando recetas...</div>
-                                ) : recetas.length === 0 ? (
-                                    <div style={{ color: '#666' }}>No hay recetas para esta consulta.</div>
+                                {docsLoading ? (
+                                    <div style={{ color: '#666' }}>Cargando documentos...</div>
+                                ) : !docs || docs.length === 0 ? (
+                                    <div style={{ color: '#666' }}>No hay documentos para esta consulta.</div>
                                 ) : (
                                     <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                                        {recetas.map((r) => (
-                                            <li key={r.id} style={{ padding: 8, borderRadius: 6, background: '#fff', border: '1px solid #eaeaea' }}>
-                                                <div style={{ fontWeight: 600, color: '#222' }}>{r.indicaciones || 'Sin indicaciones'}</div>
-                                                <div style={{ fontSize: 12, color: '#666', marginTop: 4 }}>
-                                                    {r.s3key ? <span>S3key: {r.s3key}</span> : <span>No hay archivo adjunto</span>}
-                                                    {' '}•{' '}
-                                                    {r.createdAt ? new Date(r.createdAt).toLocaleString() : 'Sin fecha'}
+                                        {docs.map((d) => (
+                                            <li key={d.id} style={{ padding: 8, borderRadius: 6, background: '#fff', border: '1px solid #eaeaea', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                                <div style={{ fontWeight: 600, color: '#222' }}>{d.titulo || d.tipo || 'Sin título'}</div>
+                                                <div style={{ fontSize: 13, color: '#444' }}>
+                                                    <span style={{ color: '#666', fontSize: 12 }}>{d.tipo ? `Tipo: ${d.tipo}` : ''}</span>
+                                                    {d.s3key ? <span style={{ marginLeft: 8, color: '#666' }}>S3key: {d.s3key}</span> : null}
                                                 </div>
+                                                <div style={{ fontSize: 12, color: '#666' }}>
+                                                    {d.createdAt ? new Date(d.createdAt).toLocaleString() : 'Sin fecha'}
+                                                </div>
+                                                {d.url ? (
+                                                    <div>
+                                                        <a href={d.url} target="_blank" rel="noopener noreferrer">Abrir documento</a>
+                                                    </div>
+                                                ) : null}
                                             </li>
                                         ))}
                                     </ul>

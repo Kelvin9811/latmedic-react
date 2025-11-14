@@ -457,11 +457,13 @@ export async function addDocumentoToConsulta(consultaID, { tipo, titulo, s3key, 
 
 /** Lista documentos por consulta. */
 export async function listDocumentosByConsulta(consultaID, { limit = 50, nextToken, sortDirection = 'DESC' } = {}) {
+  console.log('[listDocumentosByConsulta] consultaID=', consultaID);
   const resp = await client.graphql({
     query: queries.documentosByConsulta,
     variables: { consultaID, limit, nextToken, sortDirection },
     authMode: 'userPool',
   });
+  console.log('[listDocumentosByConsulta] resp=', resp);
   const conn = pickConn(resp, 'documentosByConsulta');
   return { items: pickItems(conn), nextToken: conn.nextToken ?? null };
 }
