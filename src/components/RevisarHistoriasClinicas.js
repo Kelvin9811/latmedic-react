@@ -5,6 +5,7 @@ import ConsultaPopup from './ConsultaPopup';
 import EditHistoriaPopup from './EditHistoriaPopup';
 import { uploadData,getUrl, remove } from '@aws-amplify/storage';
 import './RevisarHistoriasClinicas.css';
+import useConsulta from '../hooks/useConsulta';
 
 const RevisarHistoriasClinicas = () => {
   const [cedulaBusqueda, setCedulaBusqueda] = useState('');
@@ -16,239 +17,40 @@ const RevisarHistoriasClinicas = () => {
   const [recetasLoading, setRecetasLoading] = useState(false);
   const [documentos, setDocumentos] = useState([]); // documentos metadata desde API
   const [documentosLoading, setDocumentosLoading] = useState(false);
-  const [adjuntos, setAdjuntos] = useState([]); // array<File>
-  const [uploadingAdjuntos, setUploadingAdjuntos] = useState(false);
-  const fileInputRef = useRef(null);
-  
 
-  const uploadFiles = async (files) => {
-      if (!files || files.length === 0) return [];
-
-      const uploads = await Promise.all(
-        Array.from(files).map(async (file) => {
-          
-          console.log('Preparing to upload file:', file.name);
-          const path = `documentos/${Date.now()}_${Math.random()
-            .toString(36)
-            .slice(2, 8)}_${file.name.replace(/\s+/g, '_')}`;
-
-          console.log('Uploading file to S3 at path:', path);
-
-          try {
-          await uploadData({
-            path,           // ruta dentro del bucket (v6 usa "path" en vez de "key")
-            data: file,
-            options: {
-              contentType: file.type || 'application/octet-stream',
-            },
-          }).result;
-          } catch (error) {
-            console.error('Error uploading file:', error);
-          }
-          console.log('File uploaded. Getting URL for path:', path);
-          const { url } = await getUrl({ path });
-
-          return {
-            key: path,              // lo puedes guardar en tu modelo Documento.s3key
-            url: url.toString(),    // URL lista para usar en <a> o <img>
-            name: file.name,
-          }
-
-
-        })
-      );
-
-    return uploads;
-  };
-
-  const handleSingleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setAdjuntos(prev => [...prev, file]);
-    }
-    // limpiar el input para permitir re-elegir el mismo archivo si se desea
-    e.target.value = null;
-  };
-  
-  const handleRemoveAdjunto = (index) => {
-    setAdjuntos(prev => prev.filter((_, i) => i !== index));
-  };
-  const handleAddDocumentoClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const [editData, setEditData] = useState({
-    nombre: '',
-    cedula: '',
-    direccionResidenciaHabitual: '',
-    barrio: '',
-    parroquia: '',
-    canton: '',
-    provincia: '',
-    telefono: '',
-    grupoSanguineoYFactorRh: '',
-    fechaNacimiento: '',
-    lugarNacimiento: '',
-    nacionalidad: '',
-    grupoCultural: '',
-    edadEnAnosCumplidos: '',
-    sexo: '',
-    estadoCivil: '',
-    nivelEducativo: '',
-    fechaAdmision: '',
-    ocupacion: '',
-    empresaDondeTrabaja: '',
-    tipoSeguroSalud: '',
-    referidoDe: '',
-    enCasoDeAvisarA: '',
-    parentescoAfinidad: '',
-    telefonoEmergencia: '',
-    antecedenteAlergico: '',
-    antecedenteClinico: '',
-    antecedenteGinecologico: '',
-    antecedenteTraumatologico: '',
-    antecedenteQuirurgico: '',
-    antecedenteFarmacoLogico: '',
-    antecedentePsiquiatrico: '',
-    antecedenteOtro: ''
-  });
+  // reintroducir estados que quedaron eliminados durante la refactorización
+  const [editData, setEditData] = useState({});                     // para editar historia
   const [showConsultas, setShowConsultas] = useState(false);
   const [consultas, setConsultas] = useState([]);
   const [consultasCedula, setConsultasCedula] = useState('');
+  const [loadingConsulta, setLoadingConsulta] = useState(false);
+  const [consultaSeleccionada, setConsultaSeleccionada] = useState(null);
+
   const [showEliminar, setShowEliminar] = useState(false);
   const [eliminarIdx, setEliminarIdx] = useState(null);
   const [eliminarTimer, setEliminarTimer] = useState(10);
   const [eliminarHabilitado, setEliminarHabilitado] = useState(false);
-  const [nuevaConsulta, setNuevaConsulta] = useState({ motivo: '', diagnostico: '' });
-  const [loadingConsulta, setLoadingConsulta] = useState(false);
-  const [consultaSeleccionada, setConsultaSeleccionada] = useState(null);
+
   const [editConsultaIdx, setEditConsultaIdx] = useState(null);
-  const [editConsultaData, setEditConsultaData] = useState({
-    hora: '',
-    motivoDeConsulta: '',
-    enfermedadActual: '',
-    presionArterial: '',
-    frecuenciaCardiaca: '',
-    frecuenciaRespiratoria: '',
-    temperaturaBucal: '',
-    temperaturaAxilar: '',
-    peso: '',
-    talla: '',
-    gaslowOcular: '',
-    gaslowVerbal: '',
-    gaslowMotora: '',
-    gaslowTotal: '',
-    reaccionPupilaIzq: '',
-    reaccionPupilaDer: '',
-    tiempoLlenadoCapilar: '',
-    saturacionOxigeno: '',
-    viaAereaObstruida: '',
-    cabeza: '',
-    cuello: '',
-    torax: '',
-    abdomen: '',
-    columna: '',
-    pelvis: '',
-    extremidades: '',
-    heridaPenetrante: '',
-    heridaCortante: '',
-    fracturaExpuesta: '',
-    fracturaCerrada: '',
-    cuerpoExtrano: '',
-    hemorragia: '',
-    mordedura: '',
-    picadura: '',
-    excoriacion: '',
-    deformidadOMasa: '',
-    hematoma: '',
-    eritemaInflamacion: '',
-    luxacionEsguince: '',
-    quemadura: '',
-    solicitudExamenBiometria: false,
-    solicitudExamenUroanalisis: false,
-    solicitudExamenQuimicaSanguinea: false,
-    solicitudExamenElectrolitos: false,
-    solicitudExamenGasometria: false,
-    solicitudExamenElectrocardiograma: false,
-    solicitudExamenEndoscopia: false,
-    solicitudExamenRxTorax: false,
-    solicitudExamenRxAbdomen: false,
-    solicitudExamenRxOsea: false,
-    solicitudExamenTomografia: false,
-    solicitudExamenResonancia: false,
-    solicitudExamenEcografiaPelvica: false,
-    solicitudExamenEcografiaAbdomen: false,
-    solicitudExamenInterconsulta: false,
-    solicitudExamenOtros: false,
-    diagnosticodeIngreso: '',
-    diagnosticodeAltade: '',
-    planDeTratamientoIndicaciones: '',
-    planDeTratamientoMedicamentos: ''
-  });
-  const [nuevaConsultaData, setNuevaConsultaData] = useState({
-    hora: '',
-    motivoDeConsulta: '',
-    enfermedadActual: '',
-    presionArterial: '',
-    frecuenciaCardiaca: '',
-    frecuenciaRespiratoria: '',
-    temperaturaBucal: '',
-    temperaturaAxilar: '',
-    peso: '',
-    talla: '',
-    gaslowOcular: '',
-    gaslowVerbal: '',
-    gaslowMotora: '',
-    gaslowTotal: '',
-    reaccionPupilaIzq: '',
-    reaccionPupilaDer: '',
-    tiempoLlenadoCapilar: '',
-    saturacionOxigeno: '',
-    viaAereaObstruida: '',
-    cabeza: '',
-    cuello: '',
-    torax: '',
-    abdomen: '',
-    columna: '',
-    pelvis: '',
-    extremidades: '',
-    heridaPenetrante: '',
-    heridaCortante: '',
-    fracturaExpuesta: '',
-    fracturaCerrada: '',
-    cuerpoExtrano: '',
-    hemorragia: '',
-    mordedura: '',
-    picadura: '',
-    excoriacion: '',
-    deformidadOMasa: '',
-    hematoma: '',
-    eritemaInflamacion: '',
-    luxacionEsguince: '',
-    quemadura: '',
-    solicitudExamenBiometria: false,
-    solicitudExamenUroanalisis: false,
-    solicitudExamenQuimicaSanguinea: false,
-    solicitudExamenElectrolitos: false,
-    solicitudExamenGasometria: false,
-    solicitudExamenElectrocardiograma: false,
-    solicitudExamenEndoscopia: false,
-    solicitudExamenRxTorax: false,
-    solicitudExamenRxAbdomen: false,
-    solicitudExamenRxOsea: false,
-    solicitudExamenTomografia: false,
-    solicitudExamenResonancia: false,
-    solicitudExamenEcografiaPelvica: false,
-    solicitudExamenEcografiaAbdomen: false,
-    solicitudExamenInterconsulta: false,
-    solicitudExamenOtros: false,
-    diagnosticodeIngreso: '',
-    diagnosticodeAltade: '',
-    planDeTratamientoIndicaciones: '',
-    planDeTratamientoMedicamentos: ''
-  });
+  const [editConsultaData, setEditConsultaData] = useState({});
 
-
+  // reutilizamos hook para manejo de nueva consulta / adjuntos
+  const {
+    nuevaConsultaData,
+    setNuevaConsultaData,
+    handleNuevaConsultaChange,
+    resetNuevaConsulta,
+    adjuntos,
+    setAdjuntos,        // ahora disponible para limpiar adjuntos tras edit
+    uploadingAdjuntos,
+    fileInputRef,
+    handleSingleFileChange,
+    handleRemoveAdjunto,
+    handleAddDocumentoClick,
+    uploadFiles,        // needed for edit flow upload
+    saveNuevaConsulta
+  } = useConsulta();
+ 
   React.useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -287,68 +89,7 @@ const RevisarHistoriasClinicas = () => {
     setConsultasCedula(cedula || consultasCedula);
     setShowConsultas(true);
     setShowAgregarConsultaDetalle(true);
-    setNuevaConsultaData({
-      hora: '',
-      motivoDeConsulta: '',
-      enfermedadActual: '',
-      presionArterial: '',
-      frecuenciaCardiaca: '',
-      frecuenciaRespiratoria: '',
-      temperaturaBucal: '',
-      temperaturaAxilar: '',
-      peso: '',
-      talla: '',
-      gaslowOcular: '',
-      gaslowVerbal: '',
-      gaslowMotora: '',
-      gaslowTotal: '',
-      reaccionPupilaIzq: '',
-      reaccionPupilaDer: '',
-      tiempoLlenadoCapilar: '',
-      saturacionOxigeno: '',
-      viaAereaObstruida: '',
-      cabeza: '',
-      cuello: '',
-      torax: '',
-      abdomen: '',
-      columna: '',
-      pelvis: '',
-      extremidades: '',
-      heridaPenetrante: '',
-      heridaCortante: '',
-      fracturaExpuesta: '',
-      fracturaCerrada: '',
-      cuerpoExtrano: '',
-      hemorragia: '',
-      mordedura: '',
-      picadura: '',
-      excoriacion: '',
-      deformidadOMasa: '',
-      hematoma: '',
-      eritemaInflamacion: '',
-      luxacionEsguince: '',
-      quemadura: '',
-      solicitudExamenBiometria: false,
-      solicitudExamenUroanalisis: false,
-      solicitudExamenQuimicaSanguinea: false,
-      solicitudExamenElectrolitos: false,
-      solicitudExamenGasometria: false,
-      solicitudExamenElectrocardiograma: false,
-      solicitudExamenEndoscopia: false,
-      solicitudExamenRxTorax: false,
-      solicitudExamenRxAbdomen: false,
-      solicitudExamenRxOsea: false,
-      solicitudExamenTomografia: false,
-      solicitudExamenResonancia: false,
-      solicitudExamenEcografiaPelvica: false,
-      solicitudExamenEcografiaAbdomen: false,
-      solicitudExamenInterconsulta: false,
-      solicitudExamenOtros: false,
-      diagnosticodeIngreso: '',
-      diagnosticodeAltade: '',
-      planDeTratamientoIndicaciones: '',
-      planDeTratamientoMedicamentos: ''
-    });
+    resetNuevaConsulta();
   };
 
   // Función para cancelar agregar consulta
@@ -357,53 +98,21 @@ const RevisarHistoriasClinicas = () => {
     setShowAgregarConsultaDetalle(false);
   };
 
-  // Función para cambiar los campos del formulario de nueva consulta
-  const handleNuevaConsultaChange = (field, value) => {
-    setNuevaConsultaData(prev => ({ ...prev, [field]: value }));
-  };
-
   // Función para guardar la nueva consulta
   const handleAgregarConsultaSave = async () => {
     setLoadingConsulta(true);
-    let uploadResults = [];
     try {
-      // subir adjuntos primero (si hay)
-      if (adjuntos && adjuntos.length > 0) {
-        setUploadingAdjuntos(true);
-        try {
-          uploadResults = await uploadFiles(adjuntos);
-        } finally {
-          setUploadingAdjuntos(false);
-        }
+      const resp = await saveNuevaConsulta(consultasCedula, { ...nuevaConsultaData });
+      if (resp.success && resp.consulta) {
+        setConsultas(con => [{ ...resp.consulta }, ...con]);
+        setShowConsultas(false);
+        setShowAgregarConsultaDetalle(false);
+      } else {
+        console.error('Error guardando consulta', resp.error);
       }
-
-      // crear consulta
-      const nueva = await createConsultaForCedula(consultasCedula, { ...nuevaConsultaData });
-
-      // crear registros Documento asociados a la nueva consulta
-      if (uploadResults && uploadResults.length > 0) {
-        for (const u of uploadResults) {
-          try {
-            await addDocumentoToConsulta(nueva.id, {
-              tipo: 'OTRO',
-              titulo: u.name,
-              s3key: u.key,
-              notas: u.url, // guardamos la URL en notas para referencia
-            });
-          } catch (err) {
-            console.error('Error creando documento para nueva consulta:', err);
-          }
-        }
-      }
-
-      setConsultas(con => [{ ...nueva }, ...con]);
-      setShowConsultas(false);
-      setShowAgregarConsultaDetalle(false);
-      setAdjuntos([]); // limpiar adjuntos del UI
     } catch (err) {
       console.error('Error creando consulta:', err);
     } finally {
-      setUploadingAdjuntos(false);
       setLoadingConsulta(false);
     }
   };
@@ -628,11 +337,10 @@ const RevisarHistoriasClinicas = () => {
       // si hay archivos, subirlos primero y obtener resultados (key + url + name)
       let uploadResults = [];
       if (adjuntos && adjuntos.length > 0) {
-        setUploadingAdjuntos(true);
         try {
-          uploadResults = await uploadFiles(adjuntos);
-        } finally {
-          setUploadingAdjuntos(false);
+          uploadResults = await uploadFiles(adjuntos); // usar uploadFiles del hook
+        } catch (err) {
+          console.error('Error subiendo adjuntos para consulta editada:', err);
         }
       }
 
@@ -653,13 +361,6 @@ const RevisarHistoriasClinicas = () => {
             console.error('Error creando documento para consulta editada:', err);
           }
         }
-        // recargar lista de documentos para la consulta (si quieres mantener documentos actualizados)
-        // try {
-        //   const docsResp = await listDocumentosByConsulta(updated.id);
-        //   setDocumentos(Array.isArray(docsResp.items) ? docsResp.items : []);
-        // } catch (e) {
-        //   console.error('Error recargando documentos después de guardar:', e);
-        // }
       }
 
       // Actualiza la lista de consultas mostrada en el popup (si existe)
@@ -670,7 +371,7 @@ const RevisarHistoriasClinicas = () => {
         consultas: Array.isArray(h.consultas) ? h.consultas.map(c => (c.id === updated.id ? updated : c)) : h.consultas
       })));
       setEditConsultaIdx(null);
-      setAdjuntos([]); // limpiar adjuntos después de asociarlos
+      setAdjuntos([]); // limpiar adjuntos después de asociarlos (usa setAdjuntos del hook)
      } catch (e) {
        // error opcional: puedes agregar notificación
        console.error('Error actualizando consulta', e);
@@ -866,23 +567,39 @@ const RevisarHistoriasClinicas = () => {
                   <div>
                     <strong>Motivo:</strong>
                     <input
-                      value={nuevaConsulta.motivo}
-                      onChange={e => handleNuevaConsultaChange('motivo', e.target.value)}
+                      value={nuevaConsultaData.motivoDeConsulta || nuevaConsultaData.motivo || ''}
+                      onChange={e => handleNuevaConsultaChange('motivoDeConsulta', e.target.value)}
                       style={{ marginLeft: 8 }}
                     />
                   </div>
                   <div>
                     <strong>Diagnóstico:</strong>
                     <textarea
-                      value={nuevaConsulta.diagnostico}
-                      onChange={e => handleNuevaConsultaChange('diagnostico', e.target.value)}
+                      value={nuevaConsultaData.diagnosticodeIngreso || nuevaConsultaData.diagnostico || ''}
+                      onChange={e => handleNuevaConsultaChange('diagnosticodeIngreso', e.target.value)}
                       rows={2}
                       style={{ marginLeft: 8, width: '100%' }}
                     />
                   </div>
+                  {/* input file invisible para adjuntos (useConsulta provee fileInputRef y handler) */}
+                  <input ref={fileInputRef} type="file" style={{ display: 'none' }} onChange={handleSingleFileChange} />
+                  {/* Mostrar lista de adjuntos si los hay */}
+                  {adjuntos && adjuntos.length > 0 && (
+                    <div style={{ marginTop: 8 }}>
+                      <strong>Adjuntos:</strong>
+                      <ul>
+                        {adjuntos.map((f, i) => (
+                          <li key={i}>
+                            {f.name} <button onClick={() => handleRemoveAdjunto(i)}>Eliminar</button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                   <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
                     <button className="revisar-historias-btn revisar-historias-btn-agregar" onClick={handleAgregarConsultaSave} disabled={loadingConsulta}>Guardar</button>
                     <button className="revisar-historias-btn revisar-historias-btn-cancel" onClick={handleAgregarConsultaCancel} disabled={loadingConsulta}>Cancelar</button>
+                    <button className="revisar-historias-btn" onClick={handleAddDocumentoClick}>Adjuntar archivo</button>
                   </div>
                 </div>
               </div>
@@ -964,10 +681,10 @@ const RevisarHistoriasClinicas = () => {
           onSingleFileChange={handleSingleFileChange}
           onRemoveAdjunto={handleRemoveAdjunto}
           uploadingAdjuntos={uploadingAdjuntos}
-          loadingButtonState={loadingButtonState}
-          onDeleteDocumento={handleDeleteDocumento}
-        />
-      )}
+           loadingButtonState={loadingButtonState}
+           onDeleteDocumento={handleDeleteDocumento}
+         />
+       )}
       {editConsultaIdx && (
         <ConsultaPopup
           mode="edit"
@@ -985,8 +702,8 @@ const RevisarHistoriasClinicas = () => {
           onSingleFileChange={handleSingleFileChange}
           onRemoveAdjunto={handleRemoveAdjunto}
           uploadingAdjuntos={uploadingAdjuntos}
-          loadingButtonState={loadingButtonState}
-          onDeleteDocumento={handleDeleteDocumento}
+           loadingButtonState={loadingButtonState}
+           onDeleteDocumento={handleDeleteDocumento}
         />
       )}
     </div>
