@@ -13,7 +13,8 @@
     },
     "categories": {
       "auth": {
-        "latmedicreact68ebd0e4": {}
+        "latmedicreact68ebd0e4": {},
+        "userPoolGroups": {}
       },
       "api": {
         "latmedicreact": {}
