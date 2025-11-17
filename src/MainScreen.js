@@ -27,19 +27,7 @@ const MainScreen = ({ user, signOut }) => {
         </div>
         {selected === 'crear' && (
           <div>
-            {!cliente ? (
-              <CrearHistoriaClinica onHistoriaCreada={data => setCliente(data)} />
-            ) : !consulta ? (
-              <CrearConsulta
-                cedula={cliente.cedula}
-                onConsultaCreada={data => setConsulta(data)}
-                nombreCliente={cliente.nombre}
-              />
-            ) : (
-              <ManejoConsulta
-                consultaID={consulta.id}
-              />
-            )}
+            <CrearHistoriaClinica onHistoriaCreada={data => setCliente(data)} />
           </div>
         )}
         {selected === 'revisar' && (

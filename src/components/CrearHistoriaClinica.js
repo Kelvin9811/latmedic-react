@@ -1,43 +1,58 @@
 import React, { useState } from 'react';
 import './CrearHistoriaClinica.css';
 import { upsertClienteByCedula } from '../apiCrud';
+import useHistoriaClinica from '../hooks/useHistoriaClinica';
 
 const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
-  const [nombre, setNombre] = useState('');
-  const [cedula, setCedula] = useState('');
-  const [direccionResidenciaHabitual, setDireccionResidenciaHabitual] = useState('');
-  const [barrio, setBarrio] = useState('');
-  const [parroquia, setParroquia] = useState('');
-  const [canton, setCanton] = useState('');
-  const [provincia, setProvincia] = useState('');
-  const [telefono, setTelefono] = useState('');
-  const [grupoSanguineoYFactorRh, setGrupoSanguineoYFactorRh] = useState('');
-  const [fechaNacimiento, setFechaNacimiento] = useState('');
-  const [lugarNacimiento, setLugarNacimiento] = useState('');
-  const [nacionalidad, setNacionalidad] = useState('');
-  const [grupoCultural, setGrupoCultural] = useState('');
-  const [edadEnAnosCumplidos, setEdadEnAnosCumplidos] = useState('');
-  const [sexo, setSexo] = useState('');
-  const [estadoCivil, setEstadoCivil] = useState('');
-  const [nivelEducativo, setNivelEducativo] = useState('');
-  const [fechaAdmision, setFechaAdmision] = useState('');
-  const [ocupacion, setOcupacion] = useState('');
-  const [empresaDondeTrabaja, setEmpresaDondeTrabaja] = useState('');
-  const [tipoSeguroSalud, setTipoSeguroSalud] = useState('');
-  const [referidoDe, setReferidoDe] = useState('');
-  const [enCasoDeAvisarA, setEnCasoDeAvisarA] = useState('');
-  const [parentescoAfinidad, setParentescoAfinidad] = useState('');
-  const [telefonoEmergencia, setTelefonoEmergencia] = useState('');
-  const [antecedenteAlergico, setAntecedenteAlergico] = useState('');
-  const [antecedenteClinico, setAntecedenteClinico] = useState('');
-  const [antecedenteGinecologico, setAntecedenteGinecologico] = useState('');
-  const [antecedenteTraumatologico, setAntecedenteTraumatologico] = useState('');
-  const [antecedenteQuirurgico, setAntecedenteQuirurgico] = useState('');
-  const [antecedenteFarmacoLogico, setAntecedenteFarmacoLogico] = useState('');
-  const [antecedentePsiquiatrico, setAntecedentePsiquiatrico] = useState('');
-  const [antecedenteOtro, setAntecedenteOtro] = useState('');
+  // uso del hook para todos los campos y utilidades compartidas
+  const {
+    nombre, setNombre,
+    cedula, setCedula,
+    direccionResidenciaHabitual, setDireccionResidenciaHabitual,
+    barrio, setBarrio,
+    parroquia, setParroquia,
+    canton, setCanton,
+    provincia, setProvincia,
+    telefono, setTelefono,
+    grupoSanguineoYFactorRh, setGrupoSanguineoYFactorRh,
+    fechaNacimiento, setFechaNacimiento,
+    lugarNacimiento, setLugarNacimiento,
+    nacionalidad, setNacionalidad,
+    grupoCultural, setGrupoCultural,
+    edadEnAnosCumplidos, setEdadEnAnosCumplidos,
+    sexo, setSexo,
+    estadoCivil, setEstadoCivil,
+    nivelEducativo, setNivelEducativo,
+    fechaAdmision, setFechaAdmision,
+    ocupacion, setOcupacion,
+    empresaDondeTrabaja, setEmpresaDondeTrabaja,
+    tipoSeguroSalud, setTipoSeguroSalud,
+    referidoDe, setReferidoDe,
+    enCasoDeAvisarA, setEnCasoDeAvisarA,
+    parentescoAfinidad, setParentescoAfinidad,
+    telefonoEmergencia, setTelefonoEmergencia,
+    antecedenteAlergico, setAntecedenteAlergico,
+    antecedenteClinico, setAntecedenteClinico,
+    antecedenteGinecologico, setAntecedenteGinecologico,
+    antecedenteTraumatologico, setAntecedenteTraumatologico,
+    antecedenteQuirurgico, setAntecedenteQuirurgico,
+    antecedenteFarmacoLogico, setAntecedenteFarmacoLogico,
+    antecedentePsiquiatrico, setAntecedentePsiquiatrico,
+    antecedenteOtro, setAntecedenteOtro,
+
+    // utilidades
+    handleFechaNacimientoChange,
+    buildHistoriaPayload,
+    resetFields
+  } = useHistoriaClinica();
+
   const [loading, setLoading] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+
+  // estados del flujo de agregar consulta (si ya los tienes en otro sitio, mantenlos)
+  const [showAddConsultaConfirm, setShowAddConsultaConfirm] = useState(false);
+  const [showCrearConsulta, setShowCrearConsulta] = useState(false);
+  const [createdCliente, setCreatedCliente] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -46,132 +61,30 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
 
   const handleConfirm = async () => {
     setLoading(true);
-    const fechaNacimientoISO = fechaNacimiento ? new Date(fechaNacimiento).toISOString() : undefined;
-    const fechaAdmisionISO = fechaAdmision ? new Date(fechaAdmision).toISOString() : undefined;
-    await upsertClienteByCedula({
-      cedula,
-      nombre,
-      direccionResidenciaHabitual,
-      barrio,
-      parroquia,
-      canton,
-      provincia,
-      telefono,
-      grupoSanguineoYFactorRh,
-      fechaNacimiento: fechaNacimientoISO,
-      lugarNacimiento,
-      nacionalidad,
-      grupoCultural,
-      edadEnAnosCumplidos: edadEnAnosCumplidos ? parseInt(edadEnAnosCumplidos) : undefined,
-      sexo,
-      estadoCivil,
-      nivelEducativo,
-      fechaAdmision: fechaAdmisionISO,
-      ocupacion,
-      empresaDondeTrabaja,
-      tipoSeguroSalud,
-      referidoDe,
-      enCasoDeAvisarA,
-      parentescoAfinidad,
-      telefonoEmergencia,
-      antecedenteAlergico,
-      antecedenteClinico,
-      antecedenteGinecologico,
-      antecedenteTraumatologico,
-      antecedenteQuirurgico,
-      antecedenteFarmacoLogico,
-      antecedentePsiquiatrico,
-      antecedenteOtro
-    });
+    // usar la utilidad reutilizable para construir payload y datos del cliente
+    const { payload, clienteData } = buildHistoriaPayload();
+    await upsertClienteByCedula(payload);
+
     if (onHistoriaCreada) {
-      onHistoriaCreada({
-        nombre,
-        cedula,
-        direccionResidenciaHabitual,
-        barrio,
-        parroquia,
-        canton,
-        provincia,
-        telefono,
-        grupoSanguineoYFactorRh,
-        fechaNacimiento,
-        lugarNacimiento,
-        nacionalidad,
-        grupoCultural,
-        edadEnAnosCumplidos,
-        sexo,
-        estadoCivil,
-        nivelEducativo,
-        fechaAdmision,
-        ocupacion,
-        empresaDondeTrabaja,
-        tipoSeguroSalud,
-        referidoDe,
-        enCasoDeAvisarA,
-        parentescoAfinidad,
-        telefonoEmergencia,
-        antecedenteAlergico,
-        antecedenteClinico,
-        antecedenteGinecologico,
-        antecedenteTraumatologico,
-        antecedenteQuirurgico,
-        antecedenteFarmacoLogico,
-        antecedentePsiquiatrico,
-        antecedenteOtro
-      });
+      onHistoriaCreada(clienteData);
     }
-    setNombre('');
-    setCedula('');
-    setDireccionResidenciaHabitual('');
-    setBarrio('');
-    setParroquia('');
-    setCanton('');
-    setProvincia('');
-    setTelefono('');
-    setGrupoSanguineoYFactorRh('');
-    setFechaNacimiento('');
-    setLugarNacimiento('');
-    setNacionalidad('');
-    setGrupoCultural('');
-    setEdadEnAnosCumplidos('');
-    setSexo('');
-    setEstadoCivil('');
-    setNivelEducativo('');
-    setFechaAdmision('');
-    setOcupacion('');
-    setEmpresaDondeTrabaja('');
-    setTipoSeguroSalud('');
-    setReferidoDe('');
-    setEnCasoDeAvisarA('');
-    setParentescoAfinidad('');
-    setTelefonoEmergencia('');
-    setAntecedenteAlergico('');
-    setAntecedenteClinico('');
-    setAntecedenteGinecologico('');
-    setAntecedenteTraumatologico('');
-    setAntecedenteQuirurgico('');
-    setAntecedenteFarmacoLogico('');
-    setAntecedentePsiquiatrico('');
-    setAntecedenteOtro('');
+
+    // Guardar el cliente creado para flujos adicionales (ej. crear consulta)
+    setCreatedCliente({
+      nombre: clienteData.nombre,
+      cedula: clienteData.cedula,
+      telefono: clienteData.telefono,
+      fechaNacimiento: clienteData.fechaNacimiento,
+      edadEnAnosCumplidos: clienteData.edadEnAnosCumplidos
+    });
+
+    // preguntar si desea agregar consulta
+    setShowAddConsultaConfirm(true);
+
+    // resetear campos vía hook
+    resetFields();
     setLoading(false);
     setShowConfirm(false);
-  };
-
-  const handleFechaNacimientoChange = (e) => {
-    const fecha = e.target.value;
-    setFechaNacimiento(fecha);
-    if (fecha) {
-      const hoy = new Date();
-      const nacimiento = new Date(fecha);
-      let edad = hoy.getFullYear() - nacimiento.getFullYear();
-      const m = hoy.getMonth() - nacimiento.getMonth();
-      if (m < 0 || (m === 0 && hoy.getDate() < nacimiento.getDate())) {
-        edad--;
-      }
-      setEdadEnAnosCumplidos(edad >= 0 ? edad : '');
-    } else {
-      setEdadEnAnosCumplidos('');
-    }
   };
 
   return (
@@ -270,7 +183,7 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
             type="date"
             value={fechaNacimiento}
             onChange={handleFechaNacimientoChange}
-          />          
+          />
           <label>Edad:</label>
           <input
             type="number"
@@ -437,7 +350,7 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
           />
         </div>
         <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '24px 0 8px 0' }} />
-        <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>En caso de emergencia</h4>        
+        <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>En caso de emergencia</h4>
         <div className="crear-historia-campo">
           <label>Notificar a:</label>
           <input
@@ -462,7 +375,7 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
             onChange={e => setTelefonoEmergencia(e.target.value.replace(/\D/g, ''))}
             maxLength={15}
           />
-        </div>        
+        </div>
         <button className="crear-historia-btn" type="submit" disabled={loading}>
           {loading ? 'Guardando...' : 'Guardar'}
         </button>
@@ -476,6 +389,24 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
           </div>
         </div>
       )}
+
+            {/* Modal: preguntar si desea agregar una consulta */}
+      {showAddConsultaConfirm && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 1100, background: 'rgba(0,0,0,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 16px rgba(0,0,0,0.15)', padding: 28, minWidth: 300, maxWidth: 420, textAlign: 'center' }}>
+            <p style={{ fontWeight: 'bold', color: '#222', marginBottom: 18 }}>¿Desea agregar una consulta ahora?</p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <button className="crear-historia-btn" onClick={() => { setShowCrearConsulta(true); setShowAddConsultaConfirm(false); }}>Sí</button>
+              <button className="crear-historia-btn crear-historia-btn-cancel" style={{ background: '#ff4d4f' }} onClick={() => setShowAddConsultaConfirm(false)}>No</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: mostrar el componente ConsultaPopup (si el usuario eligió agregar)
+          Nota: mantén aquí la UI/props que necesites. El hook ya maneja los campos de la historia */}
+     
+      
     </>
   );
 };
