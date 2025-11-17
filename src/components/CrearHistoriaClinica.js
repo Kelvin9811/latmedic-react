@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './CrearHistoriaClinica.css';
 import { upsertClienteByCedula } from '../apiCrud';
 import useHistoriaClinica from '../hooks/useHistoriaClinica';
+import useConsulta from '../hooks/useConsulta';
+import ConsultaPopup from './ConsultaPopup';
 
 const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
   // uso del hook para todos los campos y utilidades compartidas
@@ -54,6 +56,60 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
   const [showCrearConsulta, setShowCrearConsulta] = useState(false);
   const [createdCliente, setCreatedCliente] = useState(null);
 
+  // usar hook de consulta para manejar datos/adjuntos de la consulta
+  const {
+    nuevaConsultaData: editConsultaData,
+    handleNuevaConsultaChange,
+    setNuevaConsultaData: setEditConsultaData,
+    adjuntos,
+    fileInputRef,
+    handleSingleFileChange,
+    handleRemoveAdjunto,
+    handleAddDocumentoClick,
+    uploadingAdjuntos,
+    saveNuevaConsulta
+  } = useConsulta();
+
+  const [loadingButtonState, setLoadingButtonState] = useState(false);
+  const [editConsultaIdx, setEditConsultaIdx] = useState(null);
+  // Placeholders mínimos para props que pide ConsultaPopup
+  const [recetas] = useState([]);
+  const [recetasLoading] = useState(false);
+  const [documentos] = useState([]);
+  const [documentosLoading] = useState(false);
+
+
+  React.useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const currentTime = now.toLocaleString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).replace(',', ' -');
+        handleNuevaConsultaChange('hora', currentTime)
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  React.useEffect(() => {
+    // Actualiza automáticamente gaslowTotal a partir de los tres componentes.
+    const ocular = parseInt(editConsultaData.gaslowOcular, 10) || 0;
+    const verbal = parseInt(editConsultaData.gaslowVerbal, 10) || 0;
+    const motora = parseInt(editConsultaData.gaslowMotora, 10) || 0;
+    const total = ocular + verbal + motora;
+    // Usamos el handler existente para mantener la consistencia del estado
+    handleNuevaConsultaChange('gaslowTotal', total);
+  }, [editConsultaData.gaslowOcular, editConsultaData.gaslowVerbal, editConsultaData.gaslowMotora]);
+
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setShowConfirm(true);
@@ -85,6 +141,22 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
     resetFields();
     setLoading(false);
     setShowConfirm(false);
+  };
+
+  // guardar la consulta (usando el hook) cuando el usuario la salva en el popup
+  const handleSaveEditConsulta = async () => {
+    if (!createdCliente?.cedula) return;
+    setLoadingButtonState(true);
+    const result = await saveNuevaConsulta(createdCliente.cedula, editConsultaData);
+    setLoadingButtonState(false);
+    if (result?.success) {
+      // cerrar modal y limpiar índice de edición
+      setShowCrearConsulta(false);
+      setEditConsultaIdx(null);
+      // opcional: puedes notificar/update UI aquí
+    } else {
+      console.error('Error guardando consulta:', result?.error);
+    }
   };
 
   return (
@@ -405,8 +477,27 @@ const CrearHistoriaClinica = ({ onHistoriaCreada }) => {
 
       {/* Modal: mostrar el componente ConsultaPopup (si el usuario eligió agregar)
           Nota: mantén aquí la UI/props que necesites. El hook ya maneja los campos de la historia */}
-     
-      
+      {showCrearConsulta && (
+        <ConsultaPopup
+          mode="edit"
+          consultaData={editConsultaData}
+          setConsultaData={setEditConsultaData}
+          onSave={handleSaveEditConsulta}
+          onCancel={() => { setEditConsultaIdx(null); setShowCrearConsulta(false); }}
+          recetas={recetas}
+          recetasLoading={recetasLoading}
+          documentos={documentos}
+          documentosLoading={documentosLoading}
+          adjuntos={adjuntos}
+          onAddDocumentoClick={handleAddDocumentoClick}
+          fileInputRef={fileInputRef}
+          onSingleFileChange={handleSingleFileChange}
+          onRemoveAdjunto={handleRemoveAdjunto}
+          uploadingAdjuntos={uploadingAdjuntos}
+          loadingButtonState={loadingButtonState}
+          onDeleteDocumento={() => {}}
+        />
+      )}
     </>
   );
 };
