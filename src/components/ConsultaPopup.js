@@ -64,7 +64,7 @@ const ConsultaPopup = ({
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                             <h4 style={{ color: '#222', fontWeight: 'bold', margin: 8 }}>Inicio de Atención y Motivo</h4>
                             <label>Hora:</label>
-                            <input type="text" value={consultaData.hora || ''} onChange={e => setConsultaData(d => ({ ...d, hora: e.target.value }))} readOnly={mode === 'create' && !!consultaData.hora} />
+                            <input type="text" value={consultaData.hora || ''} onChange={e => setConsultaData(d => ({ ...d, hora: e.target.value }))} readOnly={!!consultaData.hora} />
                             <label>Motivo de Consulta:</label>
                             <input type="text" value={consultaData.motivoDeConsulta || ''} onChange={e => setConsultaData(d => ({ ...d, motivoDeConsulta: e.target.value }))} />
                             <hr style={{ border: 'none', borderTop: '1px solid #e0e0e0', margin: '16px 0' }} />
